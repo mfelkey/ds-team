@@ -1,3 +1,5 @@
+import sys
+sys.path.insert(0, "/home/mfelkey/dev-team")
 import json
 from crewai import Task
 from agents.orchestrator.orchestrator import build_master_orchestrator, create_project_context, log_event, save_context
