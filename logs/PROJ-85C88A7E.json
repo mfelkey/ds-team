@@ -1,7 +1,7 @@
 {
   "project_id": "PROJ-85C88A7E",
   "created_at": "2026-02-19T20:58:41.791775",
-  "status": "ACTIVE_DEV_PHASE2",
+  "status": "PRD_COMPLETE",
   "classification": "JOINT",
   "original_request": "\n    I need to analyze our VA ambulance trip data from 2023 to identify\n    which trips we could have captured in-house versus contracted out.\n    Then build a simple dashboard so leadership can explore the results\n    interactively by month and trip type.\n    ",
   "structured_spec": {
@@ -35,7 +35,15 @@
       "path": "ds/handoffs/HO-PROJ-85C88A7E-DS2DEV.json"
     }
   ],
-  "artifacts": [],
+  "artifacts": [
+    {
+      "name": "Product Requirements Document",
+      "type": "PRD",
+      "path": "dev/requirements/PROJ-85C88A7E_PRD.md",
+      "created_at": "2026-02-19T21:34:20.310550",
+      "created_by": "Product Manager"
+    }
+  ],
   "audit_log": [
     {
       "timestamp": "2026-02-19T20:58:41.791782",
@@ -66,6 +74,11 @@
       "timestamp": "2026-02-19T21:24:41.500007",
       "event": "HANDOFF APPROVED: HO-PROJ-85C88A7E-DS2DEV",
       "detail": ""
+    },
+    {
+      "timestamp": "2026-02-19T21:34:20.310574",
+      "event": "PRD_COMPLETE",
+      "detail": "dev/requirements/PROJ-85C88A7E_PRD.md"
     }
   ],
   "crew_lead": "Master Orchestrator",
