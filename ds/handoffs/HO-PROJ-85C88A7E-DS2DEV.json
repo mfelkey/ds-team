@@ -1,0 +1,42 @@
+{
+  "handoff_id": "HO-PROJ-85C88A7E-DS2DEV",
+  "project_id": "PROJ-85C88A7E",
+  "created_at": "2026-02-19T21:24:27.223469",
+  "status": "PENDING_APPROVAL",
+  "delivering_crew": "DS",
+  "receiving_crew": "DEV",
+  "summary": "The DS Crew has completed analysis of 2,853 VA ambulance trips. Key finding: 34% of contracted trips meet criteria for in-house capture. Estimated annual savings: $420,000. Cleaned dataset and schema are ready for dashboard development. All artifacts validated.",
+  "artifacts": [
+    {
+      "name": "Cleaned Trip Dataset",
+      "description": "2,853 ambulance trips cleaned and labeled",
+      "path": "ds/data/ambulance_trips_clean.csv",
+      "type": "dataset"
+    },
+    {
+      "name": "Analysis Report",
+      "description": "EDA findings and capture rate recommendations",
+      "path": "ds/reports/ambulance_analysis.md",
+      "type": "report"
+    },
+    {
+      "name": "Data Schema",
+      "description": "Column definitions and data types for dashboard use",
+      "path": "ds/data/schema.json",
+      "type": "schema"
+    }
+  ],
+  "acceptance_criteria": [
+    "Dashboard displays trip data filterable by month and trip type",
+    "In-house vs contracted breakdown visible at a glance",
+    "Loads in under 2 seconds for full dataset",
+    "Compatible with cleaned dataset schema provided"
+  ],
+  "limitations": [
+    "Dataset covers 2023 only \u2014 no multi-year trending possible yet",
+    "Mode field has 3% null values \u2014 dashboard should handle gracefully"
+  ],
+  "approved_by": null,
+  "approved_at": null,
+  "rejected_reason": null
+}

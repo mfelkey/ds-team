@@ -1,7 +1,7 @@
 {
   "project_id": "PROJ-85C88A7E",
   "created_at": "2026-02-19T20:58:41.791775",
-  "status": "ROUTED_TO_DS_PHASE1",
+  "status": "ACTIVE_DEV_PHASE2",
   "classification": "JOINT",
   "original_request": "\n    I need to analyze our VA ambulance trip data from 2023 to identify\n    which trips we could have captured in-house versus contracted out.\n    Then build a simple dashboard so leadership can explore the results\n    interactively by month and trip type.\n    ",
   "structured_spec": {
@@ -28,7 +28,13 @@
   },
   "assigned_crew": "JOINT",
   "checkpoints": [],
-  "handoffs": [],
+  "handoffs": [
+    {
+      "handoff_id": "HO-PROJ-85C88A7E-DS2DEV",
+      "status": "APPROVED",
+      "path": "ds/handoffs/HO-PROJ-85C88A7E-DS2DEV.json"
+    }
+  ],
   "artifacts": [],
   "audit_log": [
     {
@@ -45,11 +51,26 @@
       "timestamp": "2026-02-19T21:09:08.916977",
       "event": "ROUTED",
       "detail": "Joint project: DS Crew first \u2192 Dev Crew second"
+    },
+    {
+      "timestamp": "2026-02-19T21:23:27.833981",
+      "event": "HANDOFF_VALIDATION_FAILED",
+      "detail": "Missing artifact: ds/data/ambulance_trips_clean.csv; Missing artifact: ds/reports/ambulance_analysis.md; Missing artifact: ds/data/schema.json"
+    },
+    {
+      "timestamp": "2026-02-19T21:24:27.223711",
+      "event": "HANDOFF_PACKAGE_SAVED",
+      "detail": "ds/handoffs/HO-PROJ-85C88A7E-DS2DEV.json"
+    },
+    {
+      "timestamp": "2026-02-19T21:24:41.500007",
+      "event": "HANDOFF APPROVED: HO-PROJ-85C88A7E-DS2DEV",
+      "detail": ""
     }
   ],
   "crew_lead": "Master Orchestrator",
   "handoff_direction": "DS_TO_DEV",
   "phase_1_crew": "DS",
   "phase_2_crew": "DEV",
-  "next_action": "DS_CREW: Data analysis phase (Phase 1 of 2)"
+  "next_action": "DEV_CREW: Begin work on received artifacts"
 }
