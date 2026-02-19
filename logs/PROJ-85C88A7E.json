@@ -1,7 +1,7 @@
 {
   "project_id": "PROJ-85C88A7E",
   "created_at": "2026-02-19T20:58:41.791775",
-  "status": "PRD_COMPLETE",
+  "status": "BUSINESS_ANALYSIS_COMPLETE",
   "classification": "JOINT",
   "original_request": "\n    I need to analyze our VA ambulance trip data from 2023 to identify\n    which trips we could have captured in-house versus contracted out.\n    Then build a simple dashboard so leadership can explore the results\n    interactively by month and trip type.\n    ",
   "structured_spec": {
@@ -42,6 +42,13 @@
       "path": "dev/requirements/PROJ-85C88A7E_PRD.md",
       "created_at": "2026-02-19T21:34:20.310550",
       "created_by": "Product Manager"
+    },
+    {
+      "name": "Business Analysis Document",
+      "type": "BAD",
+      "path": "dev/requirements/PROJ-85C88A7E_BAD.md",
+      "created_at": "2026-02-19T22:05:25.061138",
+      "created_by": "Business Analyst"
     }
   ],
   "audit_log": [
@@ -79,6 +86,11 @@
       "timestamp": "2026-02-19T21:34:20.310574",
       "event": "PRD_COMPLETE",
       "detail": "dev/requirements/PROJ-85C88A7E_PRD.md"
+    },
+    {
+      "timestamp": "2026-02-19T22:05:25.061156",
+      "event": "BAD_COMPLETE",
+      "detail": "dev/requirements/PROJ-85C88A7E_BAD.md"
     }
   ],
   "crew_lead": "Master Orchestrator",
