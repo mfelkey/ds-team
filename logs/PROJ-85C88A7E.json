@@ -1,0 +1,40 @@
+{
+  "project_id": "PROJ-85C88A7E",
+  "created_at": "2026-02-19T20:58:41.791775",
+  "status": "CLASSIFIED",
+  "classification": "JOINT",
+  "original_request": "\n    I need to analyze our VA ambulance trip data from 2023 to identify\n    which trips we could have captured in-house versus contracted out.\n    Then build a simple dashboard so leadership can explore the results\n    interactively by month and trip type.\n    ",
+  "structured_spec": {
+    "title": "VA Ambulance Trip Analysis",
+    "description": "Perform a data analysis of the 2023 VA ambulance trip dataset to classify each trip as potentially handled in\u2011house or contracted out, then create a simple interactive dashboard that allows leadership to explore the results by month and trip type.",
+    "business_goal": "Enable leadership to identify cost\u2011saving opportunities by understanding which ambulance trips could be managed in\u2011house versus outsourced.",
+    "deliverables": [
+      "Data cleaning and preprocessing pipeline",
+      "Classification logic and labeled dataset (in\u2011house vs contracted)",
+      "Analytical report summarizing findings and recommendations",
+      "Interactive web dashboard (e.g., PowerBI, Tableau, or custom web app) with filters for month and trip type",
+      "Documentation and deployment instructions"
+    ],
+    "success_criteria": [
+      "Dashboard accessible to leadership with correct breakdowns by month and trip type",
+      "Classification results validated against business rules with >95% accuracy on sample review",
+      "Dashboard loads and updates within 2 seconds for typical queries",
+      "All deliverables handed over with complete documentation"
+    ],
+    "estimated_complexity": "MEDIUM",
+    "data_required": true,
+    "primary_crew": "JOINT",
+    "handoff_direction": "DS_TO_DEV"
+  },
+  "assigned_crew": null,
+  "checkpoints": [],
+  "handoffs": [],
+  "artifacts": [],
+  "audit_log": [
+    {
+      "timestamp": "2026-02-19T20:58:41.791782",
+      "event": "PROJECT_CLASSIFIED",
+      "detail": "Type: JOINT"
+    }
+  ]
+}
