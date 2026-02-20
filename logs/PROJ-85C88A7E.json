@@ -1,7 +1,7 @@
 {
   "project_id": "PROJ-85C88A7E",
   "created_at": "2026-02-19T20:58:41.791775",
-  "status": "BIR_RETROFIT_COMPLETE",
+  "status": "MTP_RETROFIT_COMPLETE",
   "classification": "JOINT",
   "original_request": "\n    I need to analyze our VA ambulance trip data from 2023 to identify\n    which trips we could have captured in-house versus contracted out.\n    Then build a simple dashboard so leadership can explore the results\n    interactively by month and trip type.\n    ",
   "structured_spec": {
@@ -147,6 +147,13 @@
       "path": "dev/build/PROJ-85C88A7E_BIR_R.md",
       "created_at": "2026-02-20T15:14:40.640567",
       "created_by": "Backend Developer (retrofit)"
+    },
+    {
+      "name": "Master Test Plan (Revised)",
+      "type": "MTP_R",
+      "path": "dev/quality/PROJ-85C88A7E_MTP_R.md",
+      "created_at": "2026-02-20T20:31:11.268536",
+      "created_by": "QA Lead (retrofit)"
     }
   ],
   "audit_log": [
@@ -259,6 +266,11 @@
       "timestamp": "2026-02-20T15:14:40.640579",
       "event": "BIR_RETROFIT_COMPLETE",
       "detail": "dev/build/PROJ-85C88A7E_BIR_R.md"
+    },
+    {
+      "timestamp": "2026-02-20T20:31:11.268545",
+      "event": "MTP_RETROFIT_COMPLETE",
+      "detail": "dev/quality/PROJ-85C88A7E_MTP_R.md"
     }
   ],
   "crew_lead": "Master Orchestrator",
