@@ -1,7 +1,7 @@
 {
   "project_id": "PROJ-85C88A7E",
   "created_at": "2026-02-19T20:58:41.791775",
-  "status": "SPRINT_PLAN_COMPLETE",
+  "status": "ARCHITECTURE_COMPLETE",
   "classification": "JOINT",
   "original_request": "\n    I need to analyze our VA ambulance trip data from 2023 to identify\n    which trips we could have captured in-house versus contracted out.\n    Then build a simple dashboard so leadership can explore the results\n    interactively by month and trip type.\n    ",
   "structured_spec": {
@@ -56,6 +56,13 @@
       "path": "dev/planning/PROJ-85C88A7E_SPRINT_PLAN.md",
       "created_at": "2026-02-20T02:12:08.792670",
       "created_by": "Scrum Master"
+    },
+    {
+      "name": "Technical Architecture Document",
+      "type": "TAD",
+      "path": "dev/architecture/PROJ-85C88A7E_TAD.md",
+      "created_at": "2026-02-20T02:29:39.967998",
+      "created_by": "Technical Architect"
     }
   ],
   "audit_log": [
@@ -103,6 +110,11 @@
       "timestamp": "2026-02-20T02:12:08.792680",
       "event": "SPRINT_PLAN_COMPLETE",
       "detail": "dev/planning/PROJ-85C88A7E_SPRINT_PLAN.md"
+    },
+    {
+      "timestamp": "2026-02-20T02:29:39.968008",
+      "event": "ARCHITECTURE_COMPLETE",
+      "detail": "dev/architecture/PROJ-85C88A7E_TAD.md"
     }
   ],
   "crew_lead": "Master Orchestrator",
