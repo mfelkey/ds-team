@@ -10,19 +10,26 @@ load_dotenv("config/.env")
 # ── Notification helpers ──────────────────────────────────────────────────────
 
 def send_sms(message: str) -> bool:
-    """Send SMS via Twilio. Returns True on success."""
+    """Send SMS via AT&T email-to-text gateway. Returns True on success."""
     try:
-        from twilio.rest import Client
-        client = Client(
-            os.getenv("TWILIO_ACCOUNT_SID"),
-            os.getenv("TWILIO_AUTH_TOKEN")
-        )
-        client.messages.create(
-            body=message,
-            from_=os.getenv("TWILIO_PHONE_NUMBER"),
-            to=os.getenv("HUMAN_PHONE_NUMBER")
-        )
-        print(f"📱 SMS sent: {message[:60]}...")
+        import smtplib
+        from email.mime.text import MIMEText
+
+        # AT&T email-to-text gateway
+        sms_address = os.getenv("HUMAN_PHONE_NUMBER", "").replace("+1", "") + "@txt.att.net"
+
+        msg = MIMEText(message[:160])  # SMS limit
+        msg["From"] = os.getenv("GMAIL_ADDRESS")
+        msg["To"] = sms_address
+        msg["Subject"] = ""
+
+        with smtplib.SMTP_SSL("smtp.gmail.com", 465) as server:
+            server.login(
+                os.getenv("GMAIL_ADDRESS"),
+                os.getenv("GMAIL_APP_PASSWORD")
+            )
+            server.send_message(msg)
+        print(f"📱 SMS sent via AT&T gateway: {message[:60]}...")
         return True
     except Exception as e:
         print(f"⚠️  SMS failed: {e}")
