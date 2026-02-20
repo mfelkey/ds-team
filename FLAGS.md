@@ -34,9 +34,22 @@ Each flag includes severity, document, and recommended resolution.
 
 ---
 
-## MTP-R (Master Test Plan) — pending retrofit
+## MTP-R (Master Test Plan)
 
-## TAD-R (Technical Architecture Document) — pending retrofit
+No flags.
+
+---
+
+## TAD-R (Technical Architecture Document)
+
+### FLAG-004
+- **Severity:** Low
+- **Location:** Section 2 — Architecture Diagram, Kubernetes Cluster box
+- **Issue:** Diagram box reads `Kubernetes Cluster (e.g., AKS, EKS, k3s)` — provider names in diagram
+- **Should Be:** `Kubernetes Cluster` only; provider names belong in Provider Reference sections
+- **Status:** Open
+
+---
 
 ## SRR-R (Security Review Report) — pending retrofit
 
@@ -47,6 +60,7 @@ Each flag includes severity, document, and recommended resolution.
 - [ ] FLAG-001: Fix hardcoded registry URL in CI/CD pipeline
 - [ ] FLAG-002: Migrate `auth0_id` → `oidc_sub` in SQL schema
 - [ ] FLAG-003: Rename `auth0Id` → `oidcSub` in Prisma schema + regenerate client
+- [ ] FLAG-004: Remove provider names from architecture diagram box
 
 ---
 *Last updated: 2026-02-20*
