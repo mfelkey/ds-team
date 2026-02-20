@@ -1,7 +1,7 @@
 {
   "project_id": "PROJ-85C88A7E",
   "created_at": "2026-02-19T20:58:41.791775",
-  "status": "MTP_RETROFIT_COMPLETE",
+  "status": "SRR_RETROFIT_COMPLETE",
   "classification": "JOINT",
   "original_request": "\n    I need to analyze our VA ambulance trip data from 2023 to identify\n    which trips we could have captured in-house versus contracted out.\n    Then build a simple dashboard so leadership can explore the results\n    interactively by month and trip type.\n    ",
   "structured_spec": {
@@ -154,6 +154,20 @@
       "path": "dev/quality/PROJ-85C88A7E_MTP_R.md",
       "created_at": "2026-02-20T20:31:11.268536",
       "created_by": "QA Lead (retrofit)"
+    },
+    {
+      "name": "Technical Architecture Document (Revised)",
+      "type": "TAD_R",
+      "path": "dev/architecture/PROJ-85C88A7E_TAD_R.md",
+      "created_at": "2026-02-20T20:51:24.728697",
+      "created_by": "Solutions Architect (retrofit)"
+    },
+    {
+      "name": "Security Review Report (Revised)",
+      "type": "SRR_R",
+      "path": "dev/security/PROJ-85C88A7E_SRR_R.md",
+      "created_at": "2026-02-20T21:08:55.323808",
+      "created_by": "Security Engineer (retrofit)"
     }
   ],
   "audit_log": [
@@ -271,6 +285,16 @@
       "timestamp": "2026-02-20T20:31:11.268545",
       "event": "MTP_RETROFIT_COMPLETE",
       "detail": "dev/quality/PROJ-85C88A7E_MTP_R.md"
+    },
+    {
+      "timestamp": "2026-02-20T20:51:24.728712",
+      "event": "TAD_RETROFIT_COMPLETE",
+      "detail": "dev/architecture/PROJ-85C88A7E_TAD_R.md"
+    },
+    {
+      "timestamp": "2026-02-20T21:08:55.323815",
+      "event": "SRR_RETROFIT_COMPLETE",
+      "detail": "dev/security/PROJ-85C88A7E_SRR_R.md"
     }
   ],
   "crew_lead": "Master Orchestrator",

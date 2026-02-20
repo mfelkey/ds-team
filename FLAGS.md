@@ -47,7 +47,44 @@ Each flag includes severity, document, and recommended resolution.
 
 ## MTP-R (Master Test Plan) — no flags
 
-## SRR-R (Security Review Report) — pending retrofit
+## SRR-R (Security Review Report)
+
+### FLAG-005
+- **Severity:** Low
+- **Location:** [OIDC_ISSUER_URL]
+- **Issue:** OIDC provider configuration still assumes Azure or Okta
+- **Should Be:** Recommend adding explicit Keycloak example in documentation
+- **Status:** Open
+
+### FLAG-006
+- **Severity:** Low
+- **Location:** [SECRETS_BACKEND]
+- **Issue:** Env var usage still assumes specific backends
+- **Should Be:** Recommend documenting generic fallback to local files for dev
+- **Status:** Open
+
+### FLAG-007
+- **Severity:** Low
+- **Location:** [BASE_URL]
+- **Issue:** Dynamic scan URL still requires explicit configuration
+- **Should Be:** Recommend adding CI/CD example for BASE_URL injection
+- **Status:** Open
+
+### FLAG-008
+- **Severity:** Low
+- **Location:** [ALERT_WEBHOOK_URL]
+- **Issue:** Notification mechanism still tied to Slack/Teams
+- **Should Be:** Recommend adding generic webhook support documentation
+- **Status:** Open
+
+### FLAG-009
+- **Severity:** Low
+- **Location:** [Makefile target]
+- **Issue:** `make test-security` may not be universally supported
+- **Should Be:** Recommend adding Docker or CI agnostic test runner instructions
+- **Status:** Open
+
+
 
 ---
 
