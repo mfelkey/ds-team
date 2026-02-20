@@ -1,7 +1,7 @@
 {
   "project_id": "PROJ-85C88A7E",
   "created_at": "2026-02-19T20:58:41.791775",
-  "status": "DBA_COMPLETE",
+  "status": "MTP_COMPLETE",
   "classification": "JOINT",
   "original_request": "\n    I need to analyze our VA ambulance trip data from 2023 to identify\n    which trips we could have captured in-house versus contracted out.\n    Then build a simple dashboard so leadership can explore the results\n    interactively by month and trip type.\n    ",
   "structured_spec": {
@@ -119,6 +119,13 @@
       "path": "dev/build/PROJ-85C88A7E_DBAR.md",
       "created_at": "2026-02-20T04:38:01.571462",
       "created_by": "Database Administrator"
+    },
+    {
+      "name": "Master Test Plan",
+      "type": "MTP",
+      "path": "dev/quality/PROJ-85C88A7E_MTP.md",
+      "created_at": "2026-02-20T04:54:59.915517",
+      "created_by": "QA Lead"
     }
   ],
   "audit_log": [
@@ -211,6 +218,11 @@
       "timestamp": "2026-02-20T04:38:01.571477",
       "event": "DBA_COMPLETE",
       "detail": "dev/build/PROJ-85C88A7E_DBAR.md"
+    },
+    {
+      "timestamp": "2026-02-20T04:54:59.915538",
+      "event": "MTP_COMPLETE",
+      "detail": "dev/quality/PROJ-85C88A7E_MTP.md"
     }
   ],
   "crew_lead": "Master Orchestrator",
