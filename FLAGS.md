@@ -34,12 +34,6 @@ Each flag includes severity, document, and recommended resolution.
 
 ---
 
-## MTP-R (Master Test Plan)
-
-No flags.
-
----
-
 ## TAD-R (Technical Architecture Document)
 
 ### FLAG-004
@@ -50,6 +44,8 @@ No flags.
 - **Status:** Open
 
 ---
+
+## MTP-R (Master Test Plan) — no flags
 
 ## SRR-R (Security Review Report) — pending retrofit
 
