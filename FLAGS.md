@@ -34,6 +34,10 @@ Each flag includes severity, document, and recommended resolution.
 
 ---
 
+## MTP-R (Master Test Plan) — no flags
+
+---
+
 ## TAD-R (Technical Architecture Document)
 
 ### FLAG-004
@@ -45,55 +49,44 @@ Each flag includes severity, document, and recommended resolution.
 
 ---
 
-## MTP-R (Master Test Plan) — no flags
-
 ## SRR-R (Security Review Report)
 
-### FLAG-005
-- **Severity:** Low
-- **Location:** [OIDC_ISSUER_URL]
-- **Issue:** OIDC provider configuration still assumes Azure or Okta
-- **Should Be:** Recommend adding explicit Keycloak example in documentation
-- **Status:** Open
+### ~~FLAG-005~~ — CLOSED (false positive)
+- **Location:** Section 2 — OIDC_ISSUER_URL
+- **Disposition:** Keycloak is already listed as a Provider Reference Implementation. No gap.
 
-### FLAG-006
-- **Severity:** Low
-- **Location:** [SECRETS_BACKEND]
-- **Issue:** Env var usage still assumes specific backends
-- **Should Be:** Recommend documenting generic fallback to local files for dev
-- **Status:** Open
+### ~~FLAG-006~~ — CLOSED (false positive)
+- **Location:** Section 3 — SECRETS_BACKEND
+- **Disposition:** env-file fallback is already documented. No gap.
 
 ### FLAG-007
 - **Severity:** Low
-- **Location:** [BASE_URL]
-- **Issue:** Dynamic scan URL still requires explicit configuration
-- **Should Be:** Recommend adding CI/CD example for BASE_URL injection
+- **Location:** Section 6 — Application Security / Dynamic Analysis
+- **Issue:** No CI/CD example showing how BASE_URL is injected for OWASP ZAP scan
+- **Should Be:** Add `.env.ci` example or Makefile snippet showing `BASE_URL=$(STAGING_URL) make test-security`
 - **Status:** Open
 
-### FLAG-008
-- **Severity:** Low
-- **Location:** [ALERT_WEBHOOK_URL]
-- **Issue:** Notification mechanism still tied to Slack/Teams
-- **Should Be:** Recommend adding generic webhook support documentation
-- **Status:** Open
+### ~~FLAG-008~~ — CLOSED (false positive)
+- **Location:** Section 8 — ALERT_WEBHOOK_URL
+- **Disposition:** Already a generic configurable env var pointing to any webhook endpoint. No gap.
 
 ### FLAG-009
 - **Severity:** Low
-- **Location:** [Makefile target]
-- **Issue:** `make test-security` may not be universally supported
-- **Should Be:** Recommend adding Docker or CI agnostic test runner instructions
+- **Location:** Section 7 — Vulnerability Management / Scan Execution
+- **Issue:** No fallback documented for environments where `make` is unavailable
+- **Should Be:** Add Docker-based alternative: `docker run --rm -e BASE_URL=... owasp/zap2docker-stable zap-baseline.py`
 - **Status:** Open
-
-
 
 ---
 
 ## Resolution Checklist
 
-- [ ] FLAG-001: Fix hardcoded registry URL in CI/CD pipeline
-- [ ] FLAG-002: Migrate `auth0_id` → `oidc_sub` in SQL schema
-- [ ] FLAG-003: Rename `auth0Id` → `oidcSub` in Prisma schema + regenerate client
-- [ ] FLAG-004: Remove provider names from architecture diagram box
+- [ ] FLAG-001: Fix hardcoded registry URL in DIR-R CI/CD pipeline snippet
+- [ ] FLAG-002: Migrate `auth0_id` → `oidc_sub` in SQL schema (defer to schema freeze)
+- [ ] FLAG-003: Rename `auth0Id` → `oidcSub` in Prisma schema + regenerate client (blocked by FLAG-002)
+- [ ] FLAG-004: Remove provider names from TAD-R architecture diagram box
+- [ ] FLAG-007: Add BASE_URL injection example for CI/CD security scan in SRR-R
+- [ ] FLAG-009: Add Docker-based fallback for `make test-security` in SRR-R
 
 ---
 *Last updated: 2026-02-20*
