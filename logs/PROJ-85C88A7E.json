@@ -1,7 +1,7 @@
 {
   "project_id": "PROJ-85C88A7E",
   "created_at": "2026-02-19T20:58:41.791775",
-  "status": "SECURITY_REVIEW_COMPLETE",
+  "status": "UX_DESIGN_COMPLETE",
   "classification": "JOINT",
   "original_request": "\n    I need to analyze our VA ambulance trip data from 2023 to identify\n    which trips we could have captured in-house versus contracted out.\n    Then build a simple dashboard so leadership can explore the results\n    interactively by month and trip type.\n    ",
   "structured_spec": {
@@ -70,6 +70,20 @@
       "path": "dev/security/PROJ-85C88A7E_SRR.md",
       "created_at": "2026-02-20T02:43:28.977178",
       "created_by": "Security Reviewer"
+    },
+    {
+      "name": "User Experience Document",
+      "type": "UXD",
+      "path": "dev/design/PROJ-85C88A7E_UXD.md",
+      "created_at": "2026-02-20T03:04:49.373281",
+      "created_by": "UX/UI Designer"
+    },
+    {
+      "name": "UI Content Guide",
+      "type": "UI_CONTENT",
+      "path": "dev/design/PROJ-85C88A7E_UI_CONTENT.md",
+      "created_at": "2026-02-20T03:18:17.181568",
+      "created_by": "UX/UI Designer"
     }
   ],
   "audit_log": [
@@ -127,6 +141,16 @@
       "timestamp": "2026-02-20T02:43:28.977188",
       "event": "SECURITY_REVIEW_COMPLETE",
       "detail": "dev/security/PROJ-85C88A7E_SRR.md"
+    },
+    {
+      "timestamp": "2026-02-20T03:04:49.373291",
+      "event": "UX_DESIGN_COMPLETE",
+      "detail": "dev/design/PROJ-85C88A7E_UXD.md"
+    },
+    {
+      "timestamp": "2026-02-20T03:18:17.181575",
+      "event": "UI_CONTENT_COMPLETE",
+      "detail": "dev/design/PROJ-85C88A7E_UI_CONTENT.md"
     }
   ],
   "crew_lead": "Master Orchestrator",
