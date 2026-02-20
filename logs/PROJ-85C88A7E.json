@@ -1,7 +1,7 @@
 {
   "project_id": "PROJ-85C88A7E",
   "created_at": "2026-02-19T20:58:41.791775",
-  "status": "UX_DESIGN_COMPLETE",
+  "status": "TIP_COMPLETE",
   "classification": "JOINT",
   "original_request": "\n    I need to analyze our VA ambulance trip data from 2023 to identify\n    which trips we could have captured in-house versus contracted out.\n    Then build a simple dashboard so leadership can explore the results\n    interactively by month and trip type.\n    ",
   "structured_spec": {
@@ -84,6 +84,13 @@
       "path": "dev/design/PROJ-85C88A7E_UI_CONTENT.md",
       "created_at": "2026-02-20T03:18:17.181568",
       "created_by": "UX/UI Designer"
+    },
+    {
+      "name": "Technical Implementation Plan",
+      "type": "TIP",
+      "path": "dev/build/PROJ-85C88A7E_TIP.md",
+      "created_at": "2026-02-20T03:58:09.079779",
+      "created_by": "Senior Developer"
     }
   ],
   "audit_log": [
@@ -151,6 +158,11 @@
       "timestamp": "2026-02-20T03:18:17.181575",
       "event": "UI_CONTENT_COMPLETE",
       "detail": "dev/design/PROJ-85C88A7E_UI_CONTENT.md"
+    },
+    {
+      "timestamp": "2026-02-20T03:58:09.079792",
+      "event": "TIP_COMPLETE",
+      "detail": "dev/build/PROJ-85C88A7E_TIP.md"
     }
   ],
   "crew_lead": "Master Orchestrator",
