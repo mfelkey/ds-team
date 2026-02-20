@@ -1,7 +1,7 @@
 {
   "project_id": "PROJ-85C88A7E",
   "created_at": "2026-02-19T20:58:41.791775",
-  "status": "ARCHITECTURE_COMPLETE",
+  "status": "SECURITY_REVIEW_COMPLETE",
   "classification": "JOINT",
   "original_request": "\n    I need to analyze our VA ambulance trip data from 2023 to identify\n    which trips we could have captured in-house versus contracted out.\n    Then build a simple dashboard so leadership can explore the results\n    interactively by month and trip type.\n    ",
   "structured_spec": {
@@ -63,6 +63,13 @@
       "path": "dev/architecture/PROJ-85C88A7E_TAD.md",
       "created_at": "2026-02-20T02:29:39.967998",
       "created_by": "Technical Architect"
+    },
+    {
+      "name": "Security Review Report",
+      "type": "SRR",
+      "path": "dev/security/PROJ-85C88A7E_SRR.md",
+      "created_at": "2026-02-20T02:43:28.977178",
+      "created_by": "Security Reviewer"
     }
   ],
   "audit_log": [
@@ -115,6 +122,11 @@
       "timestamp": "2026-02-20T02:29:39.968008",
       "event": "ARCHITECTURE_COMPLETE",
       "detail": "dev/architecture/PROJ-85C88A7E_TAD.md"
+    },
+    {
+      "timestamp": "2026-02-20T02:43:28.977188",
+      "event": "SECURITY_REVIEW_COMPLETE",
+      "detail": "dev/security/PROJ-85C88A7E_SRR.md"
     }
   ],
   "crew_lead": "Master Orchestrator",
