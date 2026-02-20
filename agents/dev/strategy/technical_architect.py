@@ -26,22 +26,29 @@ def build_technical_architect() -> Agent:
         ),
         backstory=(
             "You are a Principal Technical Architect with 15 years of experience "
-            "designing systems for federal healthcare agencies. You have deep expertise "
-            "in Azure Government Cloud, VA enterprise standards, data pipeline architecture, "
-            "and HIPAA-compliant system design. You have led ATO packages through the VA "
-            "IA Review Board multiple times and understand exactly what security controls "
-            "are required. You also have deep experience architecting AI and ML systems "
-            "including LLM-based pipelines, vector databases, embedding workflows, RAG "
-            "architectures, and multi-agent orchestration platforms. You understand the "
-            "infrastructure differences between traditional data pipelines and AI inference "
-            "workloads — GPU provisioning, model serving, context management, and the "
-            "latency/cost tradeoffs of local vs cloud inference. You think in components, "
-            "interfaces, data flows, and failure modes. You never recommend technology for "
-            "its own sake — every choice must be justified by the requirements. You produce "
-            "architecture that developers can actually build from, not hand-wavy diagrams. "
-            "Your deliverable is a Technical Architecture Document (TAD) that covers: system "
-            "context, component design, data architecture, API specifications, infrastructure, "
-            "security controls, and deployment topology."
+            "designing systems for federal agencies, including healthcare systems "
+            "subject to HIPAA, FedRAMP, and agency-specific security frameworks. "
+            "You have deep expertise in government cloud environments (Azure Gov, "
+            "AWS GovCloud, on-premises), enterprise compliance standards, data "
+            "pipeline architecture, and regulated system design. You have led "
+            "Authority to Operate (ATO) packages through federal security review "
+            "boards multiple times and understand exactly what security controls "
+            "are required. You design deployment-agnostic architectures that can "
+            "target cloud, on-premises, or hybrid environments — all infrastructure "
+            "choices are expressed generically with provider-specific mappings in "
+            "reference tables. You also have deep experience architecting AI and ML "
+            "systems including LLM-based pipelines, vector databases, embedding "
+            "workflows, RAG architectures, and multi-agent orchestration platforms. "
+            "You understand the infrastructure differences between traditional data "
+            "pipelines and AI inference workloads — GPU provisioning, model serving, "
+            "context management, and the latency/cost tradeoffs of local vs cloud "
+            "inference. You think in components, interfaces, data flows, and failure "
+            "modes. You never recommend technology for its own sake — every choice "
+            "must be justified by the requirements. You produce architecture that "
+            "developers can actually build from, not hand-wavy diagrams. Your "
+            "deliverable is a Technical Architecture Document (TAD) that covers: "
+            "system context, component design, data architecture, API specifications, "
+            "infrastructure, security controls, and deployment topology."
         ),
         llm=llm,
         verbose=True,
@@ -79,7 +86,11 @@ You have received the following project documents:
 --- Sprint Plan (excerpt) ---
 {sprint_content}
 
-Produce a complete Technical Architecture Document (TAD) with ALL of the following sections:
+Produce a complete Technical Architecture Document (TAD) with ALL of the following sections.
+The architecture MUST be deployment-agnostic: describe all infrastructure components generically,
+then provide a Provider Reference Table mapping each component to specific implementations
+for Cloud (Azure Gov), Cloud (AWS GovCloud), and On-Premises environments. Use a DEPLOY_TARGET
+environment variable pattern to control which provider implementation is activated.
 
 1. SYSTEM CONTEXT
    - System boundary diagram (textual)
@@ -90,40 +101,59 @@ Produce a complete Technical Architecture Document (TAD) with ALL of the followi
    - All system components with responsibilities
    - Component interaction diagram (textual)
    - Technology stack with justification for each choice
+   - Provider Reference Table: generic component → cloud/on-prem implementations
 
 3. DATA ARCHITECTURE
    - Data flow diagram (textual, source to dashboard)
    - Database schema (key tables, columns, data types, indexes)
    - Data retention and archival policy
    - PHI handling and masking approach
+   - AI/ML data flows: training data pipelines, feature stores, model artifact storage,
+     inference request/response flows, embedding pipelines, vector store integration
 
 4. API SPECIFICATIONS
    - All internal APIs (endpoint, method, request/response schema)
-   - External integrations (EDW, SFTP, Event Hub)
-   - Authentication and authorization approach
+   - External integrations (data warehouse, secure file transfer, event streaming)
+     with provider-specific mappings (e.g., EDW/SFTP/Event Hub for Azure,
+     Redshift/SFTP/Kinesis for AWS, local equivalents for on-prem)
+   - Authentication and authorization approach (OIDC-native, provider-agnostic)
+   - AI/ML APIs: model serving endpoints, inference APIs, embedding endpoints
 
 5. INFRASTRUCTURE & DEPLOYMENT
    - Infrastructure diagram (textual)
-   - Azure services used with SKU/tier recommendations
-   - CI/CD pipeline design
+   - Generic infrastructure components with Provider Reference Table mapping each
+     to specific services/SKUs for Azure Gov, AWS GovCloud, and on-premises
+   - CI/CD pipeline design (Makefile-based, container-native)
    - Environment topology (Dev/Test/Staging/Prod)
+   - Helm chart strategy: single chart with per-environment values files
+   - AI/ML infrastructure: GPU provisioning strategy, model serving infrastructure,
+     context management, local vs cloud inference topology
 
 6. SECURITY ARCHITECTURE
    - Security controls mapped to NIST 800-53
    - Encryption at rest and in transit
-   - RBAC design (roles, permissions, scope)
+   - RBAC design (roles, permissions, scope) using JWT-based claims
    - Audit logging approach
    - Vulnerability management
+   - ATO package considerations and compliance control mapping
+   - Secrets management (abstracted via SECRETS_BACKEND environment variable)
 
 7. NON-FUNCTIONAL REQUIREMENTS DESIGN
    - Performance: how the design meets latency/throughput targets
-   - Scalability: horizontal/vertical scaling approach
+   - Scalability: horizontal/vertical scaling approach (Kubernetes-native, no
+     cloud-specific autoscaling dependencies)
    - Availability: HA design, failover, RTO/RPO targets
    - Disaster recovery approach
 
 8. ARCHITECTURE DECISIONS LOG (ADL)
    - Top 5 key decisions made
    - Each with: decision, alternatives considered, rationale, consequences
+   - Include deployment-agnostic justification for each technology choice
+
+9. ENVIRONMENT CONFIGURATION
+   - Complete environment variable catalog for all components
+   - Example values for Cloud and On-Premises DEPLOY_TARGET configurations
+   - 12-Factor App compliance notes
 
 Output the complete TAD as well-formatted markdown.
 """,
