@@ -151,3 +151,9 @@ Each flag includes severity, document, and recommended resolution.
 - **Resolved:** XCTest/XCUITest suite, Fastlane lanes, Privacy Manifest, GitHub Actions workflow — all present in patch
 - **Remaining:** Section 8 accessibility still collapsed to single example; per-screen VoiceOver modifiers for all 6 screens not produced
 - **New Status:** Open (reduced scope)
+
+### FLAG-012 UPDATE 2
+- **Status:** Mostly resolved by IIR_A11Y patch
+- **Resolved:** Per-screen VoiceOver modifiers for Dashboard, TripList, TripDetail, FilterModal — all complete with working Swift code
+- **Remaining:** SettingsView (8.5), LoginView (8.6), DynamicTypeAwareText modifier, ReduceMotionModifier, and AccessibilityFocusManager not produced — agent drifted to generic helpers
+- **New Status:** Open (low priority — primary journeys covered)
