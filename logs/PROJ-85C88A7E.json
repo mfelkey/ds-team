@@ -196,6 +196,13 @@
       "path": "dev/mobile/PROJ-85C88A7E_IIR_PATCH.md",
       "created_at": "2026-02-21T17:16:10.160431",
       "created_by": "iOS Developer"
+    },
+    {
+      "name": "iOS Accessibility Patch",
+      "type": "IIR_A11Y",
+      "path": "dev/mobile/PROJ-85C88A7E_IIR_A11Y.md",
+      "created_at": "2026-02-21T17:24:23.777960",
+      "created_by": "iOS Accessibility Specialist"
     }
   ],
   "audit_log": [
@@ -348,6 +355,11 @@
       "timestamp": "2026-02-21T17:16:10.160439",
       "event": "IIR_PATCH_COMPLETE",
       "detail": "dev/mobile/PROJ-85C88A7E_IIR_PATCH.md"
+    },
+    {
+      "timestamp": "2026-02-21T17:24:23.777973",
+      "event": "IIR_A11Y_COMPLETE",
+      "detail": "dev/mobile/PROJ-85C88A7E_IIR_A11Y.md"
     }
   ],
   "crew_lead": "Master Orchestrator",
