@@ -89,4 +89,20 @@ Each flag includes severity, document, and recommended resolution.
 - [ ] FLAG-009: Add Docker-based fallback for `make test-security` in SRR-R
 
 ---
+
+## MUXD (Mobile UX Document)
+
+### FLAG-010
+- **Severity:** Low
+- **Location:** Section 5 / Section 6 — PHI & Security UX
+- **Issue:** Section 5 (PHI & Security UX) appears twice — sections 5 and 6 are duplicate headings covering the same topic with different content
+- **Should Be:** Merged into a single Section 5 with all PHI/Security UX content consolidated
+
+### FLAG-011
+- **Severity:** Low
+- **Location:** Sections 7–9 — Design & Development Specifications, System Architecture, Testing, Documentation
+- **Issue:** Sections 7–9 drifted from the required spec into a general architecture overview; required sections (Screen Designs iOS/Android/RN, Interaction Design, QA Handoff) are missing or incomplete
+- **Should Be:** Full screen designs for all 10 screens across all three platforms, interaction design spec, and QA device/OS matrix as specified in the task prompt
+
+---
 *Last updated: 2026-02-20*
