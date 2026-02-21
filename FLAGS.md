@@ -122,3 +122,26 @@ Each flag includes severity, document, and recommended resolution.
 - **Issue:** PHI auto-mask timer (10s), app switcher blur, and AES-256 encrypted cache not implemented
 - **Should Be:** Timer-based auto-remask, applicationWillResignActive blur, and encrypted cache as specified in MUXD
 - **Status:** Open
+
+## AIR (Android Implementation Report)
+
+### FLAG-014
+- **Severity:** Medium
+- **Location:** Section 4 — Screen Implementations
+- **Issue:** Only 3 of 10 required screens produced (Splash, Login, Dashboard). FilterBottomSheet, TripDetail, TripList, Settings, Error/Empty, and About screens missing
+- **Should Be:** Complete Composable + ViewModel for all 10 screens
+- **Status:** Open
+
+### FLAG-015
+- **Severity:** Medium
+- **Location:** Sections 7–10 — PHI/Security, Accessibility, Testing, Build/Distribution
+- **Issue:** FLAG_SECURE not implemented, PHI auto-remask timer absent, SQLCipher not used (unencrypted Room), Fastlane lanes and CI/CD workflow not produced
+- **Should Be:** FLAG_SECURE in onCreate, coroutine-based 10s auto-remask, SQLCipher Room setup, complete Fastlane Appfile/Fastfile, GitHub Actions workflow
+- **Status:** Open
+
+### FLAG-016
+- **Severity:** Low
+- **Location:** NetworkModule.kt
+- **Issue:** HttpLoggingInterceptor set to Level.BODY unconditionally — logs request/response bodies in all build variants including release
+- **Should Be:** Level.BODY in debug only, Level.NONE in staging/release
+- **Status:** Open
