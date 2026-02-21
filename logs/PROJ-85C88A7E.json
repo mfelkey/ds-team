@@ -1,7 +1,7 @@
 {
   "project_id": "PROJ-85C88A7E",
   "created_at": "2026-02-19T20:58:41.791775",
-  "status": "IIR_COMPLETE",
+  "status": "AIR_COMPLETE",
   "classification": "JOINT",
   "original_request": "\n    I need to analyze our VA ambulance trip data from 2023 to identify\n    which trips we could have captured in-house versus contracted out.\n    Then build a simple dashboard so leadership can explore the results\n    interactively by month and trip type.\n    ",
   "structured_spec": {
@@ -182,6 +182,20 @@
       "path": "dev/mobile/PROJ-85C88A7E_IIR.md",
       "created_at": "2026-02-21T02:06:22.882206",
       "created_by": "iOS Developer"
+    },
+    {
+      "name": "Android Implementation Report",
+      "type": "AIR",
+      "path": "dev/mobile/PROJ-85C88A7E_AIR.md",
+      "created_at": "2026-02-21T02:17:48.083404",
+      "created_by": "Android Developer"
+    },
+    {
+      "name": "iOS Implementation Report Patch",
+      "type": "IIR_PATCH",
+      "path": "dev/mobile/PROJ-85C88A7E_IIR_PATCH.md",
+      "created_at": "2026-02-21T17:16:10.160431",
+      "created_by": "iOS Developer"
     }
   ],
   "audit_log": [
@@ -324,6 +338,16 @@
       "timestamp": "2026-02-21T02:06:22.882237",
       "event": "IIR_COMPLETE",
       "detail": "dev/mobile/PROJ-85C88A7E_IIR.md"
+    },
+    {
+      "timestamp": "2026-02-21T02:17:48.083412",
+      "event": "AIR_COMPLETE",
+      "detail": "dev/mobile/PROJ-85C88A7E_AIR.md"
+    },
+    {
+      "timestamp": "2026-02-21T17:16:10.160439",
+      "event": "IIR_PATCH_COMPLETE",
+      "detail": "dev/mobile/PROJ-85C88A7E_IIR_PATCH.md"
     }
   ],
   "crew_lead": "Master Orchestrator",
