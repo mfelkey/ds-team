@@ -145,3 +145,9 @@ Each flag includes severity, document, and recommended resolution.
 - **Issue:** HttpLoggingInterceptor set to Level.BODY unconditionally — logs request/response bodies in all build variants including release
 - **Should Be:** Level.BODY in debug only, Level.NONE in staging/release
 - **Status:** Open
+
+### FLAG-012 UPDATE
+- **Status:** Partially resolved by IIR_PATCH
+- **Resolved:** XCTest/XCUITest suite, Fastlane lanes, Privacy Manifest, GitHub Actions workflow — all present in patch
+- **Remaining:** Section 8 accessibility still collapsed to single example; per-screen VoiceOver modifiers for all 6 screens not produced
+- **New Status:** Open (reduced scope)
