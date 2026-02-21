@@ -1,7 +1,7 @@
 {
   "project_id": "PROJ-85C88A7E",
   "created_at": "2026-02-19T20:58:41.791775",
-  "status": "SRR_RETROFIT_COMPLETE",
+  "status": "IIR_COMPLETE",
   "classification": "JOINT",
   "original_request": "\n    I need to analyze our VA ambulance trip data from 2023 to identify\n    which trips we could have captured in-house versus contracted out.\n    Then build a simple dashboard so leadership can explore the results\n    interactively by month and trip type.\n    ",
   "structured_spec": {
@@ -168,6 +168,20 @@
       "path": "dev/security/PROJ-85C88A7E_SRR_R.md",
       "created_at": "2026-02-20T21:08:55.323808",
       "created_by": "Security Engineer (retrofit)"
+    },
+    {
+      "name": "Mobile UX Document",
+      "type": "MUXD",
+      "path": "dev/mobile/PROJ-85C88A7E_MUXD.md",
+      "created_at": "2026-02-21T01:54:37.056570",
+      "created_by": "Mobile UI/UX Designer"
+    },
+    {
+      "name": "iOS Implementation Report",
+      "type": "IIR",
+      "path": "dev/mobile/PROJ-85C88A7E_IIR.md",
+      "created_at": "2026-02-21T02:06:22.882206",
+      "created_by": "iOS Developer"
     }
   ],
   "audit_log": [
@@ -300,6 +314,16 @@
       "timestamp": "2026-02-20T21:29:01.723574",
       "event": "RECONCILIATION_COMPLETE",
       "detail": "RECONCILIATION.md"
+    },
+    {
+      "timestamp": "2026-02-21T01:54:37.056583",
+      "event": "MUXD_COMPLETE",
+      "detail": "dev/mobile/PROJ-85C88A7E_MUXD.md"
+    },
+    {
+      "timestamp": "2026-02-21T02:06:22.882237",
+      "event": "IIR_COMPLETE",
+      "detail": "dev/mobile/PROJ-85C88A7E_IIR.md"
     }
   ],
   "crew_lead": "Master Orchestrator",
