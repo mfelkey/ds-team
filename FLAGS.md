@@ -106,3 +106,19 @@ Each flag includes severity, document, and recommended resolution.
 
 ---
 *Last updated: 2026-02-20*
+
+## IIR (iOS Implementation Report)
+
+### FLAG-012
+- **Severity:** Medium
+- **Location:** Sections 8–10
+- **Issue:** Accessibility implementation, XCTest/XCUITest suite, and Fastlane build/distribution lanes collapsed into a single bullet-point "Additional Features" section — no working code produced
+- **Should Be:** Full VoiceOver modifiers, XCTest unit tests, XCUITest UI tests, and complete Fastlane Matchfile/Fastfile lanes
+- **Status:** Open
+
+### FLAG-013
+- **Severity:** Medium
+- **Location:** Section 7 — PHI & Security Implementation
+- **Issue:** PHI auto-mask timer (10s), app switcher blur, and AES-256 encrypted cache not implemented
+- **Should Be:** Timer-based auto-remask, applicationWillResignActive blur, and encrypted cache as specified in MUXD
+- **Status:** Open
