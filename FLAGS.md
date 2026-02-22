@@ -157,3 +157,11 @@ Each flag includes severity, document, and recommended resolution.
 - **Resolved:** Per-screen VoiceOver modifiers for Dashboard, TripList, TripDetail, FilterModal — all complete with working Swift code
 - **Remaining:** SettingsView (8.5), LoginView (8.6), DynamicTypeAwareText modifier, ReduceMotionModifier, and AccessibilityFocusManager not produced — agent drifted to generic helpers
 - **New Status:** Open (low priority — primary journeys covered)
+
+### FLAG-018
+- **Artifact:** RNAD_P2
+- **Severity:** Medium
+- **Issues:**
+  - Section 7: Only KpiCard produced; VAButton, VATextInput, TripRow, LoadingSkeleton, EmptyState, ErrorBanner, ToastMessage missing
+  - Section 8: Generic platform styles only; bottom sheet, haptics, safe area, keyboard behavior, font selection patterns not produced
+  - Section 10: env.ts/featureFlags.ts produced instead of app.config.js, eas.json, .env.example, GitHub Actions workflow
