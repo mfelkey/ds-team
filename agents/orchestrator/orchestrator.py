@@ -145,25 +145,29 @@ def request_human_approval(context: dict, checkpoint_name: str,
 
 # ── Agent factory ─────────────────────────────────────────────────────────────
 
-def build_master_orchestrator() -> Agent:
-    """Instantiate and return the Master Orchestrator agent."""
+def build_devteam_orchestrator() -> Agent:
+    """Instantiate and return the Dev-Team Orchestrator agent."""
     llm = LLM(
         model=os.getenv("TIER1_MODEL", "ollama/gpt-oss:120b"),
         base_url=os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
     )
 
     return Agent(
-        role="Master Orchestrator",
+        role="Dev-Team Orchestrator",
         goal=(
-            "Receive project requests, classify them, initialize structured "
-            "project context, route to the correct crew, manage checkpoints, "
-            "coordinate handoffs, and ensure complete audit trails."
+            "Receive software development project requests, initialize structured "
+            "project context, route to the correct dev sub-team (backend, frontend, "
+            "mobile, DevOps, QA), manage checkpoints, coordinate handoffs between "
+            "agents, and ensure complete audit trails."
         ),
         backstory=(
-            "You are the Master Orchestrator of a federated AI development "
-            "system with a Dev Crew and a Data Science Crew. You classify "
-            "incoming work, structure it into actionable project specs, and "
-            "coordinate execution with human oversight at every major decision. "
+            "You are the Dev-Team Orchestrator — the central coordinator for a "
+            "federated AI software development system. You manage the full dev "
+            "pipeline: product requirements, technical architecture, backend, "
+            "frontend, mobile (React Native, DevOps, QA), security review, "
+            "infrastructure, and quality assurance. You structure incoming work "
+            "into actionable project specs and coordinate execution with human "
+            "oversight at every major decision. "
             "You never proceed past a checkpoint without explicit human approval."
         ),
         llm=llm,

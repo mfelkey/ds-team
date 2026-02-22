@@ -2,7 +2,7 @@ import sys
 sys.path.insert(0, "/home/mfelkey/dev-team")
 import json
 from crewai import Task
-from agents.orchestrator.orchestrator import build_master_orchestrator, create_project_context, log_event, save_context
+from agents.orchestrator.orchestrator import build_devteam_orchestrator, create_project_context, log_event, save_context
 
 def classify_project(natural_language_request: str) -> dict:
     """
@@ -11,7 +11,7 @@ def classify_project(natural_language_request: str) -> dict:
     Returns a fully initialized project context object.
     """
 
-    orchestrator = build_master_orchestrator()
+    orchestrator = build_devteam_orchestrator()
 
     classification_task = Task(
         description=f"""
