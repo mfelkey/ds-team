@@ -7,8 +7,6 @@ from datetime import datetime
 from dotenv import load_dotenv
 from crewai import Agent, Task, Crew, Process, LLM
 from agents.orchestrator.orchestrator import log_event, save_context
-from agents.orchestrator.context_manager import load_agent_context, format_context_for_prompt, on_artifact_saved
-
 
 load_dotenv("config/.env")
 
@@ -79,15 +77,15 @@ def run_database_administration(context: dict, bir_path: str, tad_path: str, srr
     Reads BIR, TAD, and SRR and produces a Database Administration Report (DBAR).
     Returns updated context.
     """
-    # ── Smart extraction: load relevant sections for dba ──
-    ctx = load_agent_context(
-        context=context,
-        consumer="dba",
-        artifact_types=["BIR", "TAD", "SRR"],
-        max_chars_per_artifact=6000
-    )
-    prompt_context = format_context_for_prompt(ctx)
 
+    with open(bir_path) as f:
+        bir_content = f.read()[:2000]
+
+    with open(tad_path) as f:
+        tad_content = f.read()[:1500]
+
+    with open(srr_path) as f:
+        srr_content = f.read()[:1000]
 
     dba = build_database_admin()
 
@@ -97,11 +95,13 @@ You are the Database Administrator for the following project. Review the documen
 below and produce a complete Database Administration Report (DBAR).
 
 --- Backend Implementation Report / Schema (excerpt) ---
+{bir_content}
 
 --- Technical Architecture Document (excerpt) ---
 {tad_content}
 
 --- Security Review Report (excerpt) ---
+{srr_content}
 
 Produce a complete Database Administration Report (DBAR) with ALL of the following sections:
 
@@ -212,7 +212,6 @@ PHI handling must address every relevant finding from the SRR.
         "created_at": datetime.utcnow().isoformat(),
         "created_by": "Database Administrator"
     })
-    on_artifact_saved(context, "DBAR", dbar_path)
     context["status"] = "DBA_COMPLETE"
     log_event(context, "DBA_COMPLETE", dbar_path)
     save_context(context)

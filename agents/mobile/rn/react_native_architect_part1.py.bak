@@ -6,8 +6,6 @@ import json
 from datetime import datetime
 from dotenv import load_dotenv
 from crewai import Agent, Task, Crew, Process, LLM
-from agents.orchestrator.context_manager import load_agent_context, format_context_for_prompt, on_artifact_saved
-
 
 load_dotenv("/home/mfelkey/dev-team/config/.env")
 
@@ -200,15 +198,8 @@ def build_rn_architect() -> Agent:
 
 
 def run_rn_architecture_part1(context: dict, muxd_path: str) -> tuple:
-    # ── Smart extraction: load relevant sections for rn_arch_p1 ──
-    ctx = load_agent_context(
-        context=context,
-        consumer="rn_arch_p1",
-        artifact_types=["MUXD", "MOBILE_TEST_PLAN"],
-        max_chars_per_artifact=6000
-    )
-    prompt_context = format_context_for_prompt(ctx)
-
+    with open(muxd_path) as f:
+        muxd_content = f.read()[:3000]
 
     task_description = TASK_DESCRIPTION.replace("MUXD_PLACEHOLDER", muxd_content)
 
@@ -245,7 +236,6 @@ def run_rn_architecture_part1(context: dict, muxd_path: str) -> tuple:
         "created_at": datetime.utcnow().isoformat(),
         "created_by": "React Native Architect"
     })
-    on_artifact_saved(context, "RNAD_P1", rnad_path)
     log_event(context, "RNAD_P1_COMPLETE", rnad_path)
     save_context(context)
     return context, rnad_path

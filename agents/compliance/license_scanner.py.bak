@@ -6,8 +6,6 @@ import json
 from datetime import datetime
 from dotenv import load_dotenv
 from crewai import Agent, Task, Crew, Process, LLM
-from agents.orchestrator.context_manager import load_agent_context, format_context_for_prompt, on_artifact_saved
-
 
 load_dotenv("/home/mfelkey/dev-team/config/.env")
 
@@ -133,15 +131,46 @@ def run_license_scan(context: dict, bir_path: str = None,
                       rn_guide_path: str = None) -> tuple:
     """Scan all built artifacts for license compliance."""
     scanner = build_license_scanner()
-    # ── Smart extraction: load relevant sections for license_scan ──
-    ctx = load_agent_context(
-        context=context,
-        consumer="license_scan",
-        artifact_types=["PRD", "BIR", "FIR", "DIR", "DSKR", "IIR", "AIR", "RN_GUIDE"],
-        max_chars_per_artifact=6000
-    )
-    prompt_context = format_context_for_prompt(ctx)
 
+    prd_excerpt = ""
+    if prd_path and os.path.exists(prd_path):
+        with open(prd_path) as f:
+            prd_excerpt = f.read()[:2000]
+
+    bir_excerpt = ""
+    if bir_path and os.path.exists(bir_path):
+        with open(bir_path) as f:
+            bir_excerpt = f.read()[:6000]
+
+    fir_excerpt = ""
+    if fir_path and os.path.exists(fir_path):
+        with open(fir_path) as f:
+            fir_excerpt = f.read()[:4000]
+
+    dir_excerpt = ""
+    if dir_path and os.path.exists(dir_path):
+        with open(dir_path) as f:
+            dir_excerpt = f.read()[:3000]
+
+    dskr_excerpt = ""
+    if dskr_path and os.path.exists(dskr_path):
+        with open(dskr_path) as f:
+            dskr_excerpt = f.read()[:3000]
+
+    iir_excerpt = ""
+    if iir_path and os.path.exists(iir_path):
+        with open(iir_path) as f:
+            iir_excerpt = f.read()[:3000]
+
+    air_excerpt = ""
+    if air_path and os.path.exists(air_path):
+        with open(air_path) as f:
+            air_excerpt = f.read()[:3000]
+
+    rn_excerpt = ""
+    if rn_guide_path and os.path.exists(rn_guide_path):
+        with open(rn_guide_path) as f:
+            rn_excerpt = f.read()[:3000]
 
     task = Task(
         description=f"""
@@ -278,7 +307,6 @@ specific remediation. This report must be thorough enough for legal review.
         "created_at": datetime.utcnow().isoformat(),
         "created_by": "License & Compliance Scanner"
     })
-    on_artifact_saved(context, "LCR", lcr_path)
     log_event(context, "LCR_COMPLETE", lcr_path)
     save_context(context)
     return context, lcr_path

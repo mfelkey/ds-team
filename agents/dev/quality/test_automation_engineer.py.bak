@@ -7,8 +7,6 @@ from datetime import datetime
 from dotenv import load_dotenv
 from crewai import Agent, Task, Crew, Process, LLM
 from agents.orchestrator.orchestrator import log_event, save_context
-from agents.orchestrator.context_manager import load_agent_context, format_context_for_prompt, on_artifact_saved
-
 
 load_dotenv("config/.env")
 
@@ -66,15 +64,18 @@ def build_test_automation_engineer() -> Agent:
 
 def run_test_automation(context: dict, mtp_path: str, bir_path: str,
                          fir_path: str, tip_path: str) -> dict:
-    # ── Smart extraction: load relevant sections for test_auto ──
-    ctx = load_agent_context(
-        context=context,
-        consumer="test_auto",
-        artifact_types=["MTP", "TIP", "TAD"],
-        max_chars_per_artifact=6000
-    )
-    prompt_context = format_context_for_prompt(ctx)
 
+    with open(mtp_path) as f:
+        mtp_content = f.read()[:2000]
+
+    with open(bir_path) as f:
+        bir_content = f.read()[:1000]
+
+    with open(fir_path) as f:
+        fir_content = f.read()[:1000]
+
+    with open(tip_path) as f:
+        tip_content = f.read()[:500]
 
     tae = build_test_automation_engineer()
 
@@ -84,11 +85,13 @@ You are the Test Automation Engineer. Using the documents below, implement
 a complete automated test suite and produce a Test Automation Report (TAR).
 
 --- Master Test Plan (excerpt) ---
+{mtp_content}
 
 --- Backend Implementation Report (excerpt) ---
 {bir_content}
 
 --- Frontend Implementation Report (excerpt) ---
+{fir_content}
 
 --- Technical Implementation Plan (excerpt) ---
 {tip_content}
@@ -215,7 +218,6 @@ Every environment-specific value must come from environment variables.
         "created_at": datetime.utcnow().isoformat(),
         "created_by": "Test Automation Engineer"
     })
-    on_artifact_saved(context, "TAR", tar_path)
     context["status"] = "TAR_COMPLETE"
     log_event(context, "TAR_COMPLETE", tar_path)
     save_context(context)

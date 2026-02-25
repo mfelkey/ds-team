@@ -7,8 +7,6 @@ from datetime import datetime
 from dotenv import load_dotenv
 from crewai import Agent, Task, Crew, Process, LLM
 from agents.orchestrator.orchestrator import log_event, save_context
-from agents.orchestrator.context_manager import load_agent_context, format_context_for_prompt, on_artifact_saved
-
 
 load_dotenv("config/.env")
 
@@ -57,15 +55,21 @@ def build_qa_lead() -> Agent:
 
 def run_master_test_plan(context: dict, prd_path: str, tip_path: str,
                           bir_path: str, fir_path: str, uxd_path: str) -> dict:
-    # ── Smart extraction: load relevant sections for qa_lead ──
-    ctx = load_agent_context(
-        context=context,
-        consumer="qa_lead",
-        artifact_types=["PRD", "TIP", "TAD", "UXD"],
-        max_chars_per_artifact=6000
-    )
-    prompt_context = format_context_for_prompt(ctx)
 
+    with open(prd_path) as f:
+        prd_content = f.read()[:1500]
+
+    with open(tip_path) as f:
+        tip_content = f.read()[:1000]
+
+    with open(bir_path) as f:
+        bir_content = f.read()[:1000]
+
+    with open(fir_path) as f:
+        fir_content = f.read()[:1000]
+
+    with open(uxd_path) as f:
+        uxd_content = f.read()[:1000]
 
     qa = build_qa_lead()
 
@@ -75,16 +79,19 @@ You are the QA Lead for the following project. Review the documents below
 and produce a complete Master Test Plan (MTP).
 
 --- PRD (excerpt) ---
+{prd_content}
 
 --- Technical Implementation Plan (excerpt) ---
 {tip_content}
 
 --- Backend Implementation Report (excerpt) ---
+{bir_content}
 
 --- Frontend Implementation Report (excerpt) ---
 {fir_content}
 
 --- User Experience Document (excerpt) ---
+{uxd_content}
 
 Produce a complete Master Test Plan (MTP) with ALL of the following sections:
 
@@ -195,7 +202,6 @@ Every test case must have actual steps — no vague descriptions.
         "created_at": datetime.utcnow().isoformat(),
         "created_by": "QA Lead"
     })
-    on_artifact_saved(context, "MTP", mtp_path)
     context["status"] = "MTP_COMPLETE"
     log_event(context, "MTP_COMPLETE", mtp_path)
     save_context(context)

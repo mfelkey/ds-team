@@ -1,474 +1,309 @@
-"""
-React Native Developer Agent
-=============================
-Generates a complete React Native (Expo) implementation guide in two parts.
-
-Part 1: Sections 1-5 (Project setup, navigation, state management, API layer, shared components)
-Part 2: Sections 6-10 (Screens, forms/validation, offline support, testing, build/deploy)
-
-Fix log (2026-02-22):
-  - Part 2 now receives Part 1 output as context instead of raw architecture doc
-  - TASK_PART2 rewritten to contain zero Section 1-5 references
-  - validate_agent_output() now checks section numbers to catch regression/looping
-"""
+import sys
+sys.path.insert(0, "/home/mfelkey/dev-team")
 
 import os
-import re
-import logging
+import json
 from datetime import datetime
-from textwrap import dedent
-
+from dotenv import load_dotenv
 from crewai import Agent, Task, Crew, Process, LLM
+from agents.orchestrator.context_manager import load_agent_context, format_context_for_prompt, on_artifact_saved
 
-# ---------------------------------------------------------------------------
-# Logging
-# ---------------------------------------------------------------------------
-logger = logging.getLogger("rn_developer")
-logger.setLevel(logging.DEBUG)
-if not logger.handlers:
-    _h = logging.StreamHandler()
-    _h.setFormatter(logging.Formatter("%(asctime)s [%(levelname)s] %(name)s: %(message)s"))
-    logger.addHandler(_h)
 
-# ---------------------------------------------------------------------------
-# Configuration
-# ---------------------------------------------------------------------------
-MODEL_NAME = os.getenv("RN_DEV_MODEL", "qwen2.5-coder:32b")
-BASE_URL = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
-MAX_ITER = int(os.getenv("RN_DEV_MAX_ITER", "30"))
-TEMPERATURE = float(os.getenv("RN_DEV_TEMPERATURE", "0.2"))
-OUTPUT_DIR = os.getenv("RN_DEV_OUTPUT_DIR", os.path.expanduser("~/dev-team/output/mobile/rn"))
+load_dotenv("/home/mfelkey/dev-team/config/.env")
 
-# Langfuse observability (optional)
-LANGFUSE_ENABLED = os.getenv("LANGFUSE_ENABLED", "false").lower() == "true"
-if LANGFUSE_ENABLED:
-    try:
-        from langfuse import Langfuse
-        langfuse = Langfuse()
-        logger.info("Langfuse observability enabled")
-    except ImportError:
-        logger.warning("Langfuse not installed; observability disabled")
-        LANGFUSE_ENABLED = False
+try:
+    from agents.orchestrator.orchestrator import log_event, save_context
+except ImportError:
+    def log_event(ctx, event, path): pass
+    def save_context(ctx): pass
 
-# ---------------------------------------------------------------------------
-# TASK PROMPTS
-# ---------------------------------------------------------------------------
 
-TASK_PART1 = dedent("""\
-    You are a senior React Native developer creating a comprehensive implementation
-    guide for a mobile app using Expo and TypeScript.
+TASK_DESCRIPTION = """
+You are the React Native Developer implementing the VA Ambulance Trip Analysis
+cross-platform app. The React Native Architect has defined the architecture.
+Your job is to implement the screen-level code.
 
-    Generate Sections 1 through 5 ONLY. Each section must start with a markdown
-    heading like "## 1. ..." through "## 5. ...".
+Produce the React Native Implementation Report (RNIR) with complete working
+TypeScript/React Native code for all screens and feature implementations.
+No placeholders. No "implement logic here". Working code only.
 
-    ## 1. Project Setup & Configuration
-    - Expo SDK setup with TypeScript template
-    - Directory structure (src/screens, src/components, src/hooks, src/services, src/store, src/types, src/utils)
-    - ESLint + Prettier configuration
-    - Path aliases via babel-plugin-module-resolver
-    - Environment variables with expo-constants
+---
 
-    ## 2. Navigation Architecture
-    - React Navigation v6 with native stack
-    - Type-safe navigation with RootStackParamList
-    - Bottom tab navigator with 4-5 primary tabs
-    - Nested stack navigators per tab
-    - Deep linking configuration
-    - Auth flow (login/register → main app switch)
+## 1. SPLASH SCREEN (features/auth/screens/SplashScreen.tsx)
 
-    ## 3. State Management
-    - Zustand stores: useAuthStore, useTripStore, useSettingsStore
-    - Async persistence with zustand/middleware and AsyncStorage
-    - Selectors for derived state
-    - Actions with loading/error state patterns
+Complete implementation:
+- VA logo centered on screen with backgroundColor #003366
+- Animated fade-in using Animated.Value + Animated.timing on mount
+- useEffect: checks Keychain for existing token on mount
+  - If token exists and not expired: navigates to Main
+  - If token expired: attempts silent refresh, on fail navigates to Auth
+  - If no token: navigates to Auth after animation completes
+- Uses NavigationService to navigate imperatively
+- StatusBar: light-content on both platforms
 
-    ## 4. API Layer
-    - Axios instance with baseURL, interceptors for auth token refresh
-    - Type-safe API client (api/trips.ts, api/auth.ts, api/users.ts)
-    - React Query (TanStack Query) for caching, pagination, optimistic updates
-    - Custom hooks: useTrips(), useTrip(id), useCreateTrip(), etc.
-    - Error handling and retry strategies
+---
 
-    ## 5. Shared UI Components
-    - Design tokens (colors, spacing, typography) in theme.ts
-    - Button, Card, Input, Badge, Avatar, LoadingOverlay components
-    - Each with TypeScript props interface
-    - Accessibility: accessibilityLabel, accessibilityRole on all interactive elements
-    - Dark mode support via useColorScheme
+## 2. LOGIN SCREEN (features/auth/screens/LoginScreen.tsx)
 
-    OUTPUT FORMAT:
-    - Full TypeScript/TSX code blocks with file paths as comments
-    - Explanatory prose between code blocks
-    - Every section heading must match "## N. <Title>" format exactly
-    - Stop after Section 5. Do NOT write Section 6 or beyond.
-""")
+Complete implementation:
+- VA branding: logo, "VA Ambulance Trip Analysis" title, subtitle
+- Single "Sign in with VA Credentials" button using VAButton (primary variant)
+- Loading state: button shows ActivityIndicator while OIDC flow in progress
+- Error state: ErrorBanner below button showing error message
+- onPress: calls AuthService.login(), handles success (navigate Main) and error
+- Biometric option: if biometric available, show "Use Face ID / Fingerprint" link below button
+  calls AuthService.biometricLogin() on press
+- useEffect: calls AuthService.checkBiometricAvailability() to conditionally show link
+- KeyboardAvoidingView wrapper with platform behavior
+- SafeAreaView with edges top/bottom
 
-# NOTE: TASK_PART2 contains ZERO references to Sections 1-5 content.
-# It receives Part 1 output as context prefix at runtime.
-TASK_PART2 = dedent("""\
-    You are continuing an implementation guide that another developer started.
-    The first half (Sections 1-5) is ALREADY COMPLETE and provided above as context.
+---
 
-    YOUR JOB: Write Sections 6 through 10 ONLY.
-    DO NOT rewrite, revisit, or regenerate ANY content from Sections 1-5.
-    DO NOT write code for files that were already created in the context above.
-    START your output directly with "## 6." and continue through "## 10.".
+## 3. BIOMETRIC PROMPT SCREEN (features/auth/screens/BiometricPromptScreen.tsx)
 
-    ## 6. Screen Implementations
-    - HomeScreen: trip list with FlatList, pull-to-refresh, infinite scroll
-    - TripDetailScreen: route params, data fetching, action buttons
-    - CreateTripScreen: multi-step form wizard (3 steps)
-    - ProfileScreen: user info, settings toggles, logout
-    - SearchScreen: debounced search input, filter chips, results list
-    - Each screen imports from the shared components and hooks defined earlier
-    - Use the navigation types and store hooks from the earlier sections
+Complete implementation:
+- Full-screen modal appearance
+- Lock icon centered
+- Title: "Authentication Required"
+- Subtitle: "Please authenticate to access protected health information"
+- "Authenticate" button: calls AuthService.biometricLogin()
+  On success: navigates back to previous screen
+  On failure: shows error message, offers "Cancel" option
+- "Cancel" button: navigates back without authenticating
+- Triggered automatically when navigating to TripDetail screen
 
-    ## 7. Forms & Validation
-    - React Hook Form with zodResolver
-    - Zod schemas: LoginSchema, RegisterSchema, CreateTripSchema
-    - Reusable FormField wrapper component
-    - Inline error messages with accessibility announcements
-    - Keyboard-aware scroll views for form screens
+---
 
-    ## 8. Offline Support & Data Sync
-    - NetInfo listener with useNetworkStatus() hook
-    - Offline queue in Zustand: pendingActions array
-    - Sync service that drains queue when connectivity returns
-    - Optimistic UI updates with rollback on sync failure
-    - Cache-first strategy with React Query's staleTime/gcTime
+## 4. DASHBOARD SCREEN (features/dashboard/screens/DashboardScreen.tsx)
 
-    ## 9. Testing Strategy
-    - Jest + React Native Testing Library setup
-    - Unit tests for Zustand stores (at least 2 example test files)
-    - Component tests for 2 shared components (Button, Card)
-    - Screen integration test for HomeScreen (mocked navigation + API)
-    - API mock patterns with MSW (Mock Service Worker)
-    - Snapshot tests for key UI states
+Complete implementation:
+- useKPISummary(filters) from React Query — shows LoadingSkeleton while loading
+- Three KPICard components: Total Trips, In-House %, Cost Avoidance
+- Line chart using react-native-chart-kit or Victory Native showing monthly trends
+  (use a simple mock data structure if chart library not specified)
+- Filter button in header (toolbar) — opens FilterModal via navigation
+- Pull-to-refresh: refetch on refresh using queryClient.invalidateQueries
+- "View Trip List" button navigates to TripList with current filters
+- Error state: ErrorBanner with retry button
+- useSession() called at top to initialize session management
+- useFocusEffect: invalidates queries when screen comes back into focus
 
-    ## 10. Build & Deployment
-    - EAS Build configuration (eas.json) for dev, preview, production profiles
-    - app.config.ts with dynamic configuration
-    - OTA updates with expo-updates
-    - App Store / Google Play submission checklist
-    - CI/CD with GitHub Actions: lint → test → build → deploy
-    - Environment-specific configs (API URLs, feature flags)
+---
 
-    OUTPUT FORMAT:
-    - Full TypeScript/TSX code blocks with file paths as comments
-    - Explanatory prose between code blocks
-    - Every section heading must match "## N. <Title>" format exactly
-    - Start at "## 6." — do NOT output "## 1." through "## 5."
-""")
+## 5. FILTER MODAL SCREEN (features/dashboard/screens/FilterModal.tsx)
 
-# ---------------------------------------------------------------------------
-# Agent Builder
-# ---------------------------------------------------------------------------
+Complete implementation:
+- Presented as modal (gestureEnabled true, detents ['medium', 'large'] on iOS)
+- Three pickers: Month (1-12 + All), Trip Type (All/In-House/Contracted), Region
+- Current filter values pre-populated from DashboardStore
+- "Apply" button: updates DashboardStore filters, dismisses modal
+- "Reset" button: resets filters to defaults, dismisses modal
+- "Cancel" X button in header
+- All pickers have accessibilityLabel and accessibilityHint
+
+---
+
+## 6. TRIP LIST SCREEN (features/trips/screens/TripListScreen.tsx)
+
+Complete implementation:
+- useTrips(page, filters) with useInfiniteQuery for pagination
+- FlatList with TripRow components
+- Pull-to-refresh: refetch first page
+- Infinite scroll: onEndReached loads next page, shows LoadingSkeleton footer
+- Empty state: EmptyState component with "No trips found" and filter reset option
+- Error state: ErrorBanner with retry
+- Each TripRow: onPress navigates to TripDetail with trip.id
+  Before navigating: checks if biometric re-auth needed (always required for TripDetail)
+  navigates to BiometricPrompt first, then TripDetail on success
+- Filter chips shown below header showing active filters
+
+---
+
+## 7. TRIP DETAIL SCREEN (features/trips/screens/TripDetailScreen.tsx)
+
+Complete implementation:
+- useScreenCapturePrevention() called at top
+- useTripDetail(tripId) from React Query — no caching (staleTime 0)
+- Custom header with back button (headerShown false in navigator)
+- Non-PHI fields displayed normally: date, provider, distance, trip type, region
+- PHI fields use PHIMaskedField component:
+  - Patient ID: PHIMaskedField with fieldName="patient_id"
+  - Cost: PHIMaskedField with fieldName="trip_cost"
+- LoadingSkeleton shown while loading
+- Error state: full-screen error with back button
+- AppBlurOverlay rendered conditionally (handled at app root, not here)
+- useAuthStore to get user.sub for PHIMaskedField userSub prop
+
+---
+
+## 8. SETTINGS SCREEN (features/settings/screens/SettingsScreen.tsx)
+
+Complete implementation:
+- Account section:
+  - User name and email from AuthStore (non-editable display)
+  - Biometric toggle: reads/writes biometric preference to MMKV via CacheService
+    calls AuthService.checkBiometricAvailability() to gate toggle
+- Security section:
+  - Session timeout display: "Auto-lock after 10 minutes"
+  - Privacy Policy row: opens VA privacy URL via Linking.openURL
+- App section:
+  - App version from expo-constants
+  - About row: navigates to About screen
+- Logout button (destructive): shows confirmation Alert, calls AuthService.logout()
+  on confirm, navigates to Auth stack
+- All rows have accessibilityRole and accessibilityLabel
+
+---
+
+## 9. ABOUT SCREEN (features/settings/screens/AboutScreen.tsx)
+
+Complete implementation:
+- VA logo
+- App name and version from expo-constants
+- VA disclaimer text (placeholder text acceptable)
+- Open Source Licenses row: navigates to licenses list
+- Contact/Support row: opens mailto link
+- All text selectable for accessibility
+
+---
+
+## 10. APP ROOT (App.tsx)
+
+Complete implementation:
+- QueryClientProvider wrapping everything
+- SafeAreaProvider from react-native-safe-area-context
+- GestureHandlerRootView (required for react-native-gesture-handler)
+- RootNavigator
+- AppBlurOverlay rendered at root level using useAppBlur hook
+- ToastMessage rendered at root level reading from UIStore
+- TouchableWithoutFeedback wrapping entire app resetting session timer
+  via useSession().resetTimer on every touch
+
+Output all screens as well-formatted markdown with complete TypeScript code.
+Every screen must be fully implemented. No screen may end with placeholder comments.
+Each screen should import from the correct paths based on the architecture defined
+in the RNAD (features/*, shared/components/*, shared/services/*, store/*, api/*).
+"""
+
 
 def build_rn_developer() -> Agent:
-    """Create the React Native Developer agent."""
     llm = LLM(
-        model=f"ollama/{MODEL_NAME}",
-        base_url=BASE_URL,
-        temperature=TEMPERATURE,
+        model=os.getenv("TIER2_MODEL", "ollama/qwen2.5-coder:32b"),
+        base_url=os.getenv("OLLAMA_BASE_URL", "http://localhost:11434"),
+        timeout=3600
     )
-    logger.info(f"LLM configured: ollama/{MODEL_NAME} @ {BASE_URL}")
-
     return Agent(
-        role="Senior React Native Developer",
+        role="React Native Developer",
         goal=(
-            "Produce a complete, production-quality React Native (Expo + TypeScript) "
-            "implementation guide with working code for every section."
+            "Implement all 10 screens of the VA Ambulance Trip Analysis React Native "
+            "app with complete, working TypeScript code — consuming the architecture "
+            "defined in the RNAD."
         ),
         backstory=(
-            "You are a staff-level mobile engineer with 8+ years of React Native "
-            "experience. You've shipped dozens of apps to both stores. You write "
-            "clean, type-safe TypeScript and follow React Native community best "
-            "practices. You are meticulous about accessibility and offline support."
+            "You are a Senior React Native Developer with 8 years of experience "
+            "implementing production mobile apps for government and healthcare clients. "
+            "You are expert in React Native screens, FlatList, navigation, "
+            "React Query hooks, Zustand stores, and HIPAA-compliant PHI handling. "
+            "You implement from architecture documents precisely — your imports match "
+            "the defined folder structure, your hooks match the defined API, and your "
+            "components use the shared component library correctly. "
+            "You write complete, compilable TypeScript. "
+            "You never write '// TODO' or placeholder comments. "
+            "Every screen you implement is production-ready."
         ),
-        verbose=True,
-        allow_delegation=False,
         llm=llm,
-        max_iter=MAX_ITER,
-    )
-
-
-# ---------------------------------------------------------------------------
-# Output Validation
-# ---------------------------------------------------------------------------
-
-def validate_agent_output(
-    output: str,
-    expected_sections: list[int],
-    forbidden_sections: list[int] | None = None,
-    part_label: str = "output",
-) -> dict:
-    """
-    Validate that the agent output contains the expected section headings
-    and does NOT contain forbidden section headings.
-
-    Returns:
-        {
-            "valid": bool,
-            "found_expected": [int, ...],
-            "missing_expected": [int, ...],
-            "found_forbidden": [int, ...],
-            "duplicate_sections": {section_num: count},
-            "errors": [str, ...],
-        }
-    """
-    result = {
-        "valid": True,
-        "found_expected": [],
-        "missing_expected": [],
-        "found_forbidden": [],
-        "duplicate_sections": {},
-        "errors": [],
-    }
-
-    if forbidden_sections is None:
-        forbidden_sections = []
-
-    # Find all section headings: "## 1.", "## 2.", etc.
-    section_pattern = re.compile(r"^##\s+(\d+)\.", re.MULTILINE)
-    found_numbers = [int(m.group(1)) for m in section_pattern.finditer(output)]
-
-    # Check for expected sections
-    for s in expected_sections:
-        if s in found_numbers:
-            result["found_expected"].append(s)
-        else:
-            result["missing_expected"].append(s)
-            result["errors"].append(f"{part_label}: Missing expected section ## {s}.")
-            result["valid"] = False
-
-    # Check for forbidden sections (regression detection)
-    for s in forbidden_sections:
-        if s in found_numbers:
-            result["found_forbidden"].append(s)
-            result["errors"].append(
-                f"{part_label}: Found FORBIDDEN section ## {s}. "
-                f"Model regenerated content it should not have."
-            )
-            result["valid"] = False
-
-    # Check for excessive duplication (looping detection)
-    from collections import Counter
-    counts = Counter(found_numbers)
-    for section_num, count in counts.items():
-        if count > 1:
-            result["duplicate_sections"][section_num] = count
-            result["errors"].append(
-                f"{part_label}: Section ## {section_num}. appears {count} times (looping detected)."
-            )
-            result["valid"] = False
-
-    # Check for useTripList.ts looping specifically (the known failure mode)
-    trip_list_mentions = len(re.findall(r"useTripList", output))
-    if trip_list_mentions > 10:
-        result["errors"].append(
-            f"{part_label}: 'useTripList' appears {trip_list_mentions} times — "
-            f"probable generation loop."
-        )
-        result["valid"] = False
-
-    return result
-
-
-# ---------------------------------------------------------------------------
-# File I/O Helpers
-# ---------------------------------------------------------------------------
-
-def _ensure_output_dir():
-    os.makedirs(OUTPUT_DIR, exist_ok=True)
-
-
-def _write_output(filename: str, content: str) -> str:
-    _ensure_output_dir()
-    path = os.path.join(OUTPUT_DIR, filename)
-    with open(path, "w", encoding="utf-8") as f:
-        f.write(content)
-    logger.info(f"Wrote {len(content)} chars → {path}")
-    return path
-
-
-def _timestamp() -> str:
-    return datetime.now().strftime("%Y%m%d_%H%M%S")
-
-
-# ---------------------------------------------------------------------------
-# Runner
-# ---------------------------------------------------------------------------
-
-def run_rn_developer() -> dict:
-    """
-    Execute the RN Developer agent in two sequential Crew runs.
-
-    Part 1: Sections 1-5 (uses TASK_PART1 as-is)
-    Part 2: Sections 6-10 (injects Part 1 output as context, uses rewritten TASK_PART2)
-
-    Returns dict with paths, validation results, and status.
-    """
-    ts = _timestamp()
-    agent = build_rn_developer()
-    results = {
-        "timestamp": ts,
-        "part1_path": None,
-        "part2_path": None,
-        "combined_path": None,
-        "part1_validation": None,
-        "part2_validation": None,
-        "status": "started",
-    }
-
-    # -----------------------------------------------------------------------
-    # PART 1: Sections 1-5
-    # -----------------------------------------------------------------------
-    logger.info("=" * 60)
-    logger.info("PART 1: Generating Sections 1-5")
-    logger.info("=" * 60)
-
-    task_part1 = Task(
-        description=TASK_PART1,
-        expected_output="Complete implementation guide Sections 1-5 with TypeScript code blocks.",
-        agent=agent,
-    )
-
-    crew_part1 = Crew(
-        agents=[agent],
-        tasks=[task_part1],
-        process=Process.sequential,
         verbose=True,
+        allow_delegation=False
     )
 
-    part1_result = crew_part1.kickoff()
-    part1_output = str(part1_result)
 
-    # Validate Part 1
-    part1_validation = validate_agent_output(
-        output=part1_output,
-        expected_sections=[1, 2, 3, 4, 5],
-        forbidden_sections=[6, 7, 8, 9, 10],
-        part_label="Part1",
+def run_rn_developer(context: dict, rnad_p1_path: str, rnad_p2_path: str) -> tuple:
+    # Give developer a summary of the architecture to reference
+    # ── Smart extraction: load relevant sections for rn_dev ──
+    ctx = load_agent_context(
+        context=context,
+        consumer="rn_dev",
+        artifact_types=["RNAD_P1", "RNAD_P2", "MOBILE_TEST_PLAN"],
+        max_chars_per_artifact=6000
     )
-    results["part1_validation"] = part1_validation
+    prompt_context = format_context_for_prompt(ctx)
 
-    if not part1_validation["valid"]:
-        for err in part1_validation["errors"]:
-            logger.warning(f"Part 1 validation: {err}")
-    else:
-        logger.info("Part 1 validation: PASSED ✓")
 
-    # Save Part 1
-    results["part1_path"] = _write_output(f"rn_guide_part1_{ts}.md", part1_output)
+    task_description = TASK_DESCRIPTION + f"""
 
-    # -----------------------------------------------------------------------
-    # PART 2: Sections 6-10  (KEY FIX: inject Part 1 output as context)
-    # -----------------------------------------------------------------------
-    logger.info("=" * 60)
-    logger.info("PART 2: Generating Sections 6-10 (with Part 1 context)")
-    logger.info("=" * 60)
+---
+## ARCHITECTURE REFERENCE (from RNAD Part 1)
+"""
 
-    # Build the Part 2 task description by prepending Part 1 output as context.
-    # This replaces the old approach of pointing at the raw architecture doc.
-    part2_context_prompt = dedent(f"""\
-        =====================================================================
-        CONTEXT: The following is the ALREADY-COMPLETED Part 1 (Sections 1-5).
-        This is provided for reference only. DO NOT regenerate any of this.
-        =====================================================================
+    developer = build_rn_developer()
 
-        {part1_output}
-
-        =====================================================================
-        END OF PART 1 CONTEXT. Now continue with YOUR task below.
-        =====================================================================
-
-        {TASK_PART2}
-    """)
-
-    task_part2 = Task(
-        description=part2_context_prompt,
-        expected_output="Implementation guide Sections 6-10 ONLY, continuing from Part 1.",
-        agent=agent,
+    task = Task(
+        description=task_description,
+        expected_output=(
+            "React Native Implementation Report with complete TypeScript code "
+            "for all 10 screens: Splash, Login, BiometricPrompt, Dashboard, "
+            "FilterModal, TripList, TripDetail, Settings, About, and App root."
+        ),
+        agent=developer
     )
 
-    crew_part2 = Crew(
-        agents=[agent],
-        tasks=[task_part2],
+    crew = Crew(
+        agents=[developer],
+        tasks=[task],
         process=Process.sequential,
-        verbose=True,
+        verbose=True
     )
 
-    part2_result = crew_part2.kickoff()
-    part2_output = str(part2_result)
+    print("\n⚛️  React Native Developer implementing all screens...\n")
+    result = crew.kickoff()
 
-    # Validate Part 2
-    part2_validation = validate_agent_output(
-        output=part2_output,
-        expected_sections=[6, 7, 8, 9, 10],
-        forbidden_sections=[1, 2, 3, 4, 5],
-        part_label="Part2",
-    )
-    results["part2_validation"] = part2_validation
+    os.makedirs("/home/mfelkey/dev-team/dev/mobile", exist_ok=True)
+    rnir_path = f"/home/mfelkey/dev-team/dev/mobile/{context['project_id']}_RNIR.md"
+    with open(rnir_path, "w") as f:
+        f.write(str(result))
 
-    if not part2_validation["valid"]:
-        for err in part2_validation["errors"]:
-            logger.error(f"Part 2 validation: {err}")
-        results["status"] = "part2_validation_failed"
-        # Still save the output so you can inspect what went wrong
-        results["part2_path"] = _write_output(f"rn_guide_part2_BAD_{ts}.md", part2_output)
-        logger.error(
-            "Part 2 FAILED validation — output saved with _BAD_ suffix. "
-            "The model likely regressed into Part 1 content or looped."
-        )
-    else:
-        logger.info("Part 2 validation: PASSED ✓")
-        results["part2_path"] = _write_output(f"rn_guide_part2_{ts}.md", part2_output)
-        results["status"] = "success"
+    print(f"\n💾 React Native Implementation Report saved: {rnir_path}")
 
-    # -----------------------------------------------------------------------
-    # Combine if both parts are valid
-    # -----------------------------------------------------------------------
-    if results["status"] == "success":
-        combined = part1_output.rstrip() + "\n\n---\n\n" + part2_output.lstrip()
-        results["combined_path"] = _write_output(f"rn_guide_complete_{ts}.md", combined)
-        logger.info(f"Combined guide: {results['combined_path']}")
-    else:
-        logger.warning("Skipping combined output due to validation failure.")
+    context["artifacts"].append({
+        "name": "React Native Implementation Report",
+        "type": "RNIR",
+        "path": rnir_path,
+        "created_at": datetime.utcnow().isoformat(),
+        "created_by": "React Native Developer"
+    })
+    on_artifact_saved(context, "RN_GUIDE", rnir_path)
+    log_event(context, "RNIR_COMPLETE", rnir_path)
+    save_context(context)
+    return context, rnir_path
 
-    # -----------------------------------------------------------------------
-    # Summary
-    # -----------------------------------------------------------------------
-    logger.info("=" * 60)
-    logger.info(f"RN Developer Agent — Status: {results['status']}")
-    logger.info(f"  Part 1: {results['part1_path']}")
-    logger.info(f"  Part 2: {results['part2_path']}")
-    if results["combined_path"]:
-        logger.info(f"  Combined: {results['combined_path']}")
-    if results["part1_validation"]["errors"]:
-        logger.info(f"  Part 1 issues: {results['part1_validation']['errors']}")
-    if results["part2_validation"]["errors"]:
-        logger.info(f"  Part 2 issues: {results['part2_validation']['errors']}")
-    logger.info("=" * 60)
-
-    return results
-
-
-# ---------------------------------------------------------------------------
-# CLI Entry Point
-# ---------------------------------------------------------------------------
 
 if __name__ == "__main__":
-    import json
+    import glob
 
-    results = run_rn_developer()
+    logs = sorted(
+        glob.glob("/home/mfelkey/dev-team/logs/PROJ-*.json"),
+        key=os.path.getmtime,
+        reverse=True
+    )
+    if not logs:
+        print("No project context found.")
+        exit(1)
 
-    # Print summary to stdout as JSON for pipeline consumption
-    print(json.dumps({
-        "status": results["status"],
-        "part1_path": results["part1_path"],
-        "part2_path": results["part2_path"],
-        "combined_path": results["combined_path"],
-        "part1_valid": results["part1_validation"]["valid"],
-        "part2_valid": results["part2_validation"]["valid"],
-        "part2_errors": results["part2_validation"]["errors"],
-    }, indent=2))
+    with open(logs[0]) as f:
+        context = json.load(f)
+
+    rnad_p1_path = rnad_p2_path = None
+    for artifact in context.get("artifacts", []):
+        if artifact.get("type") == "RNAD_P1":
+            rnad_p1_path = artifact["path"]
+        if artifact.get("type") == "RNAD_P2":
+            rnad_p2_path = artifact["path"]
+
+    if not rnad_p1_path:
+        print("Missing RNAD_P1 in context.")
+        exit(1)
+
+    print(f"📂 Loaded context: {logs[0]}")
+    print(f"📄 Using RNAD_P1: {rnad_p1_path}")
+    context, rnir_path = run_rn_developer(context, rnad_p1_path, rnad_p2_path)
+    print(f"\n✅ React Native Implementation Report complete: {rnir_path}")

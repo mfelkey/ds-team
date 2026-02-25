@@ -6,8 +6,6 @@ import json
 from datetime import datetime
 from dotenv import load_dotenv
 from crewai import Agent, Task, Crew, Process, LLM
-from agents.orchestrator.context_manager import load_agent_context, format_context_for_prompt, on_artifact_saved
-
 
 load_dotenv("/home/mfelkey/dev-team/config/.env")
 
@@ -111,15 +109,36 @@ def run_performance_audit(context: dict, pbd_path: str,
                            dskr_path: str = None) -> tuple:
     """Audit built code against performance budgets."""
     auditor = build_performance_auditor()
-    # ── Smart extraction: load relevant sections for perf_audit ──
-    ctx = load_agent_context(
-        context=context,
-        consumer="perf_audit",
-        artifact_types=["PBD", "BIR", "FIR", "DIR", "DBAR", "DSKR"],
-        max_chars_per_artifact=6000
-    )
-    prompt_context = format_context_for_prompt(ctx)
 
+    pbd_excerpt = ""
+    if pbd_path and os.path.exists(pbd_path):
+        with open(pbd_path) as f:
+            pbd_excerpt = f.read()[:6000]
+
+    bir_excerpt = ""
+    if bir_path and os.path.exists(bir_path):
+        with open(bir_path) as f:
+            bir_excerpt = f.read()[:8000]
+
+    fir_excerpt = ""
+    if fir_path and os.path.exists(fir_path):
+        with open(fir_path) as f:
+            fir_excerpt = f.read()[:6000]
+
+    dir_excerpt = ""
+    if dir_path and os.path.exists(dir_path):
+        with open(dir_path) as f:
+            dir_excerpt = f.read()[:4000]
+
+    dbar_excerpt = ""
+    if dbar_path and os.path.exists(dbar_path):
+        with open(dbar_path) as f:
+            dbar_excerpt = f.read()[:4000]
+
+    dskr_excerpt = ""
+    if dskr_path and os.path.exists(dskr_path):
+        with open(dskr_path) as f:
+            dskr_excerpt = f.read()[:4000]
 
     task = Task(
         description=f"""
@@ -127,9 +146,11 @@ Perform a comprehensive performance audit of all built code against the
 Performance Budget Document. Identify every budget violation, bottleneck,
 and optimization opportunity.
 
-=== UPSTREAM CONTEXT ===
-{prompt_context}
+=== PERFORMANCE BUDGET DOCUMENT (PBD) ===
+{pbd_excerpt}
 
+=== BACKEND IMPLEMENTATION REPORT (BIR) ===
+{bir_excerpt}
 
 === FRONTEND IMPLEMENTATION REPORT (FIR) ===
 {fir_excerpt if fir_excerpt else "(No FIR)"}
@@ -240,7 +261,6 @@ a concrete fix with expected performance improvement.
         "created_at": datetime.utcnow().isoformat(),
         "created_by": "Performance Engineer (Audit)"
     })
-    on_artifact_saved(context, "PAR", par_path)
     log_event(context, "PAR_COMPLETE", par_path)
     save_context(context)
     return context, par_path

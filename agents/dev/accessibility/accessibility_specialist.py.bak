@@ -6,8 +6,6 @@ import json
 from datetime import datetime
 from dotenv import load_dotenv
 from crewai import Agent, Task, Crew, Process, LLM
-from agents.orchestrator.context_manager import load_agent_context, format_context_for_prompt, on_artifact_saved
-
 
 load_dotenv("/home/mfelkey/dev-team/config/.env")
 
@@ -145,15 +143,41 @@ def run_accessibility_audit(context: dict, uxd_path: str = None,
                              dskr_path: str = None) -> tuple:
     """Run accessibility audit against all built artifacts."""
     specialist = build_accessibility_specialist()
-    # ── Smart extraction: load relevant sections for a11y_audit ──
-    ctx = load_agent_context(
-        context=context,
-        consumer="a11y_audit",
-        artifact_types=["UXD", "FIR", "BIR", "IIR", "AIR", "RN_GUIDE", "DSKR"],
-        max_chars_per_artifact=6000
-    )
-    prompt_context = format_context_for_prompt(ctx)
 
+    uxd_excerpt = ""
+    if uxd_path and os.path.exists(uxd_path):
+        with open(uxd_path) as f:
+            uxd_excerpt = f.read()[:4000]
+
+    fir_excerpt = ""
+    if fir_path and os.path.exists(fir_path):
+        with open(fir_path) as f:
+            fir_excerpt = f.read()[:6000]
+
+    bir_excerpt = ""
+    if bir_path and os.path.exists(bir_path):
+        with open(bir_path) as f:
+            bir_excerpt = f.read()[:3000]
+
+    iir_excerpt = ""
+    if iir_path and os.path.exists(iir_path):
+        with open(iir_path) as f:
+            iir_excerpt = f.read()[:5000]
+
+    air_excerpt = ""
+    if air_path and os.path.exists(air_path):
+        with open(air_path) as f:
+            air_excerpt = f.read()[:5000]
+
+    rn_excerpt = ""
+    if rn_guide_path and os.path.exists(rn_guide_path):
+        with open(rn_guide_path) as f:
+            rn_excerpt = f.read()[:5000]
+
+    dskr_excerpt = ""
+    if dskr_path and os.path.exists(dskr_path):
+        with open(dskr_path) as f:
+            dskr_excerpt = f.read()[:5000]
 
     task = Task(
         description=f"""
@@ -278,7 +302,6 @@ compliance review.
         "created_at": datetime.utcnow().isoformat(),
         "created_by": "Accessibility Specialist"
     })
-    on_artifact_saved(context, "AAR", aar_path)
     log_event(context, "AAR_COMPLETE", aar_path)
     save_context(context)
     return context, aar_path

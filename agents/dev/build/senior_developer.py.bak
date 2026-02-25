@@ -7,8 +7,6 @@ from datetime import datetime
 from dotenv import load_dotenv
 from crewai import Agent, Task, Crew, Process, LLM
 from agents.orchestrator.orchestrator import log_event, save_context
-from agents.orchestrator.context_manager import load_agent_context, format_context_for_prompt, on_artifact_saved
-
 
 load_dotenv("config/.env")
 
@@ -71,15 +69,15 @@ def run_technical_implementation_plan(context: dict, prd_path: str, tad_path: st
     Reads PRD, TAD, and UXD and produces a Technical Implementation Plan (TIP).
     Returns updated context.
     """
-    # ── Smart extraction: load relevant sections for senior_dev ──
-    ctx = load_agent_context(
-        context=context,
-        consumer="senior_dev",
-        artifact_types=["PRD", "TAD", "UXD"],
-        max_chars_per_artifact=6000
-    )
-    prompt_context = format_context_for_prompt(ctx)
 
+    with open(prd_path) as f:
+        prd_content = f.read()[:1500]
+
+    with open(tad_path) as f:
+        tad_content = f.read()[:2000]
+
+    with open(uxd_path) as f:
+        uxd_content = f.read()[:1500]
 
     sd = build_senior_developer()
 
@@ -89,11 +87,13 @@ You are the Senior Developer for the following project. Review the documents bel
 and produce a complete Technical Implementation Plan (TIP).
 
 --- PRD (excerpt) ---
+{prd_content}
 
 --- Technical Architecture Document (excerpt) ---
 {tad_content}
 
 --- User Experience Document (excerpt) ---
+{uxd_content}
 
 Produce a complete Technical Implementation Plan (TIP) with ALL of the following sections:
 
@@ -194,7 +194,6 @@ Every section must have specific, actionable content — no placeholders.
         "created_at": datetime.utcnow().isoformat(),
         "created_by": "Senior Developer"
     })
-    on_artifact_saved(context, "TIP", tip_path)
     context["status"] = "TIP_COMPLETE"
     log_event(context, "TIP_COMPLETE", tip_path)
     save_context(context)

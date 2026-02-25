@@ -6,8 +6,6 @@ import json
 from datetime import datetime
 from dotenv import load_dotenv
 from crewai import Agent, Task, Crew, Process, LLM
-from agents.orchestrator.context_manager import load_agent_context, format_context_for_prompt, on_artifact_saved
-
 
 load_dotenv("/home/mfelkey/dev-team/config/.env")
 
@@ -100,24 +98,50 @@ def run_mobile_penetration_test(context: dict, srr_path: str,
     tester = build_mobile_penetration_tester()
 
     # Load upstream artifacts
-    # ── Smart extraction: load relevant sections for mobile_pen_test ──
-    ctx = load_agent_context(
-        context=context,
-        consumer="mobile_pen_test",
-        artifact_types=["SRR", "IIR", "AIR", "RN_GUIDE", "MDIR"],
-        max_chars_per_artifact=6000
-    )
-    prompt_context = format_context_for_prompt(ctx)
+    srr_excerpt = ""
+    if srr_path and os.path.exists(srr_path):
+        with open(srr_path) as f:
+            srr_excerpt = f.read()[:5000]
 
+    iir_excerpt = ""
+    if iir_path and os.path.exists(iir_path):
+        with open(iir_path) as f:
+            iir_excerpt = f.read()[:6000]
+
+    air_excerpt = ""
+    if air_path and os.path.exists(air_path):
+        with open(air_path) as f:
+            air_excerpt = f.read()[:6000]
+
+    rn_excerpt = ""
+    if rn_guide_path and os.path.exists(rn_guide_path):
+        with open(rn_guide_path) as f:
+            rn_excerpt = f.read()[:6000]
+
+    mdir_excerpt = ""
+    if mdir_path and os.path.exists(mdir_path):
+        with open(mdir_path) as f:
+            mdir_excerpt = f.read()[:4000]
 
     task = Task(
         description=f"""
 Perform a comprehensive mobile security assessment of all mobile code artifacts.
 Analyze against the OWASP Mobile Top 10 and the SRR threat model.
 
-=== UPSTREAM CONTEXT ===
-{prompt_context}
+=== SECURITY REVIEW REPORT (THREAT MODEL) ===
+{srr_excerpt}
 
+=== iOS IMPLEMENTATION REPORT (IIR) ===
+{iir_excerpt}
+
+=== ANDROID IMPLEMENTATION REPORT (AIR) ===
+{air_excerpt}
+
+=== REACT NATIVE GUIDE (RN) ===
+{rn_excerpt}
+
+=== MOBILE DEVOPS REPORT (MDIR) ===
+{mdir_excerpt}
 
 === YOUR MOBILE PENETRATION TEST REPORT MUST INCLUDE ===
 
@@ -206,7 +230,6 @@ file reference and concrete remediation with code example.
         "created_at": datetime.utcnow().isoformat(),
         "created_by": "Mobile Penetration Tester"
     })
-    on_artifact_saved(context, "MOBILE_PTR", mptr_path)
     log_event(context, "MOBILE_PTR_COMPLETE", mptr_path)
     save_context(context)
     return context, mptr_path

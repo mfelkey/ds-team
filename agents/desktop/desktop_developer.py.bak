@@ -6,8 +6,6 @@ import json
 from datetime import datetime
 from dotenv import load_dotenv
 from crewai import Agent, Task, Crew, Process, LLM
-from agents.orchestrator.context_manager import load_agent_context, format_context_for_prompt, on_artifact_saved
-
 
 load_dotenv("/home/mfelkey/dev-team/config/.env")
 
@@ -118,15 +116,31 @@ def run_desktop_implementation(context: dict, uxd_path: str,
                                 fir_path: str = None) -> tuple:
     """Run the Desktop Developer against upstream artifacts."""
     developer = build_desktop_developer()
-    # ── Smart extraction: load relevant sections for desktop_dev ──
-    ctx = load_agent_context(
-        context=context,
-        consumer="desktop_dev",
-        artifact_types=["UXD", "TAD", "TIP", "BIR", "FIR"],
-        max_chars_per_artifact=6000
-    )
-    prompt_context = format_context_for_prompt(ctx)
 
+    uxd_excerpt = ""
+    if uxd_path and os.path.exists(uxd_path):
+        with open(uxd_path) as f:
+            uxd_excerpt = f.read()[:5000]
+
+    tad_excerpt = ""
+    if tad_path and os.path.exists(tad_path):
+        with open(tad_path) as f:
+            tad_excerpt = f.read()[:5000]
+
+    tip_excerpt = ""
+    if tip_path and os.path.exists(tip_path):
+        with open(tip_path) as f:
+            tip_excerpt = f.read()[:5000]
+
+    bir_excerpt = ""
+    if bir_path and os.path.exists(bir_path):
+        with open(bir_path) as f:
+            bir_excerpt = f.read()[:4000]
+
+    fir_excerpt = ""
+    if fir_path and os.path.exists(fir_path):
+        with open(fir_path) as f:
+            fir_excerpt = f.read()[:4000]
 
     task = Task(
         description=f"""
@@ -138,9 +152,14 @@ requirements. Document your decision with a criteria table.
 
 Then implement the complete desktop application.
 
-=== UPSTREAM CONTEXT ===
-{prompt_context}
+=== USER EXPERIENCE DOCUMENT (UXD) ===
+{uxd_excerpt}
 
+=== TECHNICAL ARCHITECTURE DOCUMENT (TAD) ===
+{tad_excerpt}
+
+=== TECHNICAL IMPLEMENTATION PLAN (TIP) ===
+{tip_excerpt}
 
 === BACKEND IMPLEMENTATION REPORT (BIR) ===
 {bir_excerpt if bir_excerpt else "(No BIR available — desktop app may be standalone)"}
@@ -238,7 +257,6 @@ No placeholders. No TODO comments. Every function must be complete and working.
         "created_at": datetime.utcnow().isoformat(),
         "created_by": "Desktop Application Developer"
     })
-    on_artifact_saved(context, "DSKR", dskr_path)
     log_event(context, "DSKR_COMPLETE", dskr_path)
     save_context(context)
     return context, dskr_path

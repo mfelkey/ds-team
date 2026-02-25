@@ -6,8 +6,6 @@ import json
 from datetime import datetime
 from dotenv import load_dotenv
 from crewai import Agent, Task, Crew, Process, LLM
-from agents.orchestrator.context_manager import load_agent_context, format_context_for_prompt, on_artifact_saved
-
 
 load_dotenv("/home/mfelkey/dev-team/config/.env")
 
@@ -130,15 +128,30 @@ def run_scalability_review(context: dict, tad_path: str, bir_path: str,
     architect = build_scalability_architect()
 
     # Load upstream artifacts with generous context
-    # ── Smart extraction: load relevant sections for scale_arch ──
-    ctx = load_agent_context(
-        context=context,
-        consumer="scale_arch",
-        artifact_types=["TAD", "BIR", "FIR", "DBAR", "DIR"],
-        max_chars_per_artifact=6000
-    )
-    prompt_context = format_context_for_prompt(ctx)
+    tad_excerpt = ""
+    if tad_path and os.path.exists(tad_path):
+        with open(tad_path) as f:
+            tad_excerpt = f.read()[:6000]
 
+    bir_excerpt = ""
+    if bir_path and os.path.exists(bir_path):
+        with open(bir_path) as f:
+            bir_excerpt = f.read()[:8000]
+
+    fir_excerpt = ""
+    if fir_path and os.path.exists(fir_path):
+        with open(fir_path) as f:
+            fir_excerpt = f.read()[:6000]
+
+    dbar_excerpt = ""
+    if dbar_path and os.path.exists(dbar_path):
+        with open(dbar_path) as f:
+            dbar_excerpt = f.read()[:6000]
+
+    dir_excerpt = ""
+    if dir_path and os.path.exists(dir_path):
+        with open(dir_path) as f:
+            dir_excerpt = f.read()[:5000]
 
     task = Task(
         description=f"""
@@ -150,9 +163,20 @@ The target is a system that can serve 10,000+ tenants, handle 10k+ requests/seco
 manage millions of database records with analytics workloads, and serve users globally
 with sub-200ms latency.
 
-=== UPSTREAM CONTEXT ===
-{prompt_context}
+=== TECHNICAL ARCHITECTURE DOCUMENT (TAD) ===
+{tad_excerpt}
 
+=== BACKEND IMPLEMENTATION REPORT (BIR) ===
+{bir_excerpt}
+
+=== FRONTEND IMPLEMENTATION REPORT (FIR) ===
+{fir_excerpt}
+
+=== DATABASE ADMINISTRATION REPORT (DBAR) ===
+{dbar_excerpt}
+
+=== DEVOPS IMPLEMENTATION REPORT (DIR) ===
+{dir_excerpt}
 
 === YOUR SCALABILITY ARCHITECTURE REPORT (SAR) MUST INCLUDE ===
 
@@ -308,7 +332,6 @@ code/config and include a concrete remediation example.
         "created_at": datetime.utcnow().isoformat(),
         "created_by": "Scalability Architect"
     })
-    on_artifact_saved(context, "SAR", sar_path)
     log_event(context, "SAR_COMPLETE", sar_path)
     save_context(context)
     return context, sar_path

@@ -6,8 +6,6 @@ import json
 from datetime import datetime
 from dotenv import load_dotenv
 from crewai import Agent, Task, Crew, Process, LLM
-from agents.orchestrator.context_manager import load_agent_context, format_context_for_prompt, on_artifact_saved
-
 
 load_dotenv("/home/mfelkey/dev-team/config/.env")
 
@@ -82,15 +80,25 @@ def run_test_verification(context: dict, tar_path: str, bir_path: str,
     verifier = build_test_verifier()
 
     # Load upstream artifacts
-    # ── Smart extraction: load relevant sections for verify ──
-    ctx = load_agent_context(
-        context=context,
-        consumer="verify",
-        artifact_types=["TAR", "BIR", "FIR", "DIR"],
-        max_chars_per_artifact=6000
-    )
-    prompt_context = format_context_for_prompt(ctx)
+    tar_excerpt = ""
+    if tar_path and os.path.exists(tar_path):
+        with open(tar_path) as f:
+            tar_excerpt = f.read()[:8000]
 
+    bir_excerpt = ""
+    if bir_path and os.path.exists(bir_path):
+        with open(bir_path) as f:
+            bir_excerpt = f.read()[:8000]
+
+    fir_excerpt = ""
+    if fir_path and os.path.exists(fir_path):
+        with open(fir_path) as f:
+            fir_excerpt = f.read()[:8000]
+
+    dir_excerpt = ""
+    if dir_path and os.path.exists(dir_path):
+        with open(dir_path) as f:
+            dir_excerpt = f.read()[:5000]
 
     task = Task(
         description=f"""
@@ -98,9 +106,17 @@ Verify that all pre-written tests from the Test Automation Report (TAR) are
 satisfied by the built code in the BIR, FIR, and DIR. This is the final TDD
 gate — the tests were written BEFORE the code, and the code must pass them.
 
-=== UPSTREAM CONTEXT ===
-{prompt_context}
+=== TEST AUTOMATION REPORT (PRE-WRITTEN TESTS) ===
+{tar_excerpt}
 
+=== BACKEND IMPLEMENTATION REPORT (BUILT CODE) ===
+{bir_excerpt}
+
+=== FRONTEND IMPLEMENTATION REPORT (BUILT CODE) ===
+{fir_excerpt}
+
+=== DEVOPS IMPLEMENTATION REPORT (CI/CD) ===
+{dir_excerpt}
 
 === YOUR VERIFICATION REPORT MUST INCLUDE ===
 
@@ -184,7 +200,6 @@ No placeholders. No TODO comments. Every test case must be evaluated.
         "created_at": datetime.utcnow().isoformat(),
         "created_by": "Test Verification Engineer"
     })
-    on_artifact_saved(context, "VERIFY", vr_path)
     log_event(context, "VERIFY_COMPLETE", vr_path)
     save_context(context)
     return context, vr_path

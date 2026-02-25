@@ -7,8 +7,6 @@ from datetime import datetime
 from dotenv import load_dotenv
 from crewai import Agent, Task, Crew, Process, LLM
 from agents.orchestrator.orchestrator import log_event, save_context
-from agents.orchestrator.context_manager import load_agent_context, format_context_for_prompt, on_artifact_saved
-
 
 load_dotenv("config/.env")
 
@@ -65,15 +63,15 @@ def run_mobile_devops_implementation(context: dict, tip_path: str, rn_guide_path
     Implementation Report (MDIR).
     Returns updated context.
     """
-    # ── Smart extraction: load relevant sections for mobile_devops ──
-    ctx = load_agent_context(
-        context=context,
-        consumer="mobile_devops",
-        artifact_types=["RN_GUIDE", "SRR", "MOBILE_TEST_PLAN"],
-        max_chars_per_artifact=6000
-    )
-    prompt_context = format_context_for_prompt(ctx)
 
+    with open(tip_path) as f:
+        tip_content = f.read()[:1500]
+
+    with open(rn_guide_path) as f:
+        rn_content = f.read()[:3000]
+
+    with open(srr_path) as f:
+        srr_content = f.read()[:1500]
 
     mde = build_mobile_devops_engineer()
 
@@ -84,11 +82,13 @@ below, produce a complete Mobile DevOps Implementation Report (MDIR) with workin
 configuration files and scripts for all mobile pipeline and infrastructure components.
 
 --- Technical Implementation Plan (excerpt) ---
+{tip_content}
 
 --- React Native Implementation Guide (excerpt) ---
 {rn_content}
 
 --- Security Review Report (excerpt) ---
+{srr_content}
 
 Produce a complete Mobile DevOps Implementation Report (MDIR) with ALL of the
 following sections:
@@ -204,7 +204,6 @@ All security findings from the SRR that apply to mobile must be addressed explic
         "created_at": datetime.utcnow().isoformat(),
         "created_by": "Mobile DevOps Engineer"
     })
-    on_artifact_saved(context, "MDIR", mdir_path)
     context["status"] = "MOBILE_DEVOPS_COMPLETE"
     log_event(context, "MOBILE_DEVOPS_COMPLETE", mdir_path)
     save_context(context)

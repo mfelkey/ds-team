@@ -1,129 +1,90 @@
 """
-Orchestrator Smart Context Integration — agents/orchestrator/context_manager.py
+Context Manager — agents/orchestrator/context_manager.py
 
-Hooks into the artifact lifecycle to:
-  1. Auto-index new artifacts into ChromaDB on save
-  2. Provide a single-call context loader for any agent
+Bridge between the orchestrator's project context and smart_extract.
+Provides high-level functions that agents call instead of manual file reads.
 
 Usage in any agent:
-
-    from agents.orchestrator.context_manager import load_agent_context
-
-    # Instead of manually reading files with [:3000]:
-    ctx = load_agent_context(
-        context=project_context,          # the PROJ JSON dict
-        consumer="backend_dev",           # this agent's ID
-        artifact_types=["TIP", "TAD", "MTP", "TAR"],  # what it needs
-        max_chars_per_artifact=6000
+    from agents.orchestrator.context_manager import (
+        load_agent_context, format_context_for_prompt, on_artifact_saved
     )
 
-    # ctx is a dict: {"TIP": "extracted content...", "TAD": "extracted content..."}
-    # Pass these into your Task description.
-
-This replaces the pattern:
-    with open(tip_path) as f:
-        tip_content = f.read()[:3000]
+    ctx = load_agent_context(context, "backend_dev", ["TIP", "TAD", "MTP", "TAR"])
+    prompt_context = format_context_for_prompt(ctx)
 """
 
 import os
-import json
 from typing import Optional
 
-from agents.utils.smart_extract import (
-    get_context,
-    get_multi_context,
-    index_artifact,
-    CHROMA_AVAILABLE
-)
+try:
+    from agents.utils.smart_extract import (
+        get_context, get_multi_context, index_artifact
+    )
+except ImportError:
+    # Fallback if smart_extract not yet available
+    import sys
+    sys.path.insert(0, os.path.expanduser("~/dev-team"))
+    from agents.utils.smart_extract import (
+        get_context, get_multi_context, index_artifact
+    )
 
 
-def index_project_artifacts(context: dict):
+# ═══════════════════════════════════════════════════════════════════
+#  ORCHESTRATOR INTEGRATION
+# ═══════════════════════════════════════════════════════════════════
+
+def _find_artifact_path(context: dict, artifact_type: str) -> Optional[str]:
     """
-    Index all artifacts in a project context into ChromaDB.
+    Find the file path for an artifact type in the project context.
 
-    Call this once when loading a project, or after each agent completes.
-    Idempotent — skips already-indexed artifacts with unchanged content.
+    Searches the artifacts array for the most recent artifact of the
+    given type. Returns the path or None if not found.
     """
-    if not CHROMA_AVAILABLE:
-        return
-
-    project_id = context.get("project_id", "")
-    artifacts = context.get("artifacts", [])
-
-    for artifact in artifacts:
-        filepath = artifact.get("path", "")
+    path = None
+    for artifact in context.get("artifacts", []):
         atype = artifact.get("type", "")
-
-        if filepath and atype and os.path.exists(filepath):
-            try:
-                index_artifact(filepath, atype, project_id)
-            except Exception as e:
-                print(f"⚠️  ChromaDB index failed for {atype}: {e}")
-
-
-def on_artifact_saved(context: dict, artifact_type: str, filepath: str):
-    """
-    Hook to call after an agent saves its artifact.
-    Indexes the new artifact into ChromaDB.
-
-    Add this to save_context() or call it directly after writing an artifact.
-    """
-    if not CHROMA_AVAILABLE:
-        return
-
-    project_id = context.get("project_id", "")
-    if filepath and artifact_type and os.path.exists(filepath):
-        try:
-            index_artifact(filepath, artifact_type, project_id)
-        except Exception as e:
-            print(f"⚠️  ChromaDB index failed for {artifact_type}: {e}")
+        # Flexible matching: "BIR" matches "BIR", "BIR-R", etc.
+        if atype == artifact_type or atype.startswith(artifact_type):
+            candidate = artifact.get("path", "")
+            if candidate and os.path.exists(candidate):
+                path = candidate  # Take the last (most recent) match
+    return path
 
 
 def load_agent_context(context: dict, consumer: str,
-                        artifact_types: list,
-                        max_chars_per_artifact: int = 6000) -> dict:
+                       artifact_types: list,
+                       max_chars_per_artifact: int = 6000) -> dict:
     """
-    Load smart-extracted context for a specific agent from the project.
+    Load smart-extracted context for an agent from the project.
 
-    This is the main API that agents should use instead of manual file reads.
+    This is the main function agents call. It:
+      1. Finds each artifact's file path from the project context
+      2. Extracts only the sections the consumer agent needs
+      3. Returns a dict of {artifact_type: extracted_text}
 
     Args:
-        context: The project context dict (loaded from PROJ-*.json)
-        consumer: The agent ID (e.g., "backend_dev", "pen_test")
+        context: The project context dict (from PROJ-*.json)
+        consumer: Agent ID (e.g., "backend_dev", "pen_test")
         artifact_types: List of artifact type codes to load
-                        (e.g., ["TIP", "TAD", "MTP", "TAR"])
+                       (e.g., ["TIP", "TAD", "MTP", "TAR"])
         max_chars_per_artifact: Max chars per artifact (default 6000)
 
     Returns:
         Dict of {artifact_type: extracted_text}
-        Missing artifacts return empty string.
-
-    Example:
-        ctx = load_agent_context(context, "pen_test",
-                                  ["SRR", "BIR", "FIR", "DIR", "DBAR"])
-        srr_text = ctx.get("SRR", "")
-        bir_text = ctx.get("BIR", "")
+        Missing artifacts are silently skipped.
     """
     project_id = context.get("project_id", "")
 
-    # Build artifact path lookup from context
-    artifact_paths = {}
-    for artifact in context.get("artifacts", []):
-        atype = artifact.get("type", "")
-        path = artifact.get("path", "")
-        if atype and path:
-            artifact_paths[atype] = path
-
-    # Filter to only requested types that exist
-    requested = {}
+    # Build the artifacts dict: {type: path}
+    artifacts = {}
     for atype in artifact_types:
-        path = artifact_paths.get(atype, "")
-        if path and os.path.exists(path):
-            requested[atype] = path
+        path = _find_artifact_path(context, atype)
+        if path:
+            artifacts[atype] = path
 
     # Extract using smart_extract
     return get_multi_context(
-        artifacts=requested,
+        artifacts=artifacts,
         consumer=consumer,
         project_id=project_id,
         max_chars_per_artifact=max_chars_per_artifact
@@ -132,52 +93,53 @@ def load_agent_context(context: dict, consumer: str,
 
 def format_context_for_prompt(ctx: dict, labels: dict = None) -> str:
     """
-    Format extracted context dict into a prompt-ready string.
+    Format extracted context into a prompt-ready string.
+
+    Takes the dict from load_agent_context and produces labeled
+    sections suitable for insertion into a Task description.
 
     Args:
-        ctx: Dict from load_agent_context()
-        labels: Optional override labels, e.g., {"BIR": "Backend Implementation"}
+        ctx: Dict from load_agent_context {artifact_type: text}
+        labels: Optional override labels {artifact_type: "DISPLAY NAME"}
 
     Returns:
         Formatted string with labeled sections.
-
-    Example:
-        prompt_text = format_context_for_prompt(ctx, {
-            "TIP": "Technical Implementation Plan",
-            "TAD": "Technical Architecture Document",
-        })
     """
     default_labels = {
-        "PRD": "Product Requirements Document (PRD)",
-        "BAD": "Business Analysis Document (BAD)",
-        "SPRINT_PLAN": "Sprint Plan",
-        "TAD": "Technical Architecture Document (TAD)",
-        "SRR": "Security Review Report (SRR)",
-        "UXD": "User Experience Document (UXD)",
-        "CONTENT_GUIDE": "UI Content Guide",
-        "TIP": "Technical Implementation Plan (TIP)",
-        "PBD": "Performance Budget Document (PBD)",
-        "MTP": "Master Test Plan (MTP)",
-        "TAR": "Test Automation Report (TAR)",
-        "BIR": "Backend Implementation Report (BIR)",
-        "FIR": "Frontend Implementation Report (FIR)",
-        "DBAR": "Database Administration Report (DBAR)",
-        "DIR": "DevOps Implementation Report (DIR)",
-        "DSKR": "Desktop Implementation Report (DSKR)",
-        "DXR": "Developer Experience Report (DXR)",
-        "MUXD": "Mobile UX Document (MUXD)",
-        "IIR": "iOS Implementation Report (IIR)",
-        "AIR": "Android Implementation Report (AIR)",
-        "RNAD_P1": "React Native Architecture (Part 1)",
-        "RNAD_P2": "React Native Architecture (Part 2)",
-        "RN_GUIDE": "React Native Implementation Guide",
-        "MDIR": "Mobile DevOps Report (MDIR)",
-        "MOBILE_TEST_PLAN": "Mobile Test Plan",
-        "PTR": "Penetration Test Report (PTR)",
-        "SAR": "Scalability Architecture Report (SAR)",
-        "PAR": "Performance Audit Report (PAR)",
-        "AAR": "Accessibility Audit Report (AAR)",
-        "LCR": "License Compliance Report (LCR)",
+        "PRD": "PRODUCT REQUIREMENTS DOCUMENT (PRD)",
+        "BAD": "BUSINESS ANALYSIS DOCUMENT (BAD)",
+        "SPRINT_PLAN": "SPRINT PLAN",
+        "TAD": "TECHNICAL ARCHITECTURE DOCUMENT (TAD)",
+        "SRR": "SECURITY REVIEW REPORT (SRR)",
+        "UXD": "USER EXPERIENCE DOCUMENT (UXD)",
+        "CONTENT_GUIDE": "UI CONTENT GUIDE",
+        "TIP": "TECHNICAL IMPLEMENTATION PLAN (TIP)",
+        "PBD": "PERFORMANCE BUDGET DOCUMENT (PBD)",
+        "MTP": "MASTER TEST PLAN (MTP)",
+        "TAR": "TEST AUTOMATION REPORT (TAR)",
+        "BIR": "BACKEND IMPLEMENTATION REPORT (BIR)",
+        "FIR": "FRONTEND IMPLEMENTATION REPORT (FIR)",
+        "DBAR": "DATABASE ADMINISTRATION REPORT (DBAR)",
+        "DIR": "DEVOPS IMPLEMENTATION REPORT (DIR)",
+        "DSKR": "DESKTOP APPLICATION REPORT (DSKR)",
+        "DXR": "DEVELOPER EXPERIENCE REPORT (DXR)",
+        "PTR": "PENETRATION TEST REPORT (PTR)",
+        "SAR": "SCALABILITY ARCHITECTURE REVIEW (SAR)",
+        "PAR": "PERFORMANCE AUDIT REPORT (PAR)",
+        "AAR": "ACCESSIBILITY AUDIT REPORT (AAR)",
+        "LCR": "LICENSE COMPLIANCE REPORT (LCR)",
+        "VERIFY": "VERIFICATION REPORT",
+        "MUXD": "MOBILE UX DOCUMENT (MUXD)",
+        "IIR": "iOS IMPLEMENTATION REPORT (IIR)",
+        "AIR": "ANDROID IMPLEMENTATION REPORT (AIR)",
+        "RNAD_P1": "REACT NATIVE ARCHITECTURE (PART 1)",
+        "RNAD_P2": "REACT NATIVE ARCHITECTURE (PART 2)",
+        "RN_GUIDE": "REACT NATIVE IMPLEMENTATION GUIDE",
+        "MDIR": "MOBILE DEVOPS REPORT (MDIR)",
+        "MOBILE_TEST_PLAN": "MOBILE TEST PLAN",
+        "MOBILE_PTR": "MOBILE PENETRATION TEST REPORT",
+        "MOBILE_SAR": "MOBILE SCALABILITY REVIEW",
+        "MOBILE_VERIFY": "MOBILE VERIFICATION REPORT",
     }
 
     if labels:
@@ -185,63 +147,54 @@ def format_context_for_prompt(ctx: dict, labels: dict = None) -> str:
 
     parts = []
     for atype, text in ctx.items():
-        if text:
+        if text and text.strip():
             label = default_labels.get(atype, atype)
             parts.append(f"=== {label} ===\n{text}")
-        else:
-            label = default_labels.get(atype, atype)
-            parts.append(f"=== {label} ===\n(Not available)")
 
     return "\n\n".join(parts)
 
 
-# ══════════════════════════════════════════════════════════════════
-#  MIGRATION HELPER — update existing agents
-# ══════════════════════════════════════════════════════════════════
+def on_artifact_saved(context: dict, artifact_type: str, filepath: str):
+    """
+    Hook to call after an agent saves an artifact.
 
-MIGRATION_EXAMPLE = """
-# ─── BEFORE (old pattern) ───────────────────────────────────
-#
-# with open(tip_path) as f:
-#     tip_content = f.read()[:3000]
-# with open(tad_path) as f:
-#     tad_content = f.read()[:2000]
-#
-# task = Task(description=f\"\"\"
-#     ... {tip_content} ... {tad_content} ...
-# \"\"\")
+    Indexes the artifact into ChromaDB for semantic search by
+    downstream agents. Idempotent — safe to call multiple times.
 
-# ─── AFTER (smart extraction) ──────────────────────────────
-#
-# from agents.orchestrator.context_manager import load_agent_context, format_context_for_prompt
-#
-# ctx = load_agent_context(context, "backend_dev", ["TIP", "TAD", "MTP", "TAR"])
-# prompt_context = format_context_for_prompt(ctx)
-#
-# task = Task(description=f\"\"\"
-#     ... {prompt_context} ...
-# \"\"\")
-
-# Benefits:
-#   - Backend dev gets API contracts, project structure, module boundaries from TIP
-#     (not just the first 3000 chars which might be table of contents)
-#   - Gets data architecture and auth from TAD (not the system overview)
-#   - Gets relevant test cases from MTP and TAR
-#   - ChromaDB fallback catches content in unusual heading structures
-"""
+    Args:
+        context: Project context dict
+        artifact_type: Type code (e.g., "BIR", "TAD")
+        filepath: Path to the saved artifact file
+    """
+    project_id = context.get("project_id", "")
+    if project_id and filepath and os.path.exists(filepath):
+        try:
+            index_artifact(filepath, artifact_type, project_id)
+        except Exception:
+            # ChromaDB indexing is optional — don't crash the agent
+            pass
 
 
-if __name__ == "__main__":
-    print("Smart Context Manager")
-    print("=" * 50)
-    print()
-    print("This module provides smart artifact extraction for all agents.")
-    print()
-    print("Usage in agent files:")
-    print(MIGRATION_EXAMPLE)
-    print()
-    if CHROMA_AVAILABLE:
-        print("✅ ChromaDB available — semantic search enabled")
-    else:
-        print("⚠️  ChromaDB not installed — section extraction only")
-        print("   Install: pip install chromadb --break-system-packages")
+def index_project_artifacts(context: dict):
+    """
+    Bulk index all artifacts in a project into ChromaDB.
+
+    Call this once when loading a project to ensure all existing
+    artifacts are indexed. Idempotent.
+    """
+    project_id = context.get("project_id", "")
+    if not project_id:
+        return
+
+    count = 0
+    for artifact in context.get("artifacts", []):
+        atype = artifact.get("type", "")
+        path = artifact.get("path", "")
+        if atype and path and os.path.exists(path):
+            try:
+                index_artifact(path, atype, project_id)
+                count += 1
+            except Exception:
+                pass
+
+    return count

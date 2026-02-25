@@ -6,8 +6,6 @@ import json
 from datetime import datetime
 from dotenv import load_dotenv
 from crewai import Agent, Task, Crew, Process, LLM
-from agents.orchestrator.context_manager import load_agent_context, format_context_for_prompt, on_artifact_saved
-
 
 load_dotenv("/home/mfelkey/dev-team/config/.env")
 
@@ -141,15 +139,36 @@ def run_devex_documentation(context: dict, prd_path: str = None,
                              tad_path: str = None) -> tuple:
     """Generate all developer-facing documentation."""
     writer = build_devex_writer()
-    # ── Smart extraction: load relevant sections for devex_writer ──
-    ctx = load_agent_context(
-        context=context,
-        consumer="devex_writer",
-        artifact_types=["PRD", "TAD", "BIR", "FIR", "DIR", "DSKR"],
-        max_chars_per_artifact=6000
-    )
-    prompt_context = format_context_for_prompt(ctx)
 
+    prd_excerpt = ""
+    if prd_path and os.path.exists(prd_path):
+        with open(prd_path) as f:
+            prd_excerpt = f.read()[:3000]
+
+    bir_excerpt = ""
+    if bir_path and os.path.exists(bir_path):
+        with open(bir_path) as f:
+            bir_excerpt = f.read()[:8000]
+
+    fir_excerpt = ""
+    if fir_path and os.path.exists(fir_path):
+        with open(fir_path) as f:
+            fir_excerpt = f.read()[:4000]
+
+    dir_excerpt = ""
+    if dir_path and os.path.exists(dir_path):
+        with open(dir_path) as f:
+            dir_excerpt = f.read()[:4000]
+
+    dskr_excerpt = ""
+    if dskr_path and os.path.exists(dskr_path):
+        with open(dskr_path) as f:
+            dskr_excerpt = f.read()[:4000]
+
+    tad_excerpt = ""
+    if tad_path and os.path.exists(tad_path):
+        with open(tad_path) as f:
+            tad_excerpt = f.read()[:3000]
 
     task = Task(
         description=f"""
@@ -270,7 +289,6 @@ Consistent terminology throughout. Cross-references between sections.
         "created_at": datetime.utcnow().isoformat(),
         "created_by": "API Documentation & DevEx Writer"
     })
-    on_artifact_saved(context, "DXR", dxr_path)
     log_event(context, "DXR_COMPLETE", dxr_path)
     save_context(context)
     return context, dxr_path

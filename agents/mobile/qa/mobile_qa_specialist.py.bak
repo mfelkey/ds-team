@@ -8,8 +8,6 @@ from datetime import datetime
 from dotenv import load_dotenv
 from crewai import Agent, Task, Crew, Process, LLM
 from agents.orchestrator.orchestrator import log_event, save_context
-from agents.orchestrator.context_manager import load_agent_context, format_context_for_prompt, on_artifact_saved
-
 
 load_dotenv("config/.env")
 
@@ -117,16 +115,19 @@ You are the Mobile QA Specialist for the following project. Review the documents
 below and produce a complete Mobile Master Test Plan (MMTP).
 
 --- PRD (excerpt) ---
+{prd_content}
 
 --- Technical Implementation Plan (excerpt) ---
 {tip_content}
 
 --- React Native Implementation Guide (excerpt) ---
+{rn_content}
 
 --- Mobile DevOps Implementation Report (excerpt) ---
 {mdir_content}
 
 --- User Experience Document (excerpt) ---
+{uxd_content}
 
 Produce a complete Mobile Master Test Plan (MMTP) with ALL of the following sections:
 
@@ -332,15 +333,21 @@ def run_mobile_qa(context: dict, prd_path: str, tip_path: str,
 
     Returns updated context with both artifacts registered.
     """
-    # ── Smart extraction: load relevant sections for mobile_qa ──
-    ctx = load_agent_context(
-        context=context,
-        consumer="mobile_qa",
-        artifact_types=["MUXD", "PRD", "TAD"],
-        max_chars_per_artifact=6000
-    )
-    prompt_context = format_context_for_prompt(ctx)
 
+    with open(prd_path) as f:
+        prd_content = f.read()[:1500]
+
+    with open(tip_path) as f:
+        tip_content = f.read()[:1000]
+
+    with open(rn_guide_path) as f:
+        rn_content = f.read()[:3000]
+
+    with open(mdir_path) as f:
+        mdir_content = f.read()[:1500]
+
+    with open(uxd_path) as f:
+        uxd_content = f.read()[:1000]
 
     mqa = build_mobile_qa_specialist()
 
@@ -407,7 +414,6 @@ def run_mobile_qa(context: dict, prd_path: str, tip_path: str,
         "created_by": "Mobile QA Specialist"
     })
 
-    on_artifact_saved(context, "MOBILE_TEST_PLAN", mmtp_path)
     # ------------------------------------------------------------------
     # Save Test Files
     # ------------------------------------------------------------------
