@@ -1,0 +1,1588 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Agent System Operating Manual — AI Development Team</title>
+<style>
+  body {
+    font-family: 'Georgia', serif;
+    max-width: 800px;
+    margin: 40px auto;
+    padding: 0 20px;
+    line-height: 1.7;
+    color: #1a1a1a;
+    font-size: 11pt;
+  }
+  h1 {
+    font-size: 22pt;
+    border-bottom: 3px solid #003366;
+    padding-bottom: 10px;
+    margin-top: 40px;
+    color: #003366;
+  }
+  h2 {
+    font-size: 16pt;
+    color: #003366;
+    border-bottom: 1px solid #999;
+    padding-bottom: 6px;
+    margin-top: 36px;
+  }
+  h3 {
+    font-size: 13pt;
+    color: #333;
+    margin-top: 24px;
+  }
+  h4 {
+    font-size: 11pt;
+    color: #555;
+    margin-top: 18px;
+    font-style: italic;
+  }
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 16px 0;
+    font-size: 10pt;
+  }
+  th, td {
+    border: 1px solid #ccc;
+    padding: 8px 10px;
+    text-align: left;
+    vertical-align: top;
+  }
+  th {
+    background-color: #003366;
+    color: white;
+    font-weight: bold;
+  }
+  tr:nth-child(even) { background-color: #f5f8fc; }
+  code, pre {
+    font-family: 'Courier New', monospace;
+    font-size: 9.5pt;
+    background: #f4f4f4;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+  }
+  code { padding: 2px 5px; }
+  pre {
+    padding: 12px 16px;
+    overflow-x: auto;
+    white-space: pre-wrap;
+    margin: 12px 0;
+  }
+  .cover {
+    text-align: center;
+    padding: 80px 0 60px 0;
+    border-bottom: 3px solid #003366;
+    margin-bottom: 40px;
+  }
+  .cover h1 { border: none; font-size: 28pt; }
+  .cover .subtitle { font-size: 14pt; color: #555; margin-top: 8px; }
+  .cover .meta { font-size: 10pt; color: #888; margin-top: 30px; }
+  .callout {
+    background: #e8f0fe;
+    border-left: 4px solid #003366;
+    padding: 12px 16px;
+    margin: 16px 0;
+    font-size: 10pt;
+  }
+  .warning {
+    background: #fff3e0;
+    border-left: 4px solid #e65100;
+    padding: 12px 16px;
+    margin: 16px 0;
+    font-size: 10pt;
+  }
+  .toc a { text-decoration: none; color: #003366; }
+  .toc a:hover { text-decoration: underline; }
+  .toc { margin: 20px 0 40px 0; }
+  .toc li { margin: 4px 0; }
+  .page-break { page-break-before: always; margin-top: 40px; }
+  .badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 3px;
+    font-size: 9pt;
+    font-weight: bold;
+    color: white;
+  }
+  .tier1 { background: #003366; }
+  .tier2 { background: #2e7d32; }
+  .strategy { background: #1565c0; }
+  .build { background: #2e7d32; }
+  .quality { background: #e65100; }
+  .orchestration { background: #6a1b9a; }
+  .mobile { background: #00695c; }
+</style>
+</head>
+<body>
+
+<!-- ============================================================ -->
+<!-- COVER PAGE                                                    -->
+<!-- ============================================================ -->
+<div class="cover">
+  <h1>Agent System Operating Manual</h1>
+  <div class="subtitle">AI Development Team — CrewAI Multi-Agent System</div>
+  <div class="subtitle" style="font-size: 12pt; margin-top: 4px;">Fedora 43 · Ollama · CrewAI · ChromaDB · GitHub</div>
+  <div class="meta">
+    Version 1.0 — February 2026<br>
+    Owner: Project Principal<br>
+    Classification: Internal Use Only — Confidential
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- TABLE OF CONTENTS                                             -->
+<!-- ============================================================ -->
+<h2>Table of Contents</h2>
+<div class="toc">
+<ol>
+  <li><a href="#s1">Team Charter</a></li>
+  <li><a href="#s2">Agent Profiles</a>
+    <ol>
+      <li><a href="#s2-orch">Orchestration Layer</a></li>
+      <li><a href="#s2-strat">Strategy Layer</a></li>
+      <li><a href="#s2-build">Build Layer</a></li>
+      <li><a href="#s2-quality">Quality Layer</a></li>
+      <li><a href="#s2-mobile">Mobile Sub-Team</a></li>
+      <li><a href="#s2-retrofit">Retrofit &amp; Reconciliation Agents</a></li>
+    </ol>
+  </li>
+  <li><a href="#s3">Workflow Protocols</a></li>
+  <li><a href="#s4">Checkpoint Definitions</a></li>
+  <li><a href="#s5">Context Object Schema</a></li>
+  <li><a href="#s6">Conflict Resolution</a></li>
+  <li><a href="#s7">Quality Standards</a></li>
+  <li><a href="#s8">Escalation Matrix</a></li>
+  <li><a href="#s9">Quick Start Guide</a></li>
+  <li><a href="#s10">Day-to-Day Operations</a></li>
+  <li><a href="#s11">Troubleshooting &amp; Recovery</a></li>
+  <li><a href="#s12">Maintenance &amp; Configuration</a></li>
+  <li><a href="#appendix-a">Appendix A — Artifact Registry</a></li>
+  <li><a href="#appendix-b">Appendix B — Model Tier Reference</a></li>
+</ol>
+</div>
+
+<!-- ============================================================ -->
+<!-- SECTION 1 — TEAM CHARTER                                      -->
+<!-- ============================================================ -->
+<h1 id="s1">Section 1 — Team Charter</h1>
+
+<h2>1.1 Mission</h2>
+<p>Accelerate software development and data science work through a federated AI agent system that maintains human oversight at every critical decision point. The system operates with three non-negotiable principles:</p>
+<ol>
+  <li><strong>CLARITY</strong> — Every project must have a clear scope, owner, and success criteria before any work begins.</li>
+  <li><strong>CONTROL</strong> — Humans approve all major decisions. No agent proceeds past a checkpoint without explicit human confirmation.</li>
+  <li><strong>CONTINUITY</strong> — Every decision, handoff, and output is logged to GitHub and ChromaDB so the system learns from every project.</li>
+</ol>
+
+<h2>1.2 Scope</h2>
+<p>The system manages two specialized crews coordinated by a Master Orchestrator:</p>
+<table>
+  <tr><th>Crew</th><th>Agents</th><th>Handles</th></tr>
+  <tr><td>Dev Crew</td><td>20 agents</td><td>Software requirements, architecture, UI design, database engineering, coding (backend, frontend, mobile), testing, documentation, DevOps, security</td></tr>
+  <tr><td>DS Crew</td><td>14 agents</td><td>Data ingestion, cleaning, EDA, statistical modeling, simulation, ML, visualization, NLP, reporting</td></tr>
+</table>
+<p>Joint projects that span both crews use a formal handoff package with human approval at the boundary.</p>
+
+<h2>1.3 What the Team Builds</h2>
+<ul>
+  <li>Full-stack web applications (React/Next.js frontend, Node.js/Express backend, PostgreSQL)</li>
+  <li>Cross-platform mobile applications (React Native/Expo, native iOS/Swift, native Android/Kotlin)</li>
+  <li>Data analysis pipelines and dashboards</li>
+  <li>API services and integrations</li>
+  <li>CI/CD pipelines and infrastructure-as-code</li>
+  <li>Comprehensive test suites (unit, integration, E2E, accessibility, performance)</li>
+</ul>
+
+<h2>1.4 What the Team Does Not Build</h2>
+<ul>
+  <li>Production infrastructure management (the system produces IaC that humans deploy)</li>
+  <li>Decisions requiring human judgment — budget approvals, vendor selection, hiring, policy changes</li>
+  <li>Anything that bypasses a checkpoint — no agent has authority to ship to production unilaterally</li>
+  <li>Security assessments that substitute for formal ATO review — the SRR informs but does not replace</li>
+</ul>
+
+<h2>1.5 Infrastructure</h2>
+<table>
+  <tr><th>Component</th><th>Details</th></tr>
+  <tr><td>Hardware</td><td>Framework AI 9 HX 370 · 96 GB DDR5 · 4 TB SSD</td></tr>
+  <tr><td>OS</td><td>Fedora 43 (Linux)</td></tr>
+  <tr><td>LLM Runtime</td><td>Ollama (local inference, no cloud dependency)</td></tr>
+  <tr><td>Tier 1 Model</td><td>qwen2.5:32b → upgraded to qwen2.5:72b (Strategy agents)</td></tr>
+  <tr><td>Tier 2 Model</td><td>qwen2.5-coder:14b → upgraded to qwen2.5-coder:32b (Build agents)</td></tr>
+  <tr><td>Embedding Model</td><td>nomic-embed-text</td></tr>
+  <tr><td>Agent Framework</td><td>CrewAI (Crews + Flows)</td></tr>
+  <tr><td>Memory Store</td><td>ChromaDB (local persistent vector DB)</td></tr>
+  <tr><td>Artifact Store</td><td>GitHub (full repo management)</td></tr>
+  <tr><td>Observability</td><td>Langfuse (optional, agent trace logging)</td></tr>
+  <tr><td>Notifications</td><td>SMS via AT&amp;T gateway (primary), Gmail (secondary)</td></tr>
+</table>
+
+
+<!-- ============================================================ -->
+<!-- SECTION 2 — AGENT PROFILES                                    -->
+<!-- ============================================================ -->
+<div class="page-break"></div>
+<h1 id="s2">Section 2 — Agent Profiles</h1>
+
+<p>Every agent in the system follows a standard profile structure. Each agent is implemented as a Python module under <code>~/dev-team/agents/</code> that exposes a <code>build_*</code> factory function returning a CrewAI <code>Agent</code> and a <code>run_*</code> function that orchestrates its task execution.</p>
+
+<!-- ── ORCHESTRATION LAYER ─────────────────────────────────── -->
+<h2 id="s2-orch">2.1 Orchestration Layer</h2>
+
+<h3>Dev-Team Orchestrator</h3>
+<table>
+  <tr><td style="width:160px"><strong>File</strong></td><td><code>agents/orchestrator/orchestrator.py</code></td></tr>
+  <tr><td><strong>Layer</strong></td><td><span class="badge orchestration">ORCHESTRATION</span></td></tr>
+  <tr><td><strong>Model Tier</strong></td><td><span class="badge tier1">TIER 1</span></td></tr>
+  <tr><td><strong>Role</strong></td><td>Dev-Team Orchestrator</td></tr>
+  <tr><td><strong>Goal</strong></td><td>Receive software development project requests, initialize structured project context, route to the correct dev sub-team, manage checkpoints, coordinate handoffs between agents, and ensure complete audit trails.</td></tr>
+  <tr><td><strong>Decision Authority</strong></td><td>Classifies projects (DEV / DS / JOINT). Routes to crew lead. Initializes context object. Sends checkpoint notifications. <em>Cannot</em> approve its own checkpoints — human approval required.</td></tr>
+  <tr><td><strong>Inputs</strong></td><td>Natural-language project request from human principal</td></tr>
+  <tr><td><strong>Outputs</strong></td><td>Classified project context object (JSON), routing decision, checkpoint notifications (SMS + email)</td></tr>
+  <tr><td><strong>Tools</strong></td><td>SMS gateway (<code>send_sms</code>), email (<code>send_email</code>), context persistence (<code>save_context</code>), audit logger (<code>log_event</code>)</td></tr>
+  <tr><td><strong>Escalation Triggers</strong></td><td>Classification fails (UNKNOWN type) → human review. Checkpoint rejected → return to delivering agent. Handoff validation fails → block handoff, notify human.</td></tr>
+  <tr><td><strong>Key Config</strong></td><td><code>allow_delegation=True</code></td></tr>
+</table>
+
+<div class="callout">
+  <strong>Supporting Modules:</strong>
+  <code>classify.py</code> — Takes natural language, produces structured spec JSON via LLM.<br>
+  <code>router.py</code> — Routes classified context to DEV, DS, or JOINT crew with appropriate lead assignment.<br>
+  <code>handoff.py</code> — Creates, validates, saves, and manages approval for inter-crew handoff packages.
+</div>
+
+<!-- ── STRATEGY LAYER ───────────────────────────────────────── -->
+<h2 id="s2-strat">2.2 Strategy Layer</h2>
+<p>All Strategy agents run on <span class="badge tier1">TIER 1</span> and have <code>allow_delegation=False</code>. They produce planning documents — not code.</p>
+
+<h3>Product Manager</h3>
+<table>
+  <tr><td style="width:160px"><strong>File</strong></td><td><code>agents/dev/strategy/product_manager.py</code></td></tr>
+  <tr><td><strong>Role</strong></td><td>Product Manager</td></tr>
+  <tr><td><strong>Goal</strong></td><td>Transform project specifications into detailed, unambiguous product requirements that development teams can execute without guessing.</td></tr>
+  <tr><td><strong>Persona</strong></td><td>15 years delivering software in enterprise and regulated environments. Writes requirements that are specific, measurable, and technically actionable.</td></tr>
+  <tr><td><strong>Inputs</strong></td><td>Structured project spec (from Orchestrator classification)</td></tr>
+  <tr><td><strong>Produces</strong></td><td><strong>PRD</strong> — Product Requirements Document</td></tr>
+  <tr><td><strong>Decision Authority</strong></td><td>Defines scope, user stories, acceptance criteria, and out-of-scope items. Does not make architecture decisions.</td></tr>
+  <tr><td><strong>Escalation Triggers</strong></td><td>Ambiguous business goal → flags explicitly rather than assumes. Conflicting stakeholder needs → escalates to human.</td></tr>
+</table>
+
+<h3>Business Analyst</h3>
+<table>
+  <tr><td style="width:160px"><strong>File</strong></td><td><code>agents/dev/strategy/business_analyst.py</code></td></tr>
+  <tr><td><strong>Role</strong></td><td>Business Analyst</td></tr>
+  <tr><td><strong>Goal</strong></td><td>Translate business needs into detailed process flows, stakeholder maps, and data dictionaries that eliminate ambiguity before technical design begins.</td></tr>
+  <tr><td><strong>Persona</strong></td><td>12 years in enterprise IT. Specializes in regulated industries and complex stakeholder environments. Thinks in process flows and data lineage.</td></tr>
+  <tr><td><strong>Inputs</strong></td><td>PRD</td></tr>
+  <tr><td><strong>Produces</strong></td><td><strong>BAD</strong> — Business Analysis Document (stakeholder analysis, current/future state process flows, data dictionary, gap analysis, risk register)</td></tr>
+  <tr><td><strong>Decision Authority</strong></td><td>Identifies stakeholder concerns, maps data flows, flags requirements gaps. Does not prioritize features.</td></tr>
+  <tr><td><strong>Escalation Triggers</strong></td><td>PRD has unanswerable questions about data lineage or stakeholder authority.</td></tr>
+</table>
+
+<h3>Scrum Master</h3>
+<table>
+  <tr><td style="width:160px"><strong>File</strong></td><td><code>agents/dev/strategy/scrum_master.py</code></td></tr>
+  <tr><td><strong>Role</strong></td><td>Scrum Master</td></tr>
+  <tr><td><strong>Goal</strong></td><td>Transform requirements into a prioritized, executable sprint plan that the development team can deliver predictably and transparently.</td></tr>
+  <tr><td><strong>Persona</strong></td><td>10 years running agile delivery in enterprise environments. Experienced with program management requirements, compliance processes, and accessibility timelines.</td></tr>
+  <tr><td><strong>Inputs</strong></td><td>PRD, BAD</td></tr>
+  <tr><td><strong>Produces</strong></td><td><strong>Sprint Plan</strong> — Definition of Done, prioritized product backlog with epics/stories/story points, sprint breakdown, dependency map, risk-based prioritization</td></tr>
+  <tr><td><strong>Decision Authority</strong></td><td>Prioritizes backlog, assigns story points, defines sprint boundaries and DoD. Does not make technical or architectural decisions.</td></tr>
+  <tr><td><strong>Escalation Triggers</strong></td><td>Scope exceeds reasonable sprint capacity. Dependencies on external teams or systems not under project control.</td></tr>
+</table>
+
+<h3>Technical Architect</h3>
+<table>
+  <tr><td style="width:160px"><strong>File</strong></td><td><code>agents/dev/strategy/technical_architect.py</code></td></tr>
+  <tr><td><strong>Role</strong></td><td>Technical Architect</td></tr>
+  <tr><td><strong>Goal</strong></td><td>Translate business and functional requirements into a complete, implementable technical architecture that is secure, scalable, and achievable within constraints.</td></tr>
+  <tr><td><strong>Persona</strong></td><td>15 years designing enterprise systems. Expert in compliance frameworks and security certifications. Designs deployment-agnostic architectures. Deep experience with AI/ML systems, LLM pipelines, RAG, vector databases, multi-agent orchestration.</td></tr>
+  <tr><td><strong>Inputs</strong></td><td>PRD, BAD, Sprint Plan</td></tr>
+  <tr><td><strong>Produces</strong></td><td><strong>TAD</strong> — Technical Architecture Document (system context, component design, data architecture, API specs, infrastructure, security controls, deployment topology)</td></tr>
+  <tr><td><strong>Decision Authority</strong></td><td>Selects technology stack, defines component boundaries, specifies interfaces, chooses deployment topology. All choices must be justified by requirements.</td></tr>
+  <tr><td><strong>Escalation Triggers</strong></td><td>Requirements conflict with security/compliance constraints. Multiple valid architectures with significant tradeoffs requiring business judgment.</td></tr>
+</table>
+
+<h3>Security Reviewer</h3>
+<table>
+  <tr><td style="width:160px"><strong>File</strong></td><td><code>agents/dev/strategy/security_reviewer.py</code></td></tr>
+  <tr><td><strong>Role</strong></td><td>Security Reviewer</td></tr>
+  <tr><td><strong>Goal</strong></td><td>Identify security vulnerabilities, compliance gaps, and privacy risks in the proposed architecture and deliver a Security Review Report with actionable remediation guidance before any code is written.</td></tr>
+  <tr><td><strong>Persona</strong></td><td>12 years in enterprise IT security. CISSP, CISM certified. Extensive experience with security reviews under NIST 800-53 and industry compliance frameworks. Understands AI/ML-specific security risks (model poisoning, prompt injection, training data exposure).</td></tr>
+  <tr><td><strong>Inputs</strong></td><td>PRD, TAD</td></tr>
+  <tr><td><strong>Produces</strong></td><td><strong>SRR</strong> — Security Review Report (posture rating RED/AMBER/GREEN, threat model, NIST 800-53 control mapping, sensitive data protection assessment, remediation requirements). The SRR is the final gate before development begins.</td></tr>
+  <tr><td><strong>Decision Authority</strong></td><td>Can rate a project NOT APPROVED and block development. Can require specific security controls. Cannot waive compliance requirements.</td></tr>
+  <tr><td><strong>Escalation Triggers</strong></td><td>RED posture rating. Sensitive data exposure risk. Missing encryption or access controls. AI-specific risks without mitigation.</td></tr>
+</table>
+
+<h3>UX/UI Designer</h3>
+<table>
+  <tr><td style="width:160px"><strong>File</strong></td><td><code>agents/dev/strategy/ux_designer.py</code></td></tr>
+  <tr><td><strong>Role</strong></td><td>UX/UI Designer</td></tr>
+  <tr><td><strong>Goal</strong></td><td>Translate business requirements and user needs into clear, intuitive, and accessible interface designs that developers can implement without ambiguity.</td></tr>
+  <tr><td><strong>Persona</strong></td><td>12 years designing enterprise web applications. Expert in WCAG 2.1 AA and accessibility standards. Owns all UI content — labels, tooltips, error messages.</td></tr>
+  <tr><td><strong>Inputs</strong></td><td>PRD, BAD, SRR</td></tr>
+  <tr><td><strong>Produces</strong></td><td><strong>UXD</strong> — User Experience Document (personas, user journeys, interaction patterns, annotated wireframes, UI style guide)</td></tr>
+  <tr><td><strong>Decision Authority</strong></td><td>Defines all UI patterns, interaction flows, and content. Works with Security Reviewer to ensure access controls are reflected in UI design.</td></tr>
+  <tr><td><strong>Escalation Triggers</strong></td><td>Accessibility requirements conflict with business requirements. SRR findings require UI changes not covered by PRD.</td></tr>
+</table>
+
+<h3>UX Content Guide (Sub-agent)</h3>
+<table>
+  <tr><td style="width:160px"><strong>File</strong></td><td><code>agents/dev/strategy/ux_content_guide.py</code></td></tr>
+  <tr><td><strong>Role</strong></td><td>UX/UI Designer (Content Mode)</td></tr>
+  <tr><td><strong>Inputs</strong></td><td>UXD</td></tr>
+  <tr><td><strong>Produces</strong></td><td><strong>UI Content Guide</strong> — Every field label, button text, tooltip, error message, empty state message, confirmation dialog, notification, and accessibility string in the application. Single source of truth for all UI text.</td></tr>
+</table>
+
+<!-- ── BUILD LAYER ──────────────────────────────────────────── -->
+<h2 id="s2-build">2.3 Build Layer</h2>
+<p>All Build agents run on <span class="badge tier2">TIER 2</span> and have <code>allow_delegation=False</code>. They produce code and implementation reports.</p>
+
+<h3>Senior Developer</h3>
+<table>
+  <tr><td style="width:160px"><strong>File</strong></td><td><code>agents/dev/build/senior_developer.py</code></td></tr>
+  <tr><td><strong>Role</strong></td><td>Senior Developer</td></tr>
+  <tr><td><strong>Goal</strong></td><td>Translate architecture and design documents into a concrete, implementable technical implementation plan that backend, frontend, and DevOps developers can execute without ambiguity.</td></tr>
+  <tr><td><strong>Persona</strong></td><td>15 years full-stack. Expert in C/C++, Python, Rust, React/Next.js, SQL. Primary code reviewer — nothing merges without sign-off. Aware of AI/ML integration patterns (CrewAI, LangChain).</td></tr>
+  <tr><td><strong>Inputs</strong></td><td>PRD, TAD, UXD</td></tr>
+  <tr><td><strong>Produces</strong></td><td><strong>TIP</strong> — Technical Implementation Plan (project structure, coding standards, tech stack confirmations, module boundaries, implementation sequencing). The TIP is the bible for all build agents.</td></tr>
+  <tr><td><strong>Decision Authority</strong></td><td>Defines coding standards, module boundaries, implementation order. Confirms technology choices from TAD at the implementation level.</td></tr>
+  <tr><td><strong>Escalation Triggers</strong></td><td>TAD specifies something unbuildable. Architecture/design conflict that requires human judgment.</td></tr>
+</table>
+
+<h3>Backend Developer</h3>
+<table>
+  <tr><td style="width:160px"><strong>File</strong></td><td><code>agents/dev/build/backend_developer.py</code></td></tr>
+  <tr><td><strong>Role</strong></td><td>Backend Developer</td></tr>
+  <tr><td><strong>Goal</strong></td><td>Implement the complete server-side codebase — APIs, business logic, data access layer, and authentication — producing production-ready code with full test coverage.</td></tr>
+  <tr><td><strong>Persona</strong></td><td>12 years building secure server-side systems for enterprise clients. Fluent in Python, SQL, C, Rust, Node.js/Express. Specializes in REST APIs, PostgreSQL, JWT/OAuth2/RBAC, and compliance-aware development.</td></tr>
+  <tr><td><strong>Inputs</strong></td><td>TIP, TAD</td></tr>
+  <tr><td><strong>Produces</strong></td><td><strong>BIR</strong> — Backend Implementation Report (every endpoint, database table, integration point documented with working code)</td></tr>
+  <tr><td><strong>Decision Authority</strong></td><td>Implementation decisions within the boundaries set by TIP. Does not make architectural decisions. Flags blockers immediately.</td></tr>
+  <tr><td><strong>Escalation Triggers</strong></td><td>TIP specifies something that cannot be implemented. Security controls from SRR are unclear at implementation level.</td></tr>
+</table>
+
+<h3>Frontend Developer</h3>
+<table>
+  <tr><td style="width:160px"><strong>File</strong></td><td><code>agents/dev/build/frontend_developer.py</code></td></tr>
+  <tr><td><strong>Role</strong></td><td>Frontend Developer</td></tr>
+  <tr><td><strong>Goal</strong></td><td>Implement the complete client-side codebase — pages, components, state management, API integration, and accessibility — producing production-ready code matching the design spec exactly.</td></tr>
+  <tr><td><strong>Persona</strong></td><td>12 years building enterprise web applications. Expert in React, Next.js (SSR, SSG, App Router), TypeScript. Accessibility specialist — WCAG 2.1 AA baked into every component. Implements UI copy exactly from Content Guide.</td></tr>
+  <tr><td><strong>Inputs</strong></td><td>TIP, UXD, BIR, UI Content Guide</td></tr>
+  <tr><td><strong>Produces</strong></td><td><strong>FIR</strong> — Frontend Implementation Report (every component, page, and integration point with working code)</td></tr>
+  <tr><td><strong>Decision Authority</strong></td><td>Component implementation within TIP boundaries. Does not modify backend APIs. Does not improvise UI copy.</td></tr>
+  <tr><td><strong>Escalation Triggers</strong></td><td>BIR API contract doesn't match UXD requirements. Content Guide missing strings for a component.</td></tr>
+</table>
+
+<h3>Database Administrator</h3>
+<table>
+  <tr><td style="width:160px"><strong>File</strong></td><td><code>agents/dev/build/database_admin.py</code></td></tr>
+  <tr><td><strong>Role</strong></td><td>Database Administrator</td></tr>
+  <tr><td><strong>Goal</strong></td><td>Own the database layer completely — schema integrity, query performance, index strategy, migration safety, audit design, and capacity planning.</td></tr>
+  <tr><td><strong>Persona</strong></td><td>15 years. Expert in PostgreSQL, SQL Server/Azure SQL, and MySQL. Can read execution plans across all three. Knows sensitive data schema requirements — audit tables, surrogate keys, tokenization, row-level security must be built in from day one.</td></tr>
+  <tr><td><strong>Inputs</strong></td><td>BIR, TAD, SRR</td></tr>
+  <tr><td><strong>Produces</strong></td><td><strong>DBAR</strong> — Database Administration Report (optimized schema, index strategy, migration scripts, backup/DR plan, data protection controls, capacity forecast)</td></tr>
+  <tr><td><strong>Decision Authority</strong></td><td>Owns schema. Developers do not modify schema without DBA review. Migrations do not run in production without sign-off.</td></tr>
+  <tr><td><strong>Escalation Triggers</strong></td><td>BIR schema has missing indexes, wrong data types, or sensitive data exposure. N+1 query traps in ORM layer.</td></tr>
+</table>
+
+<h3>DevOps Engineer</h3>
+<table>
+  <tr><td style="width:160px"><strong>File</strong></td><td><code>agents/dev/build/devops_engineer.py</code></td></tr>
+  <tr><td><strong>Role</strong></td><td>DevOps Engineer</td></tr>
+  <tr><td><strong>Goal</strong></td><td>Design and implement the complete CI/CD pipeline, containerization, infrastructure-as-code, and deployment strategy.</td></tr>
+  <tr><td><strong>Persona</strong></td><td>12 years. Expert in Kubernetes, Docker, Terraform, GitHub Actions. Extensive compliance and audit experience. Fluent in Bash, Python, Helm, Bicep. Everything is version controlled, nothing manually configured in production.</td></tr>
+  <tr><td><strong>Inputs</strong></td><td>TIP, TAD, SRR</td></tr>
+  <tr><td><strong>Produces</strong></td><td><strong>DIR</strong> — DevOps Implementation Report (Dockerfiles, Helm charts, GitHub Actions workflows, Terraform modules, secrets management, monitoring setup)</td></tr>
+  <tr><td><strong>Decision Authority</strong></td><td>Pipeline design, container configuration, deployment topology. Addresses all CRITICAL/HIGH SRR findings with infrastructure components.</td></tr>
+  <tr><td><strong>Escalation Triggers</strong></td><td>SRR CRITICAL finding cannot be addressed at infrastructure level. Deployment target constraints prevent recommended approach.</td></tr>
+</table>
+
+<!-- ── QUALITY LAYER ────────────────────────────────────────── -->
+<h2 id="s2-quality">2.4 Quality Layer</h2>
+
+<h3>QA Lead</h3>
+<table>
+  <tr><td style="width:160px"><strong>File</strong></td><td><code>agents/dev/quality/qa_lead.py</code></td></tr>
+  <tr><td><strong>Layer / Tier</strong></td><td><span class="badge quality">QUALITY</span> · <span class="badge tier1">TIER 1</span></td></tr>
+  <tr><td><strong>Role</strong></td><td>QA Lead</td></tr>
+  <tr><td><strong>Goal</strong></td><td>Own the complete quality assurance strategy — define what "done" means from a quality perspective, design the test plan, coordinate all testing activities, and be the final gate before any release reaches production.</td></tr>
+  <tr><td><strong>Persona</strong></td><td>15 years QA for enterprise and regulated environments. Reviews every artifact (PRD, TAD, BIR, FIR, DBAR) and finds gaps before they become defects. Voice of the end user.</td></tr>
+  <tr><td><strong>Inputs</strong></td><td>PRD, TIP, BIR, FIR, UXD</td></tr>
+  <tr><td><strong>Produces</strong></td><td><strong>MTP</strong> — Master Test Plan (test strategy, test cases across all levels, release criteria, defect management process). Nothing ships without QA Lead sign-off.</td></tr>
+  <tr><td><strong>Decision Authority</strong></td><td>Defines release criteria, test coverage requirements. Can block a release. Cannot waive test requirements.</td></tr>
+  <tr><td><strong>Escalation Triggers</strong></td><td>Untestable requirements in PRD. Test coverage below acceptable threshold. Release criteria not met.</td></tr>
+</table>
+
+<h3>Test Automation Engineer</h3>
+<table>
+  <tr><td style="width:160px"><strong>File</strong></td><td><code>agents/dev/quality/test_automation_engineer.py</code></td></tr>
+  <tr><td><strong>Layer / Tier</strong></td><td><span class="badge quality">QUALITY</span> · <span class="badge tier2">TIER 2</span></td></tr>
+  <tr><td><strong>Role</strong></td><td>Test Automation Engineer</td></tr>
+  <tr><td><strong>Goal</strong></td><td>Implement the complete automated test suite from the Master Test Plan — E2E, API, unit, and accessibility tests — producing working, deployment-agnostic test code.</td></tr>
+  <tr><td><strong>Persona</strong></td><td>12 years. Expert in Playwright, Jest/RTL, Supertest, k6, axe-core. Tests are deployment-agnostic via env vars and test tags (@smoke, @regression, @cloud-only, @onprem-only). DEPLOY_TARGET controls active tags.</td></tr>
+  <tr><td><strong>Inputs</strong></td><td>MTP, BIR, FIR, TIP</td></tr>
+  <tr><td><strong>Produces</strong></td><td><strong>TAR</strong> — Test Automation Report (test suite structure, execution instructions, environment configuration, CI integration)</td></tr>
+  <tr><td><strong>Decision Authority</strong></td><td>Test implementation approach. Can flag flaky tests with alternative proposals. Cannot skip MTP test cases.</td></tr>
+  <tr><td><strong>Escalation Triggers</strong></td><td>MTP test case cannot be automated reliably. Environment constraints prevent E2E test execution.</td></tr>
+</table>
+
+<!-- ── MOBILE SUB-TEAM ──────────────────────────────────────── -->
+<h2 id="s2-mobile">2.5 Mobile Sub-Team</h2>
+<p>The Mobile sub-team produces three parallel implementation tracks (iOS native, Android native, React Native cross-platform) coordinated by a shared Mobile UX Document.</p>
+
+<h3>Mobile UI/UX Designer</h3>
+<table>
+  <tr><td style="width:160px"><strong>File</strong></td><td><code>agents/mobile/ux/mobile_ux_designer.py</code></td></tr>
+  <tr><td><strong>Layer / Tier</strong></td><td><span class="badge mobile">MOBILE</span> · <span class="badge tier1">TIER 1</span></td></tr>
+  <tr><td><strong>Role</strong></td><td>Mobile UI/UX Designer</td></tr>
+  <tr><td><strong>Persona</strong></td><td>12 years designing native/cross-platform mobile apps. Fluent in Apple HIG and Material Design 3. Designs for VoiceOver (iOS) and TalkBack (Android) from the start. Security-aware (data masking, biometric re-auth, screenshot prevention).</td></tr>
+  <tr><td><strong>Inputs</strong></td><td>PRD</td></tr>
+  <tr><td><strong>Produces</strong></td><td><strong>MUXD</strong> — Mobile UX Document (the authoritative design spec for all three mobile tracks)</td></tr>
+</table>
+
+<h3>iOS Developer</h3>
+<table>
+  <tr><td style="width:160px"><strong>File</strong></td><td><code>agents/mobile/ios/ios_developer.py</code></td></tr>
+  <tr><td><strong>Layer / Tier</strong></td><td><span class="badge mobile">MOBILE</span> · <span class="badge tier2">TIER 2</span></td></tr>
+  <tr><td><strong>Role</strong></td><td>iOS Developer</td></tr>
+  <tr><td><strong>Persona</strong></td><td>12 years. Expert in Swift/SwiftUI. Accessibility specialist (VoiceOver). Secure storage via Keychain, LocalAuthentication biometrics, screenshot suppression. Async/await, XCTest/XCUITest.</td></tr>
+  <tr><td><strong>Inputs</strong></td><td>MUXD, PRD</td></tr>
+  <tr><td><strong>Produces</strong></td><td><strong>IIR</strong> — iOS Implementation Report (every screen, component, data flow, security control)</td></tr>
+  <tr><td><strong>Patch Agents</strong></td><td><code>ios_developer_patch.py</code> (security controls, testing, Fastlane), <code>ios_accessibility_patch.py</code> (per-screen VoiceOver)</td></tr>
+</table>
+
+<h3>Android Developer</h3>
+<table>
+  <tr><td style="width:160px"><strong>File</strong></td><td><code>agents/mobile/android/android_developer.py</code></td></tr>
+  <tr><td><strong>Layer / Tier</strong></td><td><span class="badge mobile">MOBILE</span> · <span class="badge tier2">TIER 2</span></td></tr>
+  <tr><td><strong>Role</strong></td><td>Android Developer</td></tr>
+  <tr><td><strong>Persona</strong></td><td>12 years. Expert in Kotlin/Jetpack Compose, Material Design 3. TalkBack accessibility. Secure storage via EncryptedSharedPreferences, Android Keystore, BiometricPrompt, FLAG_SECURE. JUnit5/MockK, Espresso/Compose UI Testing.</td></tr>
+  <tr><td><strong>Inputs</strong></td><td>MUXD, PRD</td></tr>
+  <tr><td><strong>Produces</strong></td><td><strong>AIR</strong> — Android Implementation Report</td></tr>
+</table>
+
+<h3>React Native Architect</h3>
+<table>
+  <tr><td style="width:160px"><strong>File</strong></td><td><code>agents/mobile/rn/react_native_architect_part1.py</code>, <code>react_native_architect_part2.py</code></td></tr>
+  <tr><td><strong>Layer / Tier</strong></td><td><span class="badge mobile">MOBILE</span> · <span class="badge tier2">TIER 2</span></td></tr>
+  <tr><td><strong>Role</strong></td><td>React Native Architect</td></tr>
+  <tr><td><strong>Execution</strong></td><td>Split into two sequential tasks due to output length limits. Part 1: architecture, navigation, state management, API layer, authentication (Sections 1–5). Part 2: security architecture, shared components, platform adaptation, testing, build config (Sections 6–10).</td></tr>
+  <tr><td><strong>Inputs</strong></td><td>MUXD</td></tr>
+  <tr><td><strong>Produces</strong></td><td><strong>RNAD</strong> — React Native Architecture Document (complete TypeScript code, no placeholders)</td></tr>
+</table>
+
+<h3>React Native Developer</h3>
+<table>
+  <tr><td style="width:160px"><strong>File</strong></td><td><code>agents/mobile/rn/react_native_developer.py</code></td></tr>
+  <tr><td><strong>Layer / Tier</strong></td><td><span class="badge mobile">MOBILE</span> · <span class="badge tier2">TIER 2</span></td></tr>
+  <tr><td><strong>Role</strong></td><td>React Native Developer</td></tr>
+  <tr><td><strong>Execution</strong></td><td>Two-part split: Part 1 (Sections 1–5), Part 2 (Sections 6–10). Part 2 receives Part 1 output as context instead of raw architecture doc — this prevents the regression/looping bug. Includes <code>validate_agent_output()</code> to detect forbidden sections and duplicate content.</td></tr>
+  <tr><td><strong>Inputs</strong></td><td>RNAD (from RN Architect)</td></tr>
+  <tr><td><strong>Produces</strong></td><td><strong>RN Implementation Guide</strong> — Complete screen implementations for all screens</td></tr>
+</table>
+
+<h3>Mobile DevOps Engineer</h3>
+<table>
+  <tr><td style="width:160px"><strong>File</strong></td><td><code>agents/mobile/devops/mobile_devops_engineer.py</code></td></tr>
+  <tr><td><strong>Layer / Tier</strong></td><td><span class="badge mobile">MOBILE</span> · <span class="badge tier2">TIER 2</span></td></tr>
+  <tr><td><strong>Role</strong></td><td>Mobile DevOps Engineer</td></tr>
+  <tr><td><strong>Persona</strong></td><td>10 years. Expert in EAS Build, Fastlane, GitHub Actions, code signing, provisioning profiles, OTA updates (expo-updates), Sentry. Full automation from PR merge through store submission.</td></tr>
+  <tr><td><strong>Inputs</strong></td><td>TIP, RN Implementation Guide, SRR</td></tr>
+  <tr><td><strong>Produces</strong></td><td><strong>MDIR</strong> — Mobile DevOps Implementation Report (EAS Build config, code signing, CI/CD pipelines, release automation)</td></tr>
+</table>
+
+<h3>Mobile QA Specialist</h3>
+<table>
+  <tr><td style="width:160px"><strong>File</strong></td><td><code>agents/mobile/qa/mobile_qa_specialist.py</code></td></tr>
+  <tr><td><strong>Layer / Tier</strong></td><td><span class="badge mobile">MOBILE</span> · <span class="badge tier1">TIER 1</span></td></tr>
+  <tr><td><strong>Role</strong></td><td>Mobile QA Specialist</td></tr>
+  <tr><td><strong>Persona</strong></td><td>12 years in mobile QA for enterprise and regulated environments. Fluent in Jest, React Native Testing Library, Detox, Appium, Maestro. Two-phase output: documentation AND executable test files.</td></tr>
+  <tr><td><strong>Inputs</strong></td><td>RN Implementation Guide, MDIR, MUXD</td></tr>
+  <tr><td><strong>Produces</strong></td><td><strong>Mobile Test Plan</strong> + <strong>Executable Test Files</strong> (Jest/RNTL unit tests and Detox E2E tests that run with <code>npx jest</code> or <code>npx detox test</code>)</td></tr>
+  <tr><td><strong>Decision Authority</strong></td><td>Final gate before any build reaches the App Store or Google Play. Nothing ships without sign-off.</td></tr>
+</table>
+
+<!-- ── RETROFIT & RECONCILIATION ────────────────────────────── -->
+<h2 id="s2-retrofit">2.6 Retrofit &amp; Reconciliation Agents</h2>
+<p>These are specialized variants of existing agents that perform targeted revisions — specifically to make documents deployment-agnostic (removing cloud-provider-specific assumptions). Each consumes an original document and produces a revised version with the suffix <code>-R</code>.</p>
+
+<table>
+  <tr><th>Agent</th><th>File</th><th>Consumes</th><th>Produces</th><th>Purpose</th></tr>
+  <tr><td>Solutions Architect (Retrofit)</td><td><code>tad_retrofit.py</code></td><td>TAD</td><td>TAD-R</td><td>Remove Azure-specific services, make deployment-agnostic via DEPLOY_TARGET env var</td></tr>
+  <tr><td>Backend Developer (Retrofit)</td><td><code>backend_developer_retrofit.py</code></td><td>BIR</td><td>BIR-R</td><td>Replace Auth0 with generic OIDC/OAuth2 interface</td></tr>
+  <tr><td>DevOps Engineer (Retrofit)</td><td><code>devops_engineer_retrofit.py</code></td><td>DIR</td><td>DIR-R</td><td>Remove cloud provider assumptions from pipelines and IaC</td></tr>
+  <tr><td>Security Engineer (Retrofit)</td><td><code>srr_retrofit.py</code></td><td>SRR</td><td>SRR-R</td><td>Express security controls as capabilities, not provider implementations</td></tr>
+  <tr><td>QA Lead (Retrofit)</td><td><code>qa_lead_retrofit.py</code></td><td>MTP</td><td>MTP-R</td><td>Remove Azure Monitor, AKS-specific commands from test plans</td></tr>
+  <tr><td>Technical Document Reviewer</td><td><code>reconciliation.py</code></td><td>Original + Revised pairs</td><td>Reconciliation Report</td><td>Section-by-section gap analysis identifying content dropped, thinned, or added during revision</td></tr>
+</table>
+
+
+<!-- ============================================================ -->
+<!-- SECTION 3 — WORKFLOW PROTOCOLS                                -->
+<!-- ============================================================ -->
+<div class="page-break"></div>
+<h1 id="s3">Section 3 — Workflow Protocols</h1>
+
+<h2>3.1 New Feature (Full Pipeline)</h2>
+<p>This is the standard end-to-end workflow for a new software project. Every step produces a named artifact consumed by subsequent agents.</p>
+
+<h3>Phase 1 — Strategy</h3>
+<table>
+  <tr><th>Step</th><th>Agent</th><th>Consumes</th><th>Produces</th><th>Checkpoint?</th></tr>
+  <tr><td>1</td><td>Orchestrator</td><td>Natural language request</td><td>Classified context object</td><td>—</td></tr>
+  <tr><td>2</td><td>Orchestrator (Router)</td><td>Context object</td><td>Routing decision + crew assignment</td><td>—</td></tr>
+  <tr><td>3</td><td>Product Manager</td><td>Structured spec</td><td>PRD</td><td>✅ <strong>CP-1: Requirements Approval</strong></td></tr>
+  <tr><td>4</td><td>Business Analyst</td><td>PRD</td><td>BAD</td><td>—</td></tr>
+  <tr><td>5</td><td>Scrum Master</td><td>PRD, BAD</td><td>Sprint Plan</td><td>—</td></tr>
+  <tr><td>6</td><td>Technical Architect</td><td>PRD, BAD, Sprint Plan</td><td>TAD</td><td>✅ <strong>CP-2: Architecture Approval</strong></td></tr>
+  <tr><td>7</td><td>Security Reviewer</td><td>PRD, TAD</td><td>SRR</td><td>✅ <strong>CP-3: Security Gate</strong></td></tr>
+  <tr><td>8</td><td>UX/UI Designer</td><td>PRD, BAD, SRR</td><td>UXD</td><td>—</td></tr>
+  <tr><td>9</td><td>UX Content Guide</td><td>UXD</td><td>UI Content Guide</td><td>✅ <strong>CP-4: Design Approval</strong></td></tr>
+</table>
+
+<h3>Phase 2 — Build</h3>
+<table>
+  <tr><th>Step</th><th>Agent</th><th>Consumes</th><th>Produces</th><th>Checkpoint?</th></tr>
+  <tr><td>10</td><td>Senior Developer</td><td>PRD, TAD, UXD</td><td>TIP</td><td>—</td></tr>
+  <tr><td>11</td><td>Backend Developer</td><td>TIP, TAD</td><td>BIR</td><td>—</td></tr>
+  <tr><td>12</td><td>Frontend Developer</td><td>TIP, UXD, BIR, Content Guide</td><td>FIR</td><td>—</td></tr>
+  <tr><td>13</td><td>Database Administrator</td><td>BIR, TAD, SRR</td><td>DBAR</td><td>—</td></tr>
+  <tr><td>14</td><td>DevOps Engineer</td><td>TIP, TAD, SRR</td><td>DIR</td><td>✅ <strong>CP-5: Build Complete</strong></td></tr>
+</table>
+
+<h3>Phase 3 — Quality</h3>
+<table>
+  <tr><th>Step</th><th>Agent</th><th>Consumes</th><th>Produces</th><th>Checkpoint?</th></tr>
+  <tr><td>15</td><td>QA Lead</td><td>PRD, TIP, BIR, FIR, UXD</td><td>MTP</td><td>—</td></tr>
+  <tr><td>16</td><td>Test Automation Engineer</td><td>MTP, BIR, FIR, TIP</td><td>TAR</td><td>✅ <strong>CP-6: Release Gate</strong></td></tr>
+</table>
+
+<h3>Phase 4 — Retrofit (if needed)</h3>
+<table>
+  <tr><th>Step</th><th>Agent</th><th>Consumes</th><th>Produces</th><th>Checkpoint?</th></tr>
+  <tr><td>17</td><td>TAD Retrofit</td><td>TAD</td><td>TAD-R</td><td rowspan="5" style="vertical-align: middle;">—</td></tr>
+  <tr><td>18</td><td>BIR Retrofit</td><td>BIR</td><td>BIR-R</td></tr>
+  <tr><td>19</td><td>DIR Retrofit</td><td>DIR</td><td>DIR-R</td></tr>
+  <tr><td>20</td><td>SRR Retrofit</td><td>SRR</td><td>SRR-R</td></tr>
+  <tr><td>21</td><td>MTP Retrofit</td><td>MTP</td><td>MTP-R</td></tr>
+  <tr><td>22</td><td>Reconciliation</td><td>All original + revised pairs</td><td>Reconciliation Report</td><td>✅ <strong>CP-7: Retrofit Validation</strong></td></tr>
+</table>
+
+<h2>3.2 Mobile Feature Pipeline</h2>
+<p>The mobile pipeline runs in parallel with (or after) the web pipeline, sharing the PRD and SRR.</p>
+<table>
+  <tr><th>Step</th><th>Agent</th><th>Consumes</th><th>Produces</th></tr>
+  <tr><td>1</td><td>Mobile UX Designer</td><td>PRD</td><td>MUXD</td></tr>
+  <tr><td>2a</td><td>iOS Developer</td><td>MUXD, PRD</td><td>IIR</td></tr>
+  <tr><td>2b</td><td>Android Developer</td><td>MUXD, PRD</td><td>AIR</td></tr>
+  <tr><td>2c</td><td>RN Architect (Part 1 → Part 2)</td><td>MUXD</td><td>RNAD</td></tr>
+  <tr><td>3</td><td>RN Developer (Part 1 → Part 2)</td><td>RNAD</td><td>RN Implementation Guide</td></tr>
+  <tr><td>4</td><td>iOS Patches (if needed)</td><td>IIR</td><td>IIR (patched)</td></tr>
+  <tr><td>5</td><td>Mobile DevOps Engineer</td><td>TIP, RN Guide, SRR</td><td>MDIR</td></tr>
+  <tr><td>6</td><td>Mobile QA Specialist</td><td>RN Guide, MDIR, MUXD</td><td>Mobile Test Plan + Test Files</td></tr>
+</table>
+
+<h2>3.3 Bug Fix</h2>
+<p>Bug fixes follow an abbreviated pipeline:</p>
+<ol>
+  <li>Human describes bug → Orchestrator classifies scope</li>
+  <li>If backend bug → Backend Developer produces patch + updated BIR section</li>
+  <li>If frontend bug → Frontend Developer produces patch + updated FIR section</li>
+  <li>Test Automation Engineer writes regression test for the bug</li>
+  <li>QA Lead confirms fix meets MTP criteria</li>
+  <li>DevOps pipeline validates → <strong>Human approves deployment</strong></li>
+</ol>
+<p>No Strategy phase unless the bug reveals a requirements or architecture problem.</p>
+
+<h2>3.4 Architecture Change</h2>
+<p>Architecture changes restart from Step 6 (Technical Architect):</p>
+<ol>
+  <li>Human or agent identifies architecture change need</li>
+  <li>Technical Architect produces revised TAD</li>
+  <li>Security Reviewer re-reviews → updated SRR</li>
+  <li><strong>Human checkpoint: Architecture Change Approval</strong></li>
+  <li>Affected build agents re-execute (Senior Developer updates TIP, downstream agents update their reports)</li>
+  <li>QA Lead updates MTP; Test Automation Engineer updates TAR</li>
+</ol>
+
+<h2>3.5 Documentation Update</h2>
+<p>Documentation-only changes do not require the full pipeline. The relevant agent updates its report, the change is committed to GitHub, and the audit log is updated. No checkpoint required unless the documentation change reveals a functional gap.</p>
+
+
+<!-- ============================================================ -->
+<!-- SECTION 4 — CHECKPOINT DEFINITIONS                            -->
+<!-- ============================================================ -->
+<div class="page-break"></div>
+<h1 id="s4">Section 4 — Checkpoint Definitions</h1>
+
+<p>Checkpoints are the human-in-the-loop gates where the system pauses, notifies you (SMS + email), and waits for explicit <code>APPROVE</code> or <code>REJECT</code> input. No agent may proceed past a checkpoint autonomously.</p>
+
+<h3>CP-1: Requirements Approval</h3>
+<table>
+  <tr><td style="width:160px"><strong>Trigger</strong></td><td>Product Manager completes PRD</td></tr>
+  <tr><td><strong>Preconditions</strong></td><td>PRD contains: executive summary, problem statement, ≥5 user stories with Given/When/Then acceptance criteria, functional requirements, non-functional requirements, out-of-scope items</td></tr>
+  <tr><td><strong>You Review</strong></td><td>Are the user stories correct? Do the acceptance criteria match your intent? Is the scope right? Are the right things explicitly out-of-scope?</td></tr>
+  <tr><td><strong>Approve</strong></td><td>Business Analyst begins BAD. Pipeline continues.</td></tr>
+  <tr><td><strong>Reject</strong></td><td>PRD returns to Product Manager with rejection reason. PM revises and resubmits.</td></tr>
+</table>
+
+<h3>CP-2: Architecture Approval</h3>
+<table>
+  <tr><td style="width:160px"><strong>Trigger</strong></td><td>Technical Architect completes TAD</td></tr>
+  <tr><td><strong>Preconditions</strong></td><td>TAD contains: system context diagram, component design, data architecture, API specifications, infrastructure requirements, deployment topology. All technology choices justified by requirements.</td></tr>
+  <tr><td><strong>You Review</strong></td><td>Does the architecture fit your infrastructure? Are the technology choices reasonable? Is the system achievable within your timeline and team?</td></tr>
+  <tr><td><strong>Approve</strong></td><td>Security Reviewer begins SRR.</td></tr>
+  <tr><td><strong>Reject</strong></td><td>TAD returns to Technical Architect with specific concerns.</td></tr>
+</table>
+
+<h3>CP-3: Security Gate</h3>
+<table>
+  <tr><td style="width:160px"><strong>Trigger</strong></td><td>Security Reviewer completes SRR</td></tr>
+  <tr><td><strong>Preconditions</strong></td><td>SRR contains: posture rating (RED/AMBER/GREEN), threat model, NIST 800-53 control mapping, sensitive data assessment, remediation requirements, and explicit recommendation (Approved / Approved with Conditions / Not Approved)</td></tr>
+  <tr><td><strong>You Review</strong></td><td>Is the posture rating acceptable? Are remediation requirements feasible? Do the findings align with your risk tolerance?</td></tr>
+  <tr><td><strong>Approve</strong></td><td>UX Designer begins UXD. If "Approved with Conditions," conditions must be tracked and verified before release.</td></tr>
+  <tr><td><strong>Reject</strong></td><td>If RED — project may return to Architecture. If specific findings — Technical Architect revises TAD to address findings.</td></tr>
+</table>
+
+<h3>CP-4: Design Approval</h3>
+<table>
+  <tr><td style="width:160px"><strong>Trigger</strong></td><td>UX Designer completes UXD + UI Content Guide</td></tr>
+  <tr><td><strong>Preconditions</strong></td><td>UXD contains personas, user journeys, wireframes, style guide. Content Guide has every label, button, tooltip, error message, empty state, and confirmation dialog.</td></tr>
+  <tr><td><strong>You Review</strong></td><td>Does the UI make sense for your users? Is the content appropriate for your end users? Are accessibility requirements met?</td></tr>
+  <tr><td><strong>Approve</strong></td><td>Build phase begins. Senior Developer starts TIP.</td></tr>
+  <tr><td><strong>Reject</strong></td><td>UXD returns to UX Designer with specific UI/content feedback.</td></tr>
+</table>
+
+<h3>CP-5: Build Complete</h3>
+<table>
+  <tr><td style="width:160px"><strong>Trigger</strong></td><td>All build agents (Senior Dev, Backend, Frontend, DBA, DevOps) complete their reports</td></tr>
+  <tr><td><strong>Preconditions</strong></td><td>TIP, BIR, FIR, DBAR, DIR all exist. Code compiles/passes linting. No unresolved flags in FLAGS.md.</td></tr>
+  <tr><td><strong>You Review</strong></td><td>Spot-check code quality. Verify no placeholder code. Confirm all SRR conditions are addressed in implementation.</td></tr>
+  <tr><td><strong>Approve</strong></td><td>Quality phase begins. QA Lead starts MTP.</td></tr>
+  <tr><td><strong>Reject</strong></td><td>Specific build agents re-execute to address issues.</td></tr>
+</table>
+
+<h3>CP-6: Release Gate</h3>
+<table>
+  <tr><td style="width:160px"><strong>Trigger</strong></td><td>Test Automation Engineer completes TAR</td></tr>
+  <tr><td><strong>Preconditions</strong></td><td>All MTP test cases implemented. Test suite passes. Coverage meets thresholds. No CRITICAL/HIGH defects open.</td></tr>
+  <tr><td><strong>You Review</strong></td><td>Are you confident this is ready? Does it meet your definition of done?</td></tr>
+  <tr><td><strong>Approve</strong></td><td>Project complete. Artifacts committed to GitHub. If retrofit needed, proceed to Phase 4.</td></tr>
+  <tr><td><strong>Reject</strong></td><td>Specific failing areas returned to responsible agents.</td></tr>
+</table>
+
+<h3>CP-7: Retrofit Validation</h3>
+<table>
+  <tr><td style="width:160px"><strong>Trigger</strong></td><td>Reconciliation Report complete</td></tr>
+  <tr><td><strong>Preconditions</strong></td><td>All 5 document pairs (TAD/TAD-R, BIR/BIR-R, DIR/DIR-R, SRR/SRR-R, MTP/MTP-R) reconciled. Gap report shows no critical sections dropped.</td></tr>
+  <tr><td><strong>You Review</strong></td><td>Is the reconciliation clean? Were any important sections lost in revision? Is a merge pass needed?</td></tr>
+  <tr><td><strong>Approve</strong></td><td>Revised documents become the canonical versions.</td></tr>
+  <tr><td><strong>Reject</strong></td><td>Specific retrofit agents re-run with guidance on what was lost.</td></tr>
+</table>
+
+<h3>Handoff Checkpoint (Inter-Crew)</h3>
+<table>
+  <tr><td style="width:160px"><strong>Trigger</strong></td><td>One crew completes its phase and needs to hand off to another crew (e.g., DS → DEV)</td></tr>
+  <tr><td><strong>Preconditions</strong></td><td>Handoff package includes: summary, artifacts list, acceptance criteria, known limitations. Package passes <code>validate_handoff()</code>.</td></tr>
+  <tr><td><strong>You Review</strong></td><td>Are the artifacts complete? Are the acceptance criteria for the receiving crew clear? Are limitations documented?</td></tr>
+  <tr><td><strong>Approve</strong></td><td>Receiving crew begins work.</td></tr>
+  <tr><td><strong>Reject</strong></td><td>Delivering crew addresses rejection reason and resubmits.</td></tr>
+</table>
+
+
+<!-- ============================================================ -->
+<!-- SECTION 5 — CONTEXT OBJECT SCHEMA                             -->
+<!-- ============================================================ -->
+<div class="page-break"></div>
+<h1 id="s5">Section 5 — Context Object Schema</h1>
+
+<p>The context object is the shared state document that follows every project from initiation to completion. It is the single source of truth for project status, artifacts, decisions, and audit history. It is persisted as JSON in <code>logs/PROJ-{id}.json</code>.</p>
+
+<h2>5.1 Human-Readable Field Table</h2>
+
+<table>
+  <tr><th>Field</th><th>Type</th><th>Set By</th><th>Purpose</th></tr>
+  <tr><td><code>project_id</code></td><td>string</td><td>Orchestrator (create)</td><td>Unique identifier, format: <code>PROJ-{8-char-hex}</code></td></tr>
+  <tr><td><code>created_at</code></td><td>ISO 8601 datetime</td><td>Orchestrator (create)</td><td>UTC timestamp of project initiation</td></tr>
+  <tr><td><code>status</code></td><td>string (enum)</td><td>Orchestrator, Router, Checkpoint handler</td><td>Current pipeline state. Values: <code>INITIATED</code>, <code>CLASSIFIED</code>, <code>ROUTED_TO_DEV</code>, <code>ROUTED_TO_DS</code>, <code>ROUTED_TO_DS_PHASE1</code>, <code>ROUTED_TO_DEV_PHASE1</code>, <code>ROUTED_BIDIRECTIONAL</code>, <code>ROUTING_FAILED</code>, <code>ACTIVE_{CREW}_PHASE2</code>, <code>RETURNED_TO_{CREW}</code>, <code>COMPLETE</code></td></tr>
+  <tr><td><code>classification</code></td><td>string (enum)</td><td>Orchestrator (classify)</td><td>Project type: <code>DEV</code>, <code>DS</code>, <code>JOINT</code></td></tr>
+  <tr><td><code>original_request</code></td><td>string</td><td>Orchestrator (create)</td><td>Verbatim natural-language project request from human</td></tr>
+  <tr><td><code>structured_spec</code></td><td>object</td><td>Orchestrator (classify)</td><td>LLM-generated structured specification (see sub-schema below)</td></tr>
+  <tr><td><code>assigned_crew</code></td><td>string | null</td><td>Router</td><td>Active crew: <code>DEV</code>, <code>DS</code>, <code>JOINT</code>, or <code>null</code> if unrouted</td></tr>
+  <tr><td><code>crew_lead</code></td><td>string</td><td>Router</td><td>Name of the crew lead responsible (e.g., "Product Manager", "DS Project Lead")</td></tr>
+  <tr><td><code>next_action</code></td><td>string</td><td>Router, Checkpoint handler</td><td>Description of the next step in the pipeline</td></tr>
+  <tr><td><code>handoff_direction</code></td><td>string | null</td><td>Router (JOINT only)</td><td>For joint projects: <code>DS_TO_DEV</code>, <code>DEV_TO_DS</code>, <code>BIDIRECTIONAL</code></td></tr>
+  <tr><td><code>phase_1_crew</code></td><td>string</td><td>Router (JOINT only)</td><td>First crew in a joint project sequence</td></tr>
+  <tr><td><code>phase_2_crew</code></td><td>string</td><td>Router (JOINT only)</td><td>Second crew in a joint project sequence</td></tr>
+  <tr><td><code>checkpoints</code></td><td>array of objects</td><td>Checkpoint handler</td><td>Record of each checkpoint: name, timestamp, result (APPROVED/REJECTED)</td></tr>
+  <tr><td><code>handoffs</code></td><td>array of objects</td><td>Handoff handler</td><td>Record of each inter-crew handoff with status and file path</td></tr>
+  <tr><td><code>artifacts</code></td><td>array of objects</td><td>Each agent (on completion)</td><td>Registry of all produced artifacts (see artifact sub-schema below)</td></tr>
+  <tr><td><code>audit_log</code></td><td>array of objects</td><td>All agents via <code>log_event()</code></td><td>Chronological record of every significant event</td></tr>
+</table>
+
+<h2>5.2 Sub-Schemas</h2>
+
+<h3>structured_spec</h3>
+<table>
+  <tr><th>Field</th><th>Type</th><th>Purpose</th></tr>
+  <tr><td><code>title</code></td><td>string</td><td>Short project title (≤5 words)</td></tr>
+  <tr><td><code>description</code></td><td>string</td><td>One-paragraph summary</td></tr>
+  <tr><td><code>business_goal</code></td><td>string</td><td>Why this matters (one sentence)</td></tr>
+  <tr><td><code>deliverables</code></td><td>array of strings</td><td>Expected outputs</td></tr>
+  <tr><td><code>success_criteria</code></td><td>array of strings</td><td>How we know it's done</td></tr>
+  <tr><td><code>estimated_complexity</code></td><td>enum: LOW | MEDIUM | HIGH</td><td>Complexity rating</td></tr>
+  <tr><td><code>data_required</code></td><td>boolean</td><td>Does this project need existing data?</td></tr>
+  <tr><td><code>primary_crew</code></td><td>enum: DEV | DS | JOINT</td><td>Crew classification</td></tr>
+  <tr><td><code>handoff_direction</code></td><td>enum | null</td><td>DS_TO_DEV | DEV_TO_DS | BIDIRECTIONAL (JOINT only)</td></tr>
+</table>
+
+<h3>artifacts[] entry</h3>
+<table>
+  <tr><th>Field</th><th>Type</th><th>Purpose</th></tr>
+  <tr><td><code>name</code></td><td>string</td><td>Human-readable artifact name (e.g., "Product Requirements Document")</td></tr>
+  <tr><td><code>type</code></td><td>string</td><td>Artifact type code (e.g., "PRD", "BIR", "TAD_R")</td></tr>
+  <tr><td><code>path</code></td><td>string</td><td>File path relative to project root</td></tr>
+  <tr><td><code>created_at</code></td><td>ISO 8601 datetime</td><td>When the artifact was saved</td></tr>
+  <tr><td><code>agent</code></td><td>string</td><td>Which agent produced it</td></tr>
+</table>
+
+<h3>handoffs[] entry</h3>
+<table>
+  <tr><th>Field</th><th>Type</th><th>Purpose</th></tr>
+  <tr><td><code>handoff_id</code></td><td>string</td><td>Format: <code>HO-{project_id}-{FROM}2{TO}</code></td></tr>
+  <tr><td><code>status</code></td><td>enum</td><td>PENDING_APPROVAL | APPROVED | REJECTED</td></tr>
+  <tr><td><code>path</code></td><td>string</td><td>File path to handoff package JSON</td></tr>
+  <tr><td><code>reason</code></td><td>string | null</td><td>Rejection reason (if rejected)</td></tr>
+</table>
+
+<h3>audit_log[] entry</h3>
+<table>
+  <tr><th>Field</th><th>Type</th><th>Purpose</th></tr>
+  <tr><td><code>timestamp</code></td><td>ISO 8601 datetime</td><td>UTC time of event</td></tr>
+  <tr><td><code>event</code></td><td>string</td><td>Event name (e.g., "PROJECT_CLASSIFIED", "ROUTED", "CHECKPOINT: CP-1", "APPROVED: CP-1")</td></tr>
+  <tr><td><code>detail</code></td><td>string</td><td>Additional context</td></tr>
+</table>
+
+<h2>5.3 Full JSON Schema</h2>
+<pre>{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "ProjectContext",
+  "type": "object",
+  "required": ["project_id", "created_at", "status", "classification",
+               "original_request", "structured_spec", "checkpoints",
+               "handoffs", "artifacts", "audit_log"],
+  "properties": {
+    "project_id": {
+      "type": "string",
+      "pattern": "^PROJ-[A-F0-9]{8}$",
+      "description": "Unique project identifier"
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["INITIATED", "CLASSIFIED", "ROUTED_TO_DEV", "ROUTED_TO_DS",
+               "ROUTED_TO_DS_PHASE1", "ROUTED_TO_DEV_PHASE1",
+               "ROUTED_BIDIRECTIONAL", "ROUTING_FAILED", "COMPLETE"]
+    },
+    "classification": {
+      "type": "string",
+      "enum": ["DEV", "DS", "JOINT", "UNKNOWN"]
+    },
+    "original_request": { "type": "string", "minLength": 1 },
+    "structured_spec": {
+      "type": "object",
+      "properties": {
+        "title": { "type": "string", "maxLength": 50 },
+        "description": { "type": "string" },
+        "business_goal": { "type": "string" },
+        "deliverables": { "type": "array", "items": { "type": "string" } },
+        "success_criteria": { "type": "array", "items": { "type": "string" } },
+        "estimated_complexity": { "type": "string", "enum": ["LOW", "MEDIUM", "HIGH"] },
+        "data_required": { "type": "boolean" },
+        "primary_crew": { "type": "string", "enum": ["DEV", "DS", "JOINT"] },
+        "handoff_direction": {
+          "type": ["string", "null"],
+          "enum": ["DS_TO_DEV", "DEV_TO_DS", "BIDIRECTIONAL", null]
+        }
+      }
+    },
+    "assigned_crew": { "type": ["string", "null"] },
+    "crew_lead": { "type": "string" },
+    "next_action": { "type": "string" },
+    "handoff_direction": { "type": ["string", "null"] },
+    "phase_1_crew": { "type": "string" },
+    "phase_2_crew": { "type": "string" },
+    "checkpoints": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string" },
+          "timestamp": { "type": "string", "format": "date-time" },
+          "result": { "type": "string", "enum": ["APPROVED", "REJECTED"] },
+          "reason": { "type": "string" }
+        }
+      }
+    },
+    "handoffs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "handoff_id": { "type": "string" },
+          "status": { "type": "string", "enum": ["PENDING_APPROVAL", "APPROVED", "REJECTED"] },
+          "path": { "type": "string" },
+          "reason": { "type": ["string", "null"] }
+        }
+      }
+    },
+    "artifacts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "type", "path"],
+        "properties": {
+          "name": { "type": "string" },
+          "type": { "type": "string" },
+          "path": { "type": "string" },
+          "created_at": { "type": "string", "format": "date-time" },
+          "agent": { "type": "string" }
+        }
+      }
+    },
+    "audit_log": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["timestamp", "event"],
+        "properties": {
+          "timestamp": { "type": "string", "format": "date-time" },
+          "event": { "type": "string" },
+          "detail": { "type": "string", "default": "" }
+        }
+      }
+    }
+  }
+}</pre>
+
+
+<!-- ============================================================ -->
+<!-- SECTION 6 — CONFLICT RESOLUTION                               -->
+<!-- ============================================================ -->
+<div class="page-break"></div>
+<h1 id="s6">Section 6 — Conflict Resolution</h1>
+
+<h2>6.1 Agent Disagreement</h2>
+<p>Agents in this system do not debate — they produce artifacts sequentially, and downstream agents work from the artifacts they receive. However, conflicts can emerge when an agent discovers that an upstream artifact contradicts another upstream artifact it also consumes.</p>
+
+<table>
+  <tr><th>Conflict Type</th><th>Detection Method</th><th>Resolution</th></tr>
+  <tr>
+    <td>TAD specifies technology X, but SRR flags technology X as non-compliant</td>
+    <td>Security Reviewer produces SRR with RED/AMBER finding against TAD component</td>
+    <td>SRR wins. TAD must be revised to address the finding before build phase begins. Escalate to human at CP-3 (Security Gate).</td>
+  </tr>
+  <tr>
+    <td>BIR API contract doesn't match what FIR expects (based on UXD)</td>
+    <td>Frontend Developer flags mismatch in FIR</td>
+    <td>TIP is the authority. If TIP is ambiguous, escalate to Senior Developer for clarification. If TIP is wrong, escalate to human.</td>
+  </tr>
+  <tr>
+    <td>DBA finds schema flaws in BIR</td>
+    <td>Database Administrator flags in DBAR</td>
+    <td>DBA wins on schema matters. Backend Developer updates BIR to match DBAR recommendations.</td>
+  </tr>
+  <tr>
+    <td>Retrofit loses content from original</td>
+    <td>Reconciliation agent detects dropped/thinned sections</td>
+    <td>Reconciliation Report flags gaps. Human reviews at CP-7 and decides: accept loss, re-run retrofit with guidance, or perform manual merge.</td>
+  </tr>
+  <tr>
+    <td>QA Lead finds untestable requirements in PRD</td>
+    <td>QA Lead flags in MTP</td>
+    <td>Escalate to human. PRD may need revision (triggers re-run from CP-1).</td>
+  </tr>
+</table>
+
+<h2>6.2 Incompatible Outputs</h2>
+<p>When two agents produce outputs that cannot coexist:</p>
+<ol>
+  <li>The downstream agent that discovers the incompatibility documents it in its output report.</li>
+  <li>The Orchestrator flags the incompatibility in the audit log.</li>
+  <li>The system halts at the next checkpoint and presents the conflict to the human.</li>
+  <li>The human decides which agent's output takes precedence and which must revise.</li>
+</ol>
+
+<h2>6.3 Ambiguity</h2>
+<p>When an agent encounters ambiguity in its inputs:</p>
+<ol>
+  <li>The agent must <strong>not</strong> guess or assume. Each agent's backstory explicitly states it flags ambiguity rather than proceeding.</li>
+  <li>The agent documents the ambiguity in its output with a clear "AMBIGUITY FLAG" section.</li>
+  <li>If the ambiguity is blocking (cannot produce any meaningful output), the agent produces a partial output + explicit flag, and the Orchestrator escalates to the human via SMS/email.</li>
+  <li>The human resolves the ambiguity, and the agent re-runs with clarified inputs.</li>
+</ol>
+
+<h2>6.4 Authority Hierarchy</h2>
+<p>When in doubt about whose output takes precedence:</p>
+<ol>
+  <li><strong>Human</strong> — overrides everything</li>
+  <li><strong>Security Reviewer</strong> — overrides architecture and implementation on security/compliance matters</li>
+  <li><strong>Technical Architect</strong> — overrides implementation decisions on architecture matters</li>
+  <li><strong>Senior Developer (TIP)</strong> — overrides build agents on implementation approach</li>
+  <li><strong>Database Administrator</strong> — overrides Backend Developer on schema/query matters</li>
+  <li><strong>QA Lead</strong> — can block release but cannot override architecture or security decisions</li>
+</ol>
+
+
+<!-- ============================================================ -->
+<!-- SECTION 7 — QUALITY STANDARDS                                 -->
+<!-- ============================================================ -->
+<div class="page-break"></div>
+<h1 id="s7">Section 7 — Quality Standards</h1>
+
+<h2>7.1 Code Quality</h2>
+<table>
+  <tr><th>Criterion</th><th>Standard</th></tr>
+  <tr><td>No placeholder code</td><td>Every function, method, and handler must be complete. Comments like <code>// implement logic here</code> or <code>// TODO</code> in delivered artifacts are not acceptable.</td></tr>
+  <tr><td>Type safety</td><td>TypeScript for all frontend and React Native code. Python type hints for all function signatures.</td></tr>
+  <tr><td>Error handling</td><td>Every API call, file operation, and external integration must have explicit error handling. No unhandled promise rejections. No bare <code>except</code> blocks in Python.</td></tr>
+  <tr><td>Security</td><td>All SRR CRITICAL and HIGH findings must be addressed in implementation. Sensitive data handling follows the principle of least privilege. Secrets never hardcoded.</td></tr>
+  <tr><td>Accessibility</td><td>WCAG 2.1 AA compliance. VoiceOver/TalkBack tested. Every interactive element has an accessibility label.</td></tr>
+  <tr><td>Deployment agnostic</td><td>No cloud provider names in application code. Environment variables for all infrastructure-specific configuration. <code>DEPLOY_TARGET</code> env var controls provider-specific modules.</td></tr>
+</table>
+
+<h2>7.2 Documentation Quality</h2>
+<table>
+  <tr><th>Criterion</th><th>Standard</th></tr>
+  <tr><td>Completeness</td><td>Every section specified in the agent's task description must be present. The Reconciliation agent verifies this for retrofit documents.</td></tr>
+  <tr><td>Actionability</td><td>A mid-level developer should be able to execute from any report without asking clarifying questions.</td></tr>
+  <tr><td>Traceability</td><td>Every implementation decision must trace back to a requirement in the PRD, a control in the SRR, or a design in the UXD.</td></tr>
+  <tr><td>Consistency</td><td>Terminology, naming conventions, and formatting must be consistent across all artifacts in a project.</td></tr>
+</table>
+
+<h2>7.3 Test Coverage</h2>
+<table>
+  <tr><th>Test Type</th><th>Target</th><th>Tools</th></tr>
+  <tr><td>Unit tests</td><td>≥80% code coverage on business logic</td><td>Jest, XCTest, JUnit5</td></tr>
+  <tr><td>Component tests</td><td>Every UI component has at least one render test</td><td>React Testing Library, Compose UI Testing</td></tr>
+  <tr><td>API integration</td><td>Every endpoint has positive and negative test cases</td><td>Supertest</td></tr>
+  <tr><td>E2E tests</td><td>Every critical user journey covered</td><td>Playwright (web), Detox (mobile)</td></tr>
+  <tr><td>Accessibility</td><td>axe-core scan on every page, no CRITICAL/SERIOUS violations</td><td>axe-core, Playwright a11y plugin</td></tr>
+  <tr><td>Performance</td><td>Baseline established, no regression beyond 10%</td><td>k6</td></tr>
+</table>
+
+<h2>7.4 Architecture Diagrams</h2>
+<p>Architecture diagrams in the TAD must be:</p>
+<ul>
+  <li>Described in enough detail for a developer to implement — not hand-wavy boxes and arrows</li>
+  <li>Deployment-agnostic — use generic component names with provider examples in separate tables</li>
+  <li>Consistent with the data flow described in the BAD</li>
+  <li>Inclusive of security boundaries, network segmentation, and access control points from the SRR</li>
+</ul>
+
+<h2>7.5 Output Guard Standards</h2>
+<p>To prevent agent output degradation (looping, repetition, hallucinated content):</p>
+<ul>
+  <li><strong>Task-level:</strong> <code>max_tokens</code> set on tasks with known large output</li>
+  <li><strong>Agent-level:</strong> "OUTPUT DISCIPLINE" clause in backstory for agents prone to repetition</li>
+  <li><strong>System-level:</strong> <code>validate_agent_output()</code> post-processing catches runaway repetition and truncates with <code>[OUTPUT TRUNCATED: Repetition detected]</code></li>
+  <li><strong>Multi-part agents:</strong> Part 2 receives Part 1 output as context (not raw source doc) to prevent regression. Section-number validation ensures Part 2 doesn't regenerate Part 1 content.</li>
+</ul>
+
+
+<!-- ============================================================ -->
+<!-- SECTION 8 — ESCALATION MATRIX                                 -->
+<!-- ============================================================ -->
+<div class="page-break"></div>
+<h1 id="s8">Section 8 — Escalation Matrix</h1>
+
+<h2>8.1 Immediate Human Escalation Required</h2>
+<p>These situations trigger an immediate SMS + email notification. The system halts until you respond.</p>
+<table>
+  <tr><th>Situation</th><th>Triggered By</th><th>Action</th></tr>
+  <tr><td>Any checkpoint reached</td><td>Orchestrator</td><td>System pauses, sends SMS + email, waits for APPROVE/REJECT in terminal</td></tr>
+  <tr><td>Security posture rated RED</td><td>Security Reviewer</td><td>Development blocked. Human decides: revise architecture, reduce scope, or accept risk</td></tr>
+  <tr><td>Classification fails (UNKNOWN)</td><td>Orchestrator (classify)</td><td>Human manually classifies or rephrases the request</td></tr>
+  <tr><td>Handoff validation fails</td><td>Orchestrator (handoff)</td><td>Missing artifacts or acceptance criteria. Human reviews package completeness</td></tr>
+  <tr><td>Agent produces no output or empty output</td><td>Any agent</td><td>Likely model timeout or prompt issue. Human investigates logs</td></tr>
+  <tr><td>Budget, vendor, or policy decisions</td><td>Any agent flags in output</td><td>Human makes the decision; agent cannot proceed without it</td></tr>
+  <tr><td>Conflicting upstream artifacts (blocking)</td><td>Any downstream agent</td><td>Agent documents conflict, Orchestrator escalates</td></tr>
+  <tr><td>Reconciliation finds critical section dropped</td><td>Reconciliation agent</td><td>Human decides: accept, re-run, or manual merge</td></tr>
+</table>
+
+<h2>8.2 Agents Resolve Autonomously</h2>
+<p>These situations are handled within the agent pipeline without human intervention.</p>
+<table>
+  <tr><th>Situation</th><th>Resolution</th></tr>
+  <tr><td>Agent output has minor formatting issues</td><td><code>validate_agent_output()</code> cleans automatically</td></tr>
+  <tr><td>Agent output contains markdown fences in JSON</td><td>Orchestrator strips fences before JSON parsing</td></tr>
+  <tr><td>Part 2 of a split agent starts repeating Part 1 content</td><td>Section-number validation detects forbidden sections and flags the output as BAD. Agent re-runs with stricter context injection.</td></tr>
+  <tr><td>DBA finds missing indexes in BIR schema</td><td>DBA adds indexes in DBAR. Backend Developer does not need to re-run — DBAR is authoritative on schema optimizations.</td></tr>
+  <tr><td>Retrofit removes provider-specific content</td><td>Expected behavior. Reconciliation agent documents what was removed so human can verify at CP-7.</td></tr>
+  <tr><td>Agent flags non-blocking ambiguity</td><td>Agent documents it as an AMBIGUITY FLAG in output and continues. Human reviews at next checkpoint.</td></tr>
+  <tr><td>LLM response includes preamble text before JSON</td><td>Orchestrator's JSON parser strips non-JSON content</td></tr>
+  <tr><td>Downstream agent receives truncated upstream artifact</td><td>Agents work with the excerpt they receive (tasks pass first N chars of upstream docs). If insufficient, they flag gaps rather than hallucinating.</td></tr>
+</table>
+
+<h2>8.3 Escalation Flow Diagram</h2>
+<pre>
+  Agent encounters issue
+           │
+           ▼
+  ┌─── Is it blocking? ───┐
+  │                        │
+  No                      Yes
+  │                        │
+  ▼                        ▼
+Document in output    Can the agent resolve
+as AMBIGUITY FLAG     with available context?
+  │                        │
+  ▼                   ┌────┴────┐
+Continue to           No        Yes
+next checkpoint       │         │
+(human reviews)       ▼         ▼
+                 Orchestrator  Agent resolves
+                 sends SMS     and documents
+                 + email       resolution in
+                 + halts       output report
+                      │
+                      ▼
+                 Human responds
+                 APPROVE/REJECT
+</pre>
+
+
+<!-- ============================================================ -->
+<!-- SECTION 9 — QUICK START GUIDE                                 -->
+<!-- ============================================================ -->
+<div class="page-break"></div>
+<h1 id="s9">Section 9 — Quick Start Guide</h1>
+
+<p>This section walks you through your first project end-to-end. Every command is run from <code>~/dev-team/</code> with the virtual environment activated.</p>
+
+<h2>9.1 Prerequisites</h2>
+<ol>
+  <li>Complete the Stack Installation &amp; Validation Guide (all checks green).</li>
+  <li>Activate the virtual environment: <code>cd ~/dev-team && source .venv/bin/activate</code></li>
+  <li>Verify Ollama is running: <code>curl http://localhost:11434/api/tags</code> (should return model list)</li>
+  <li>Verify <code>config/.env</code> contains your GITHUB_TOKEN and model settings.</li>
+</ol>
+
+<h2>9.2 Step 1 — Classify Your Project</h2>
+<p>Open <code>agents/orchestrator/classify.py</code> and replace the test request in the <code>__main__</code> block with your actual project description. Then run:</p>
+<pre>python agents/orchestrator/classify.py</pre>
+<p>What happens:</p>
+<ul>
+  <li>The Orchestrator LLM reads your natural-language request.</li>
+  <li>It produces a structured JSON spec (title, deliverables, complexity, crew classification).</li>
+  <li>A project context file is saved to <code>logs/PROJ-{id}.json</code>.</li>
+  <li>The terminal prints the project ID and structured spec for your review.</li>
+</ul>
+<div class="callout">
+  <strong>Tip:</strong> Be specific in your project description. "Build a dashboard" will produce a vague spec. "Build an interactive dashboard showing monthly trip data with filters for trip type, date range, and provider, deployed as a containerized web app" gives the agents much better starting material.
+</div>
+
+<h2>9.3 Step 2 — Route the Project</h2>
+<pre>python agents/orchestrator/router.py</pre>
+<p>The router automatically loads the most recent project context from <code>logs/</code>, reads the classification (DEV, DS, or JOINT), and assigns a crew lead. You'll see a routing summary printed to the terminal.</p>
+
+<h2>9.4 Step 3 — Run the Strategy Phase</h2>
+<p>Each agent is run individually, in order. Each one loads the most recent project context and looks up its required upstream artifacts automatically.</p>
+<pre># 3a. Product Manager → produces PRD
+python agents/dev/strategy/product_manager.py
+
+# ⏸️ CHECKPOINT CP-1: Review the PRD
+#    Open the file printed in the terminal (e.g., dev/requirements/PROJ-XXXXX_PRD.md)
+#    Type APPROVE or REJECT when prompted
+
+# 3b. Business Analyst → produces BAD
+python agents/dev/strategy/business_analyst.py
+
+# 3c. Scrum Master → produces Sprint Plan
+python agents/dev/strategy/scrum_master.py
+
+# 3d. Technical Architect → produces TAD
+python agents/dev/strategy/technical_architect.py
+
+# ⏸️ CHECKPOINT CP-2: Review the architecture
+
+# 3e. Security Reviewer → produces SRR
+python agents/dev/strategy/security_reviewer.py
+
+# ⏸️ CHECKPOINT CP-3: Security gate
+
+# 3f. UX/UI Designer → produces UXD
+python agents/dev/strategy/ux_designer.py
+
+# 3g. UX Content Guide → produces UI Content Guide
+python agents/dev/strategy/ux_content_guide.py
+
+# ⏸️ CHECKPOINT CP-4: Review design + content</pre>
+
+<h2>9.5 Step 4 — Run the Build Phase</h2>
+<pre># 4a. Senior Developer → produces TIP
+python agents/dev/build/senior_developer.py
+
+# 4b. Backend Developer → produces BIR
+python agents/dev/build/backend_developer.py
+
+# 4c. Frontend Developer → produces FIR
+python agents/dev/build/frontend_developer.py
+
+# 4d. Database Administrator → produces DBAR
+python agents/dev/build/database_admin.py
+
+# 4e. DevOps Engineer → produces DIR
+python agents/dev/build/devops_engineer.py
+
+# ⏸️ CHECKPOINT CP-5: Build complete review</pre>
+
+<h2>9.6 Step 5 — Run the Quality Phase</h2>
+<pre># 5a. QA Lead → produces MTP
+python agents/dev/quality/qa_lead.py
+
+# 5b. Test Automation Engineer → produces TAR
+python agents/dev/quality/test_automation_engineer.py
+
+# ⏸️ CHECKPOINT CP-6: Release gate</pre>
+
+<h2>9.7 Step 6 — Commit and Review</h2>
+<pre># Commit all artifacts to git
+git add -A
+git commit -m "PROJ-XXXXX: Full pipeline complete — all artifacts generated"
+git push</pre>
+<p>Your project context in <code>logs/PROJ-{id}.json</code> contains the full audit trail — every agent that ran, every artifact produced, every checkpoint result.</p>
+
+<h2>9.8 Step 7 — Run Retrofit (Optional)</h2>
+<p>If your initial run produced cloud-provider-specific content that needs to be made deployment-agnostic:</p>
+<pre># Run each retrofit agent
+python agents/dev/build/tad_retrofit.py
+python agents/dev/build/backend_developer_retrofit.py
+python agents/dev/build/devops_engineer_retrofit.py
+python agents/dev/build/srr_retrofit.py
+python agents/dev/quality/qa_lead_retrofit.py
+
+# Run reconciliation to verify nothing critical was lost
+python agents/dev/reconciliation.py
+
+# ⏸️ CHECKPOINT CP-7: Review reconciliation report</pre>
+
+<h2>9.9 Step 8 — Mobile Pipeline (Optional)</h2>
+<p>If your project includes a mobile app, run the mobile sub-team after the web pipeline completes (they share the PRD and SRR):</p>
+<pre># Mobile UX
+python agents/mobile/ux/mobile_ux_designer.py
+
+# Native tracks (can run in parallel)
+python agents/mobile/ios/ios_developer.py
+python agents/mobile/android/android_developer.py
+
+# React Native track
+python agents/mobile/rn/react_native_architect_part1.py
+python agents/mobile/rn/react_native_architect_part2.py
+python agents/mobile/rn/react_native_developer.py
+
+# Patches if iOS report has gaps
+python agents/mobile/ios/ios_developer_patch.py
+python agents/mobile/ios/ios_accessibility_patch.py
+
+# Mobile DevOps and QA
+python agents/mobile/devops/mobile_devops_engineer.py
+python agents/mobile/qa/mobile_qa_specialist.py</pre>
+
+
+<!-- ============================================================ -->
+<!-- SECTION 10 — DAY-TO-DAY OPERATIONS                            -->
+<!-- ============================================================ -->
+<div class="page-break"></div>
+<h1 id="s10">Section 10 — Day-to-Day Operations</h1>
+
+<h2>10.1 Starting a New Project</h2>
+<ol>
+  <li>Write your project description in plain English. Be as specific as possible about deliverables, constraints, and success criteria.</li>
+  <li>Edit the <code>__main__</code> block of <code>classify.py</code> with your request text, or import <code>classify_project()</code> from your own script.</li>
+  <li>Run <code>classify.py</code> → <code>router.py</code> → then the pipeline in sequence as shown in the Quick Start Guide.</li>
+</ol>
+
+<h2>10.2 Monitoring Agent Execution</h2>
+<p>Every agent runs with <code>verbose=True</code>, which means CrewAI prints the full LLM interaction to the terminal in real time. Watch for:</p>
+<table>
+  <tr><th>Terminal Signal</th><th>Meaning</th></tr>
+  <tr><td><code>🔍 Classifying project request...</code></td><td>Orchestrator is sending your request to the LLM</td></tr>
+  <tr><td><code>📋 Product Manager generating PRD for: ...</code></td><td>Agent is starting its task</td></tr>
+  <tr><td><code>💾 PRD saved: dev/requirements/PROJ-XXXXX_PRD.md</code></td><td>Agent completed successfully, artifact written to disk</td></tr>
+  <tr><td><code>⏸️ CHECKPOINT: ...</code></td><td>System is waiting for your approval</td></tr>
+  <tr><td><code>📱 SMS sent via AT&amp;T gateway: ...</code></td><td>You've been notified on your phone</td></tr>
+  <tr><td><code>📧 Email sent: ...</code></td><td>Backup notification sent to email</td></tr>
+  <tr><td><code>⚠️ SMS failed: ...</code></td><td>Notification failed — check GMAIL_ADDRESS and GMAIL_APP_PASSWORD in .env</td></tr>
+  <tr><td>Agent text streaming with no <code>💾</code> after 15+ minutes</td><td>Possible timeout or infinite loop — see Troubleshooting</td></tr>
+</table>
+
+<h2>10.3 Responding to Checkpoints</h2>
+<p>When a checkpoint fires:</p>
+<ol>
+  <li>You receive an SMS and email with the project ID, checkpoint name, and summary.</li>
+  <li>The terminal displays the full checkpoint details and waits.</li>
+  <li>Open and review the artifact file printed in the terminal (e.g., <code>dev/requirements/PROJ-XXXXX_PRD.md</code>).</li>
+  <li>Type <code>APPROVE</code> or <code>REJECT</code> in the terminal.</li>
+  <li>If you reject, enter a reason — this is logged in the audit trail and guides the agent when it re-runs.</li>
+</ol>
+<div class="warning">
+  <strong>Important:</strong> If your terminal session dies while waiting at a checkpoint, the project context has already been saved. Restart the agent that was running — it will pick up from the same context file.
+</div>
+
+<h2>10.4 Reviewing Agent Outputs</h2>
+<p>All agent outputs are saved as Markdown files. Here is how to efficiently review them:</p>
+<table>
+  <tr><th>Review Approach</th><th>When to Use</th></tr>
+  <tr><td>Read the first 500 characters printed in the terminal</td><td>Quick sanity check — does the output start with the right section headings?</td></tr>
+  <tr><td>Open the .md file in your editor or viewer</td><td>Full review at checkpoints (CP-1 through CP-7)</td></tr>
+  <tr><td>Check <code>logs/PROJ-{id}.json</code></td><td>Verify the artifact was registered in the context object and the audit log entry exists</td></tr>
+  <tr><td>Search for <code>TODO</code>, <code>placeholder</code>, <code>implement here</code></td><td>Catch incomplete code in build agent outputs</td></tr>
+  <tr><td>Check <code>FLAGS.md</code></td><td>Known gaps tracked across the project — review before each checkpoint</td></tr>
+</table>
+
+<h2>10.5 Resuming After Interruption</h2>
+<p>Every agent loads its context from the most recent <code>logs/PROJ-*.json</code> file and looks up required upstream artifacts from the context's <code>artifacts</code> array. This means:</p>
+<ul>
+  <li>If an agent crashes mid-execution, simply re-run it. It will read the same context and upstream artifacts.</li>
+  <li>If you need to re-run an agent that already completed (e.g., after rejecting at a checkpoint), just run it again. It will overwrite its previous output.</li>
+  <li>If you have multiple project context files in <code>logs/</code>, agents always pick the most recent by file modification time. To target a specific project, either remove other context files or modify the agent's <code>__main__</code> block to load a specific file.</li>
+</ul>
+
+<h2>10.6 Running Multiple Projects</h2>
+<p>The system runs one project at a time (Ollama serves one model request at a time by default with <code>OLLAMA_NUM_PARALLEL=2</code>). To run a second project, either:</p>
+<ul>
+  <li>Wait for the first to complete.</li>
+  <li>Or archive the first project's context file to a subdirectory so agents don't pick it up, then start a fresh <code>classify.py</code> run.</li>
+</ul>
+
+
+<!-- ============================================================ -->
+<!-- SECTION 11 — TROUBLESHOOTING & RECOVERY                       -->
+<!-- ============================================================ -->
+<div class="page-break"></div>
+<h1 id="s11">Section 11 — Troubleshooting &amp; Recovery</h1>
+
+<h2>11.1 Agent Produces No Output</h2>
+<table>
+  <tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr>
+  <tr><td>Agent runs for 30+ minutes with no terminal output, then crashes</td><td>Model timeout. The LLM ran out of context window or hit Ollama's timeout.</td><td>Check <code>timeout=1800</code> in the agent's <code>LLM()</code> constructor. Increase if needed. Also verify <code>OLLAMA_KEEP_ALIVE=30m</code> in the systemd override.</td></tr>
+  <tr><td>Agent exits immediately with "No project context found"</td><td>No <code>logs/PROJ-*.json</code> file exists.</td><td>Run <code>classify.py</code> first to create the project context.</td></tr>
+  <tr><td>Agent exits with "Missing TIP or TAD" (or similar)</td><td>Required upstream artifact not found in the context object's <code>artifacts</code> array.</td><td>Run the upstream agent first. Check <code>logs/PROJ-*.json</code> → <code>artifacts</code> array to see what's registered.</td></tr>
+  <tr><td>CrewAI throws <code>OPENAI_API_KEY</code> error</td><td><code>.env</code> not loaded before crew instantiation.</td><td>Verify <code>OPENAI_API_KEY=NA</code> is in <code>config/.env</code> and the agent's <code>load_dotenv("config/.env")</code> runs before any CrewAI import.</td></tr>
+</table>
+
+<h2>11.2 Agent Loops or Repeats Content</h2>
+<p>This is the most common failure mode with local LLMs. The agent generates valid content, then enters a loop producing identical or near-identical text.</p>
+<table>
+  <tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr>
+  <tr><td>Same block of text repeating dozens of times in terminal output</td><td>Model lost the "stop" instruction. Common with large outputs that push against context window limits.</td><td>
+    <strong>Immediate:</strong> Ctrl+C to kill the process. The output may be partially usable.<br>
+    <strong>Prevent:</strong> Apply all three fixes from the Output Guard Patch:<br>
+    1. Add <code>max_tokens</code> to the CrewAI Task<br>
+    2. Add "OUTPUT DISCIPLINE" clause to agent backstory<br>
+    3. Add <code>validate_agent_output()</code> post-processing in the orchestrator
+  </td></tr>
+  <tr><td>Part 2 of a split agent regenerates Part 1 content</td><td>Part 2 received the raw architecture document instead of Part 1's actual output as context.</td><td>Ensure Part 2's task injects Part 1's output directly (not the source doc). The RN Developer agent has the reference implementation of this fix.</td></tr>
+  <tr><td>Agent produces valid content for sections 1–7, then loops on section 8</td><td>Output length approaching model's effective limit.</td><td>Split the agent into two sequential tasks (Part 1 / Part 2 pattern). Feed Part 1's output as context to Part 2.</td></tr>
+</table>
+
+<h2>11.3 Agent Produces Bad or Incomplete Output</h2>
+<table>
+  <tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr>
+  <tr><td>Output has correct structure but placeholder code (<code>// TODO</code>, <code># implement here</code>)</td><td>Task prompt not strict enough. Model took a shortcut.</td><td>Add explicit instructions to the task: "No placeholders. No TODO comments. Every function must be complete and working." The iOS Developer and RN Developer agents have examples of this.</td></tr>
+  <tr><td>Output is missing entire sections specified in the task</td><td>Context window overflow — model ran out of space before finishing.</td><td>Reduce the size of upstream artifacts passed to the task (most agents already truncate with <code>[:3000]</code> or <code>[:4000]</code>). Or split the agent into parts.</td></tr>
+  <tr><td>JSON parse fails on Orchestrator output</td><td>Model wrapped JSON in markdown fences or added preamble text.</td><td>Already handled by the classify.py parser (strips <code>```json</code> fences). If it still fails, the raw output is printed — manually extract the JSON.</td></tr>
+  <tr><td>Output drifts from the project (e.g., writes code for a different app)</td><td>Context passed to the agent is too generic or too truncated.</td><td>Increase the excerpt size of the relevant upstream artifact. Ensure the project title and description appear early in the task prompt.</td></tr>
+</table>
+
+<h2>11.4 Ollama Issues</h2>
+<table>
+  <tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr>
+  <tr><td>Ollama API returns connection refused</td><td>Ollama service not running.</td><td><code>sudo systemctl start ollama</code></td></tr>
+  <tr><td>Model loads slowly (60+ seconds before first token)</td><td>Model loaded cold from SSD.</td><td><code>OLLAMA_KEEP_ALIVE=30m</code> in systemd override keeps models hot between calls. Run <code>sudo systemctl restart ollama</code> after changing.</td></tr>
+  <tr><td>Out of memory errors</td><td>Both Tier 1 and Tier 2 models loaded simultaneously and exceed 96GB.</td><td><code>OLLAMA_MAX_LOADED_MODELS=2</code> limits concurrent models. If the upgraded 72b model causes OOM, consider running strategy and build phases in separate sessions.</td></tr>
+  <tr><td>SELinux blocks Ollama</td><td>Fedora SELinux policy blocks network connections.</td><td><code>sudo setsebool -P httpd_can_network_connect 1</code> or temporarily <code>sudo setenforce 0</code></td></tr>
+</table>
+
+<h2>11.5 Recovery Procedures</h2>
+
+<h3>Recovering a partially completed pipeline</h3>
+<ol>
+  <li>Open <code>logs/PROJ-{id}.json</code> and check the <code>artifacts</code> array and <code>status</code> field.</li>
+  <li>Identify the last agent that completed successfully (its artifact is in the array).</li>
+  <li>Run the next agent in the pipeline. It will load the context and find its upstream artifacts.</li>
+</ol>
+
+<h3>Re-running an agent after rejection</h3>
+<ol>
+  <li>The rejection reason is logged in <code>audit_log</code>. Note the specific feedback.</li>
+  <li>If the feedback requires a prompt change, edit the agent's task description.</li>
+  <li>Re-run the agent: <code>python agents/dev/strategy/product_manager.py</code></li>
+  <li>The agent will overwrite its previous output file and update the context.</li>
+</ol>
+
+<h3>Salvaging output from a Ctrl+C kill</h3>
+<ol>
+  <li>The agent may have written a partial file before the kill. Check the output path printed at agent start.</li>
+  <li>If the file exists and has useful content, you can manually add it to the context's <code>artifacts</code> array in the JSON file.</li>
+  <li>The downstream agent will consume whatever is in the file.</li>
+</ol>
+
+<h3>Starting over on a project</h3>
+<ol>
+  <li>Move or delete the project context: <code>mv logs/PROJ-XXXXX.json logs/archive/</code></li>
+  <li>Move or delete generated artifacts: <code>rm dev/requirements/PROJ-XXXXX_*.md</code></li>
+  <li>Run <code>classify.py</code> to create a fresh project context.</li>
+</ol>
+
+
+<!-- ============================================================ -->
+<!-- SECTION 12 — MAINTENANCE & CONFIGURATION                      -->
+<!-- ============================================================ -->
+<div class="page-break"></div>
+<h1 id="s12">Section 12 — Maintenance &amp; Configuration</h1>
+
+<h2>12.1 Changing Models</h2>
+<p>Model selection is controlled by two environment variables in <code>config/.env</code>:</p>
+<pre>TIER1_MODEL=ollama/qwen2.5:72b      # Strategy agents (reasoning, planning)
+TIER2_MODEL=ollama/qwen2.5-coder:32b # Build agents (code generation)</pre>
+<p>To switch models:</p>
+<ol>
+  <li>Pull the new model: <code>ollama pull &lt;model-name&gt;</code></li>
+  <li>Update the <code>TIER1_MODEL</code> or <code>TIER2_MODEL</code> value in <code>config/.env</code></li>
+  <li>No code changes needed — every agent reads the tier from the environment.</li>
+</ol>
+<div class="callout">
+  <strong>Exception:</strong> Some agents override the env var with a hardcoded model in their <code>LLM()</code> constructor (e.g., the RN Developer uses <code>RN_DEV_MODEL</code> env var, and some mobile agents reference specific model versions). Check the agent's <code>build_*</code> function to confirm which variable it reads.
+</div>
+
+<h2>12.2 Tuning Agent Prompts</h2>
+<p>Each agent's behavior is controlled by three things:</p>
+<table>
+  <tr><th>Component</th><th>Location</th><th>Effect</th></tr>
+  <tr><td><strong>Role</strong></td><td><code>Agent(role=...)</code> in the <code>build_*</code> function</td><td>Short label. Affects how CrewAI formats the system prompt.</td></tr>
+  <tr><td><strong>Goal</strong></td><td><code>Agent(goal=...)</code></td><td>One sentence. Defines what the agent is trying to achieve.</td></tr>
+  <tr><td><strong>Backstory</strong></td><td><code>Agent(backstory=...)</code></td><td>The main control lever. This is the agent's persona, domain expertise, constraints, and output discipline rules. Most prompt tuning happens here.</td></tr>
+  <tr><td><strong>Task description</strong></td><td><code>Task(description=...)</code> in the <code>run_*</code> function</td><td>The specific instructions for this execution. Defines what sections to produce, what inputs to reference, and what format to use.</td></tr>
+  <tr><td><strong>Expected output</strong></td><td><code>Task(expected_output=...)</code></td><td>Brief description of the deliverable. CrewAI uses this to validate completion.</td></tr>
+</table>
+
+<h3>Common tuning patterns</h3>
+<ul>
+  <li><strong>Agent produces too much preamble:</strong> Add to backstory: "You produce only the requested document. No preamble, no summary paragraph before the content, no 'Here is the document:' introduction."</li>
+  <li><strong>Agent drifts from the project context:</strong> Increase the excerpt size of the upstream artifact in the task description (change <code>[:3000]</code> to <code>[:5000]</code>).</li>
+  <li><strong>Agent produces generic content:</strong> Add domain-specific constraints to the backstory or include more project-specific context in the task prompt.</li>
+  <li><strong>Agent loops on output:</strong> Add "OUTPUT DISCIPLINE" clause to backstory (see Output Guard Patch in <code>agents/mobile/output_guard_patch.md</code>).</li>
+</ul>
+
+<h2>12.3 Adding a New Agent</h2>
+<p>Follow the established pattern in the codebase:</p>
+<ol>
+  <li><strong>Create the Python file</strong> in the appropriate directory:
+    <ul>
+      <li>Strategy agent → <code>agents/dev/strategy/</code></li>
+      <li>Build agent → <code>agents/dev/build/</code></li>
+      <li>Quality agent → <code>agents/dev/quality/</code></li>
+      <li>Mobile agent → <code>agents/mobile/{subteam}/</code></li>
+    </ul>
+  </li>
+  <li><strong>Implement the standard structure:</strong></li>
+</ol>
+<pre>import sys
+sys.path.insert(0, "/home/your-user/dev-team")
+
+import os, json
+from datetime import datetime
+from dotenv import load_dotenv
+from crewai import Agent, Task, Crew, Process, LLM
+from agents.orchestrator.orchestrator import log_event, save_context
+
+load_dotenv("config/.env")
+
+def build_my_agent() -> Agent:
+    llm = LLM(
+        model=os.getenv("TIER2_MODEL", "ollama/qwen2.5-coder:32b"),
+        base_url=os.getenv("OLLAMA_BASE_URL", "http://localhost:11434"),
+        timeout=1800
+    )
+    return Agent(
+        role="My New Agent",
+        goal="...",
+        backstory="...",
+        llm=llm,
+        verbose=True,
+        allow_delegation=False
+    )
+
+def run_my_task(context: dict, upstream_path: str) -> dict:
+    with open(upstream_path) as f:
+        upstream_content = f.read()[:3000]
+
+    agent = build_my_agent()
+    task = Task(
+        description=f"...{upstream_content}...",
+        expected_output="...",
+        agent=agent
+    )
+    crew = Crew(agents=[agent], tasks=[task],
+                process=Process.sequential, verbose=True)
+    result = crew.kickoff()
+
+    # Save artifact
+    output_path = f"dev/output/{context['project_id']}_MYARTIFACT.md"
+    os.makedirs(os.path.dirname(output_path), exist_ok=True)
+    with open(output_path, "w") as f:
+        f.write(str(result))
+
+    # Update context
+    context["artifacts"].append({
+        "name": "My Artifact",
+        "type": "MYART",
+        "path": output_path,
+        "created_at": datetime.utcnow().isoformat(),
+        "agent": "My New Agent"
+    })
+    context["status"] = "MY_TASK_COMPLETE"
+    log_event(context, "MY_TASK_COMPLETE", output_path)
+    save_context(context)
+    return context, output_path
+
+if __name__ == "__main__":
+    import glob
+    logs = sorted(glob.glob("logs/PROJ-*.json"),
+                  key=os.path.getmtime, reverse=True)
+    if not logs:
+        print("No project context found.")
+        exit(1)
+    with open(logs[0]) as f:
+        context = json.load(f)
+    # Find upstream artifact
+    upstream_path = None
+    for a in context.get("artifacts", []):
+        if a.get("type") == "UPSTREAM_TYPE":
+            upstream_path = a["path"]
+    if not upstream_path:
+        print("Missing upstream artifact.")
+        exit(1)
+    context, output_path = run_my_task(context, upstream_path)
+    print(f"Done: {output_path}")</pre>
+
+<ol start="3">
+  <li><strong>Register in the pipeline:</strong> Update Section 3 (Workflow Protocols), Section 2 (Agent Profiles), and Appendix A (Artifact Registry) of this manual.</li>
+  <li><strong>Test standalone:</strong> Run the agent's <code>__main__</code> block against an existing project context to verify it produces output and updates the context correctly.</li>
+</ol>
+
+<h2>12.4 Managing FLAGS.md</h2>
+<p><code>FLAGS.md</code> is the living document that tracks known gaps, issues, and incomplete items across the project. It serves as the team's punch list.</p>
+<table>
+  <tr><th>Practice</th><th>Details</th></tr>
+  <tr><td>When to add a flag</td><td>When any agent produces output with known gaps (e.g., "Section 8 accessibility incomplete," "Part 2 drifted on screens 8–10").</td></tr>
+  <tr><td>Format</td><td>Organized by artifact type with status indicators. Each flag has a description and resolution status.</td></tr>
+  <tr><td>When to review</td><td>Before every checkpoint. Unresolved flags should be called out during checkpoint review.</td></tr>
+  <tr><td>When to close</td><td>After a patch agent or re-run resolves the gap. Update the flag status and note the resolution.</td></tr>
+  <tr><td>Automated updates</td><td>Some agents (e.g., <code>srr_retrofit.py</code>) automatically update FLAGS.md via the <code>append_srr_flags()</code> function.</td></tr>
+</table>
+
+<h2>12.5 Git Workflow</h2>
+<p>Follow these practices for artifact version control:</p>
+<ul>
+  <li>Commit after each agent completes: <code>git add -A && git commit -m "PROJ-XXXXX: {Agent} → {Artifact} complete"</code></li>
+  <li>Use descriptive commit messages that reference the project ID and artifact.</li>
+  <li>Commit FLAGS.md updates alongside the artifact they reference.</li>
+  <li>After a full pipeline run, tag the release: <code>git tag PROJ-XXXXX-v1.0</code></li>
+  <li>After retrofit, tag again: <code>git tag PROJ-XXXXX-v1.0-retrofit</code></li>
+</ul>
+
+<h2>12.6 Updating Ollama and CrewAI</h2>
+<table>
+  <tr><th>Component</th><th>Update Command</th><th>Notes</th></tr>
+  <tr><td>Ollama</td><td><code>curl -fsSL https://ollama.com/install.sh | sh</code></td><td>Models are preserved across updates. Re-run <code>sudo systemctl daemon-reload && sudo systemctl restart ollama</code> after.</td></tr>
+  <tr><td>CrewAI</td><td><code>pip install --upgrade "crewai[tools]"</code></td><td>Test with <code>python tests/test_crewai_ollama.py</code> after upgrading. CrewAI API changes may require agent code updates.</td></tr>
+  <tr><td>ChromaDB</td><td><code>pip install --upgrade chromadb</code></td><td>Persistent data in <code>memory/chroma_db/</code> is usually forward-compatible. Back up before major version jumps.</td></tr>
+  <tr><td>Python packages</td><td><code>pip install --upgrade -r requirements.txt</code></td><td>Always test the full stack validation script after any upgrade: <code>python tests/validate_stack.py</code></td></tr>
+</table>
+
+<h2>12.7 Observability with Langfuse</h2>
+<p>Langfuse integration is optional and controlled by environment variables:</p>
+<pre># Add to config/.env to enable
+LANGFUSE_ENABLED=true
+LANGFUSE_PUBLIC_KEY=pk-...
+LANGFUSE_SECRET_KEY=sk-...
+LANGFUSE_HOST=https://cloud.langfuse.com  # or self-hosted URL</pre>
+<p>When enabled, every agent execution is traced in the Langfuse dashboard — you can see token counts, latencies, and full prompt/response pairs. This is invaluable for debugging prompt issues and optimizing model usage.</p>
+
+
+<!-- ============================================================ -->
+<!-- APPENDIX A — ARTIFACT REGISTRY                                -->
+<!-- ============================================================ -->
+<div class="page-break"></div>
+<h1 id="appendix-a">Appendix A — Artifact Registry</h1>
+
+<table>
+  <tr><th>Code</th><th>Full Name</th><th>Produced By</th><th>Consumed By</th><th>File Pattern</th></tr>
+  <tr><td>PRD</td><td>Product Requirements Document</td><td>Product Manager</td><td>BA, SM, TA, SR, UX, SD, QA</td><td><code>{PROJ}_PRD.md</code></td></tr>
+  <tr><td>BAD</td><td>Business Analysis Document</td><td>Business Analyst</td><td>SM, TA, UX</td><td><code>{PROJ}_BAD.md</code></td></tr>
+  <tr><td>Sprint Plan</td><td>Sprint Planning Document</td><td>Scrum Master</td><td>TA</td><td><code>{PROJ}_SPRINT.md</code></td></tr>
+  <tr><td>TAD</td><td>Technical Architecture Document</td><td>Technical Architect</td><td>SR, SD, BD, DevOps, DBA</td><td><code>{PROJ}_TAD.md</code></td></tr>
+  <tr><td>SRR</td><td>Security Review Report</td><td>Security Reviewer</td><td>UX, DevOps, DBA, Mobile DevOps</td><td><code>{PROJ}_SRR.md</code></td></tr>
+  <tr><td>UXD</td><td>User Experience Document</td><td>UX/UI Designer</td><td>Content Guide, SD, FD, QA</td><td><code>{PROJ}_UXD.md</code></td></tr>
+  <tr><td>Content Guide</td><td>UI Content Guide</td><td>UX Content Guide agent</td><td>FD</td><td><code>{PROJ}_CONTENT.md</code></td></tr>
+  <tr><td>TIP</td><td>Technical Implementation Plan</td><td>Senior Developer</td><td>BD, FD, DevOps, TAE, Mobile DevOps</td><td><code>{PROJ}_TIP.md</code></td></tr>
+  <tr><td>BIR</td><td>Backend Implementation Report</td><td>Backend Developer</td><td>FD, DBA, QA, TAE</td><td><code>{PROJ}_BIR.md</code></td></tr>
+  <tr><td>FIR</td><td>Frontend Implementation Report</td><td>Frontend Developer</td><td>QA, TAE</td><td><code>{PROJ}_FIR.md</code></td></tr>
+  <tr><td>DBAR</td><td>Database Administration Report</td><td>Database Administrator</td><td>DevOps</td><td><code>{PROJ}_DBAR.md</code></td></tr>
+  <tr><td>DIR</td><td>DevOps Implementation Report</td><td>DevOps Engineer</td><td>QA, TAE</td><td><code>{PROJ}_DIR.md</code></td></tr>
+  <tr><td>MTP</td><td>Master Test Plan</td><td>QA Lead</td><td>TAE</td><td><code>{PROJ}_MTP.md</code></td></tr>
+  <tr><td>TAR</td><td>Test Automation Report</td><td>Test Automation Engineer</td><td>(Terminal artifact)</td><td><code>{PROJ}_TAR.md</code></td></tr>
+  <tr><td>MUXD</td><td>Mobile UX Document</td><td>Mobile UX Designer</td><td>iOS, Android, RN Architect, Mobile QA</td><td><code>{PROJ}_MUXD.md</code></td></tr>
+  <tr><td>IIR</td><td>iOS Implementation Report</td><td>iOS Developer</td><td>Mobile DevOps, Mobile QA</td><td><code>{PROJ}_IIR.md</code></td></tr>
+  <tr><td>AIR</td><td>Android Implementation Report</td><td>Android Developer</td><td>Mobile DevOps, Mobile QA</td><td><code>{PROJ}_AIR.md</code></td></tr>
+  <tr><td>RNAD</td><td>React Native Architecture Document</td><td>RN Architect</td><td>RN Developer</td><td><code>{PROJ}_RNAD_P1.md</code>, <code>_P2.md</code></td></tr>
+  <tr><td>RN Guide</td><td>RN Implementation Guide</td><td>RN Developer</td><td>Mobile DevOps, Mobile QA</td><td><code>rn_guide_complete_{ts}.md</code></td></tr>
+  <tr><td>MDIR</td><td>Mobile DevOps Implementation Report</td><td>Mobile DevOps Engineer</td><td>Mobile QA</td><td><code>{PROJ}_MDIR.md</code></td></tr>
+  <tr><td>*-R</td><td>Revised (Retrofit) versions</td><td>Retrofit agents</td><td>Reconciliation agent</td><td><code>{PROJ}_{TYPE}_R.md</code></td></tr>
+</table>
+
+
+<!-- ============================================================ -->
+<!-- APPENDIX B — MODEL TIER REFERENCE                             -->
+<!-- ============================================================ -->
+<h1 id="appendix-b">Appendix B — Model Tier Reference</h1>
+
+<table>
+  <tr><th>Tier</th><th>Models (Evolution)</th><th>Purpose</th><th>Agents</th></tr>
+  <tr>
+    <td><span class="badge tier1">TIER 1</span></td>
+    <td>qwen2.5:32b → qwen2.5:72b</td>
+    <td>Reasoning, planning, analysis, review. Produces strategy documents and test plans.</td>
+    <td>Orchestrator, Product Manager, Business Analyst, Scrum Master, Technical Architect, Security Reviewer, UX Designer, UX Content Guide, QA Lead, Mobile UX Designer, Mobile QA Specialist</td>
+  </tr>
+  <tr>
+    <td><span class="badge tier2">TIER 2</span></td>
+    <td>qwen2.5-coder:14b → qwen2.5-coder:32b</td>
+    <td>Code generation, implementation, technical writing. Produces code and implementation reports.</td>
+    <td>Senior Developer, Backend Developer, Frontend Developer, Database Administrator, DevOps Engineer, Test Automation Engineer, iOS Developer, Android Developer, RN Architect, RN Developer, Mobile DevOps Engineer, all Retrofit agents, Reconciliation agent</td>
+  </tr>
+  <tr>
+    <td><strong>Embed</strong></td>
+    <td>nomic-embed-text</td>
+    <td>Vector embeddings for ChromaDB memory</td>
+    <td>All agents (via ChromaDB)</td>
+  </tr>
+</table>
+
+<div style="margin-top: 60px; padding-top: 20px; border-top: 2px solid #003366; text-align: center; color: #888; font-size: 9pt;">
+  AI Development Team Project — Confidential — For Internal Use Only<br>
+  Version 1.0 — February 2026
+</div>
+
+</body>
+</html>

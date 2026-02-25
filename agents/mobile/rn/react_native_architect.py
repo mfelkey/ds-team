@@ -1,296 +1,474 @@
-import sys
-sys.path.insert(0, "/home/mfelkey/dev-team")
+"""
+React Native Developer Agent
+=============================
+Generates a complete React Native (Expo) implementation guide in two parts.
+
+Part 1: Sections 1-5 (Project setup, navigation, state management, API layer, shared components)
+Part 2: Sections 6-10 (Screens, forms/validation, offline support, testing, build/deploy)
+
+Fix log (2026-02-22):
+  - Part 2 now receives Part 1 output as context instead of raw architecture doc
+  - TASK_PART2 rewritten to contain zero Section 1-5 references
+  - validate_agent_output() now checks section numbers to catch regression/looping
+"""
 
 import os
-import json
+import re
+import logging
 from datetime import datetime
-from dotenv import load_dotenv
+from textwrap import dedent
+
 from crewai import Agent, Task, Crew, Process, LLM
-from agents.orchestrator.orchestrator import log_event, save_context
 
-load_dotenv("config/.env")
+# ---------------------------------------------------------------------------
+# Logging
+# ---------------------------------------------------------------------------
+logger = logging.getLogger("rn_developer")
+logger.setLevel(logging.DEBUG)
+if not logger.handlers:
+    _h = logging.StreamHandler()
+    _h.setFormatter(logging.Formatter("%(asctime)s [%(levelname)s] %(name)s: %(message)s"))
+    logger.addHandler(_h)
 
+# ---------------------------------------------------------------------------
+# Configuration
+# ---------------------------------------------------------------------------
+MODEL_NAME = os.getenv("RN_DEV_MODEL", "qwen2.5-coder:32b")
+BASE_URL = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
+MAX_ITER = int(os.getenv("RN_DEV_MAX_ITER", "30"))
+TEMPERATURE = float(os.getenv("RN_DEV_TEMPERATURE", "0.2"))
+OUTPUT_DIR = os.getenv("RN_DEV_OUTPUT_DIR", os.path.expanduser("~/dev-team/output/mobile/rn"))
 
-def build_rn_architect() -> Agent:
+# Langfuse observability (optional)
+LANGFUSE_ENABLED = os.getenv("LANGFUSE_ENABLED", "false").lower() == "true"
+if LANGFUSE_ENABLED:
+    try:
+        from langfuse import Langfuse
+        langfuse = Langfuse()
+        logger.info("Langfuse observability enabled")
+    except ImportError:
+        logger.warning("Langfuse not installed; observability disabled")
+        LANGFUSE_ENABLED = False
+
+# ---------------------------------------------------------------------------
+# TASK PROMPTS
+# ---------------------------------------------------------------------------
+
+TASK_PART1 = dedent("""\
+    You are a senior React Native developer creating a comprehensive implementation
+    guide for a mobile app using Expo and TypeScript.
+
+    Generate Sections 1 through 5 ONLY. Each section must start with a markdown
+    heading like "## 1. ..." through "## 5. ...".
+
+    ## 1. Project Setup & Configuration
+    - Expo SDK setup with TypeScript template
+    - Directory structure (src/screens, src/components, src/hooks, src/services, src/store, src/types, src/utils)
+    - ESLint + Prettier configuration
+    - Path aliases via babel-plugin-module-resolver
+    - Environment variables with expo-constants
+
+    ## 2. Navigation Architecture
+    - React Navigation v6 with native stack
+    - Type-safe navigation with RootStackParamList
+    - Bottom tab navigator with 4-5 primary tabs
+    - Nested stack navigators per tab
+    - Deep linking configuration
+    - Auth flow (login/register → main app switch)
+
+    ## 3. State Management
+    - Zustand stores: useAuthStore, useTripStore, useSettingsStore
+    - Async persistence with zustand/middleware and AsyncStorage
+    - Selectors for derived state
+    - Actions with loading/error state patterns
+
+    ## 4. API Layer
+    - Axios instance with baseURL, interceptors for auth token refresh
+    - Type-safe API client (api/trips.ts, api/auth.ts, api/users.ts)
+    - React Query (TanStack Query) for caching, pagination, optimistic updates
+    - Custom hooks: useTrips(), useTrip(id), useCreateTrip(), etc.
+    - Error handling and retry strategies
+
+    ## 5. Shared UI Components
+    - Design tokens (colors, spacing, typography) in theme.ts
+    - Button, Card, Input, Badge, Avatar, LoadingOverlay components
+    - Each with TypeScript props interface
+    - Accessibility: accessibilityLabel, accessibilityRole on all interactive elements
+    - Dark mode support via useColorScheme
+
+    OUTPUT FORMAT:
+    - Full TypeScript/TSX code blocks with file paths as comments
+    - Explanatory prose between code blocks
+    - Every section heading must match "## N. <Title>" format exactly
+    - Stop after Section 5. Do NOT write Section 6 or beyond.
+""")
+
+# NOTE: TASK_PART2 contains ZERO references to Sections 1-5 content.
+# It receives Part 1 output as context prefix at runtime.
+TASK_PART2 = dedent("""\
+    You are continuing an implementation guide that another developer started.
+    The first half (Sections 1-5) is ALREADY COMPLETE and provided above as context.
+
+    YOUR JOB: Write Sections 6 through 10 ONLY.
+    DO NOT rewrite, revisit, or regenerate ANY content from Sections 1-5.
+    DO NOT write code for files that were already created in the context above.
+    START your output directly with "## 6." and continue through "## 10.".
+
+    ## 6. Screen Implementations
+    - HomeScreen: trip list with FlatList, pull-to-refresh, infinite scroll
+    - TripDetailScreen: route params, data fetching, action buttons
+    - CreateTripScreen: multi-step form wizard (3 steps)
+    - ProfileScreen: user info, settings toggles, logout
+    - SearchScreen: debounced search input, filter chips, results list
+    - Each screen imports from the shared components and hooks defined earlier
+    - Use the navigation types and store hooks from the earlier sections
+
+    ## 7. Forms & Validation
+    - React Hook Form with zodResolver
+    - Zod schemas: LoginSchema, RegisterSchema, CreateTripSchema
+    - Reusable FormField wrapper component
+    - Inline error messages with accessibility announcements
+    - Keyboard-aware scroll views for form screens
+
+    ## 8. Offline Support & Data Sync
+    - NetInfo listener with useNetworkStatus() hook
+    - Offline queue in Zustand: pendingActions array
+    - Sync service that drains queue when connectivity returns
+    - Optimistic UI updates with rollback on sync failure
+    - Cache-first strategy with React Query's staleTime/gcTime
+
+    ## 9. Testing Strategy
+    - Jest + React Native Testing Library setup
+    - Unit tests for Zustand stores (at least 2 example test files)
+    - Component tests for 2 shared components (Button, Card)
+    - Screen integration test for HomeScreen (mocked navigation + API)
+    - API mock patterns with MSW (Mock Service Worker)
+    - Snapshot tests for key UI states
+
+    ## 10. Build & Deployment
+    - EAS Build configuration (eas.json) for dev, preview, production profiles
+    - app.config.ts with dynamic configuration
+    - OTA updates with expo-updates
+    - App Store / Google Play submission checklist
+    - CI/CD with GitHub Actions: lint → test → build → deploy
+    - Environment-specific configs (API URLs, feature flags)
+
+    OUTPUT FORMAT:
+    - Full TypeScript/TSX code blocks with file paths as comments
+    - Explanatory prose between code blocks
+    - Every section heading must match "## N. <Title>" format exactly
+    - Start at "## 6." — do NOT output "## 1." through "## 5."
+""")
+
+# ---------------------------------------------------------------------------
+# Agent Builder
+# ---------------------------------------------------------------------------
+
+def build_rn_developer() -> Agent:
+    """Create the React Native Developer agent."""
     llm = LLM(
-        model=os.getenv("TIER2_MODEL", "ollama/qwen2.5:72b"),
-        base_url=os.getenv("OLLAMA_BASE_URL", "http://localhost:11434"),
-        timeout=3600
+        model=f"ollama/{MODEL_NAME}",
+        base_url=BASE_URL,
+        temperature=TEMPERATURE,
     )
+    logger.info(f"LLM configured: ollama/{MODEL_NAME} @ {BASE_URL}")
 
     return Agent(
-        role="React Native Architect",
+        role="Senior React Native Developer",
         goal=(
-            "Design a complete, production-ready React Native architecture for "
-            "a cross-platform iOS and Android application — producing a React Native "
-            "Architecture Document that defines every technical decision, shared "
-            "component strategy, platform adaptation pattern, navigation structure, "
-            "state management approach, and native module integration, so the "
-            "React Native Developer can implement without ambiguity."
+            "Produce a complete, production-quality React Native (Expo + TypeScript) "
+            "implementation guide with working code for every section."
         ),
         backstory=(
-            "You are a Senior React Native Architect with 10 years of experience "
-            "designing cross-platform mobile applications for government, healthcare, "
-            "and enterprise clients using React Native and Expo. "
-            "You understand the fundamental tension in React Native: the promise of "
-            "a single codebase versus the reality that iOS and Android users have "
-            "different mental models, navigation patterns, and platform conventions. "
-            "You resolve this tension through principled use of Platform.OS, "
-            "platform-specific file extensions (.ios.tsx, .android.tsx), and a "
-            "shared design token system that adapts to each platform. "
-            "You are expert-level in the modern React Native stack: "
-            "React Navigation 6 for navigation, Zustand or Redux Toolkit for state, "
-            "React Query (TanStack Query) for server state and caching, "
-            "React Native MMKV for encrypted local storage, "
-            "React Native Keychain for secure credential storage, "
-            "React Native Biometrics for biometric authentication, "
-            "React Native Reanimated 3 for performant animations, "
-            "React Native Gesture Handler for gesture support, "
-            "Expo modules for device APIs where available, "
-            "and Jest + Detox for testing. "
-            "You design for HIPAA compliance from the start — you know which screens "
-            "require biometric re-authentication, how to prevent PHI from appearing "
-            "in screenshots (expo-screen-capture), and how to implement encrypted "
-            "offline caching with TTL enforcement. "
-            "You produce a React Native Architecture Document (RNAD) that is the "
-            "authoritative technical specification for the React Native track. "
-            "The React Native Developer implements from your RNAD. Every decision "
-            "you make is justified, every pattern is documented with code examples, "
-            "and every platform divergence is explicitly called out."
+            "You are a staff-level mobile engineer with 8+ years of React Native "
+            "experience. You've shipped dozens of apps to both stores. You write "
+            "clean, type-safe TypeScript and follow React Native community best "
+            "practices. You are meticulous about accessibility and offline support."
         ),
-        llm=llm,
         verbose=True,
-        allow_delegation=False
+        allow_delegation=False,
+        llm=llm,
+        max_iter=MAX_ITER,
     )
 
 
-def run_rn_architecture(context: dict, muxd_path: str, prd_path: str) -> tuple:
+# ---------------------------------------------------------------------------
+# Output Validation
+# ---------------------------------------------------------------------------
 
-    with open(muxd_path) as f:
-        muxd_content = f.read()[:4000]
+def validate_agent_output(
+    output: str,
+    expected_sections: list[int],
+    forbidden_sections: list[int] | None = None,
+    part_label: str = "output",
+) -> dict:
+    """
+    Validate that the agent output contains the expected section headings
+    and does NOT contain forbidden section headings.
 
-    with open(prd_path) as f:
-        prd_content = f.read()[:1000]
+    Returns:
+        {
+            "valid": bool,
+            "found_expected": [int, ...],
+            "missing_expected": [int, ...],
+            "found_forbidden": [int, ...],
+            "duplicate_sections": {section_num: count},
+            "errors": [str, ...],
+        }
+    """
+    result = {
+        "valid": True,
+        "found_expected": [],
+        "missing_expected": [],
+        "found_forbidden": [],
+        "duplicate_sections": {},
+        "errors": [],
+    }
 
-    architect = build_rn_architect()
+    if forbidden_sections is None:
+        forbidden_sections = []
 
-    rnad_task = Task(
-        description=f"""
-You are the React Native Architect. Using the Mobile UX Document and PRD below,
-produce a complete React Native Architecture Document (RNAD).
+    # Find all section headings: "## 1.", "## 2.", etc.
+    section_pattern = re.compile(r"^##\s+(\d+)\.", re.MULTILINE)
+    found_numbers = [int(m.group(1)) for m in section_pattern.finditer(output)]
 
---- Mobile UX Document (excerpt) ---
-{muxd_content}
+    # Check for expected sections
+    for s in expected_sections:
+        if s in found_numbers:
+            result["found_expected"].append(s)
+        else:
+            result["missing_expected"].append(s)
+            result["errors"].append(f"{part_label}: Missing expected section ## {s}.")
+            result["valid"] = False
 
---- Product Requirements Document (excerpt) ---
-{prd_content}
+    # Check for forbidden sections (regression detection)
+    for s in forbidden_sections:
+        if s in found_numbers:
+            result["found_forbidden"].append(s)
+            result["errors"].append(
+                f"{part_label}: Found FORBIDDEN section ## {s}. "
+                f"Model regenerated content it should not have."
+            )
+            result["valid"] = False
 
-Produce a complete RNAD with ALL of the following sections.
-Every section requires working TypeScript/React Native code — no placeholders.
+    # Check for excessive duplication (looping detection)
+    from collections import Counter
+    counts = Counter(found_numbers)
+    for section_num, count in counts.items():
+        if count > 1:
+            result["duplicate_sections"][section_num] = count
+            result["errors"].append(
+                f"{part_label}: Section ## {section_num}. appears {count} times (looping detected)."
+            )
+            result["valid"] = False
 
-1. ARCHITECTURE OVERVIEW
-   - Architecture pattern: Feature-based folder structure with shared kernel
-   - Complete folder structure:
-     src/
-       features/ (auth, dashboard, trips, settings)
-       shared/ (components, hooks, services, utils, theme)
-       navigation/
-       store/
-       api/
-   - Technology decisions table: library, version, justification for each choice
-   - Platform adaptation strategy: when to use Platform.OS vs platform files vs
-     shared components with platform props
-   - Monorepo vs single-package decision and justification
+    # Check for useTripList.ts looping specifically (the known failure mode)
+    trip_list_mentions = len(re.findall(r"useTripList", output))
+    if trip_list_mentions > 10:
+        result["errors"].append(
+            f"{part_label}: 'useTripList' appears {trip_list_mentions} times — "
+            f"probable generation loop."
+        )
+        result["valid"] = False
 
-2. NAVIGATION ARCHITECTURE
-   - Complete React Navigation 6 setup
-   - Root navigator: Stack navigator wrapping auth flow + tab navigator
-   - Auth navigator: Stack (Login → BiometricPrompt)
-   - Main tab navigator: Bottom tabs (Dashboard, Settings, About)
-     * iOS: tabBarStyle matching Apple HIG (opaque, no border)
-     * Android: tabBarStyle matching Material 3 (elevated surface)
-   - Dashboard stack: Dashboard → TripList → TripDetail
-   - Modal screens: FilterModal (presented as modal on both platforms)
-   - Deep linking configuration matching MUXD §2.3
-   - Complete TypeScript type definitions for all route params
-   - Navigation service for imperative navigation outside components
-   - Complete NavigationContainer setup with linking config
+    return result
 
-3. STATE MANAGEMENT
-   - Zustand store design:
-     * AuthStore: isAuthenticated, user, accessToken, sessionExpiry
-     * DashboardStore: kpiData, chartData, filters, lastFetched
-     * TripStore: trips, selectedTrip, pagination state
-     * UIStore: isLoading, error, toastMessage
-   - React Query (TanStack Query) for all API calls:
-     * QueryClient configuration (staleTime, cacheTime, retry policy)
-     * Custom hooks: useKPISummary, useTrips, useTripDetail
-     * Optimistic updates for filter changes
-     * Background refetch strategy
-   - Separation of concerns: Zustand for UI/auth state, React Query for server state
-   - Complete TypeScript interfaces for all store shapes
 
-4. API LAYER
-   - Axios instance with:
-     * BaseURL from environment (react-native-config or Expo Constants)
-     * Request interceptor: inject Bearer token from Keychain
-     * Response interceptor: handle 401 → token refresh → retry
-     * Error normalization: ApiError class with code, message, statusCode
-   - Complete API service functions for all endpoints:
-     * authApi: login, refreshToken, logout
-     * dashboardApi: getKPISummary(filters)
-     * tripsApi: getTrips(page, filters), getTripDetail(id)
-   - React Query integration: queryFn wrappers for each endpoint
-   - No hardcoded URLs — reads from EXPO_PUBLIC_API_BASE_URL
+# ---------------------------------------------------------------------------
+# File I/O Helpers
+# ---------------------------------------------------------------------------
 
-5. AUTHENTICATION ARCHITECTURE
-   - OIDC flow using expo-auth-session or AppAuth
-   - JWT storage: react-native-keychain (never AsyncStorage)
-   - Token refresh: Axios interceptor with mutex to prevent concurrent refreshes
-   - Biometric authentication: react-native-biometrics
-     * iOS: Face ID / Touch ID via LAContext bridge
-     * Android: BiometricPrompt bridge
-     * Fallback: device PIN/password
-   - Session timeout: background timer, 10 min foreground / 15 min background
-   - Complete AuthService class with all methods
-   - AppState listener for background/foreground session management
+def _ensure_output_dir():
+    os.makedirs(OUTPUT_DIR, exist_ok=True)
 
-6. PHI & SECURITY ARCHITECTURE
-   - Screenshot prevention:
-     * iOS: expo-screen-capture preventScreenCapture() on PHI screens
-     * Android: FLAG_SECURE via expo-screen-capture
-     * Pattern: useEffect hook activating on mount, deactivating on unmount
-   - Encrypted offline cache:
-     * react-native-mmkv with encryption key from Keychain
-     * CacheService class: set<T>, get<T>, delete, clearAll
-     * TTL enforcement: store expiry timestamp with each entry
-     * TripDetail: explicitly never cached
-   - PHI field masking:
-     * PHIMaskedField component: masked by default, reveal button
-     * Auto-remask after 10 seconds using useEffect + setTimeout
-     * Audit log on reveal: logs fieldName + userSub, never PHI value
-   - App backgrounding: blur overlay on both platforms
-     * AppState listener: add blur view on background, remove on foreground
-     * Platform-specific implementation details
 
-7. SHARED COMPONENT LIBRARY
-   - Complete TypeScript interfaces for all components
-   - Produce working component code for each:
-     * VAButton: primary, secondary, destructive, disabled variants
-       — Platform-adapted: iOS uses SF-style rounded rect, Android uses Material ripple
-     * VATextInput: default, focused, error, disabled states with accessibilityLabel
-     * KPICard: title, value, trend indicator, accessibilityElement(combined)
-     * TripRow: date, provider, distance, accessibilityLabel
-     * PHIMaskedField: masked display, reveal button, auto-remask timer
-     * LoadingSkeleton: animated placeholder for async content
-     * EmptyState: illustration, title, subtitle, retry button
-     * ErrorBanner: dismissible error display with retry action
-     * ToastMessage: auto-dismiss notification (uses UIStore)
-     * AppBlurOverlay: covers app content when backgrounded
+def _write_output(filename: str, content: str) -> str:
+    _ensure_output_dir()
+    path = os.path.join(OUTPUT_DIR, filename)
+    with open(path, "w", encoding="utf-8") as f:
+        f.write(content)
+    logger.info(f"Wrote {len(content)} chars → {path}")
+    return path
 
-8. PLATFORM ADAPTATION PATTERNS
-   - Document and provide code for each adaptation:
-     * Navigation headers: iOS uses large title, Android uses standard toolbar
-     * Bottom sheets: iOS uses @gorhom/bottom-sheet, Android same
-     * Haptics: expo-haptics, platform-gated
-     * Status bar: Platform-specific style (light/dark content)
-     * Safe area: react-native-safe-area-context usage patterns
-     * Keyboard behavior: KeyboardAvoidingView with platform-specific behavior
-     * Font selection: Platform.select for SF Pro vs Roboto
-     * Icon sets: @expo/vector-icons with SF Symbols on iOS, Material on Android
-   - Complete Platform.select examples for each adaptation
-   - When to use .ios.tsx/.android.tsx vs Platform.OS conditional
 
-9. TESTING ARCHITECTURE
-   - Jest configuration for React Native + TypeScript
-   - Testing utilities: custom render with providers (QueryClient, Navigation, Zustand)
-   - Unit test examples:
-     * AuthService: login, token refresh, biometric auth
-     * CacheService: set/get with TTL, TripDetail exclusion
-     * PHIMaskedField: auto-remask after 10s
-   - Detox E2E configuration:
-     * iOS simulator and Android emulator setup
-     * Test scenarios: login flow, dashboard load, PHI reveal/remask
-   - Mock strategy: MSW (Mock Service Worker) for API mocking in tests
+def _timestamp() -> str:
+    return datetime.now().strftime("%Y%m%d_%H%M%S")
 
-10. BUILD & ENVIRONMENT CONFIGURATION
-    - Expo managed vs bare workflow decision and justification
-    - Environment variables: EXPO_PUBLIC_* pattern, app.config.js
-    - EAS Build configuration (eas.json):
-      * development, preview (internal), production profiles
-      * iOS: provisioning via EAS credentials
-      * Android: keystore via EAS credentials
-    - EAS Submit for App Store and Play Store
-    - OTA updates: expo-updates configuration and rollout strategy
-    - Complete app.config.js with all required plugins
 
-Output the complete RNAD as well-formatted markdown with working TypeScript code.
-All code must be production-ready, properly typed, and follow React Native best practices.
-No hardcoded credentials, URLs, or provider-specific assumptions.
-Every section must have actual working code — not descriptions of what code should do.
-""",
-        expected_output="A complete React Native Architecture Document with working TypeScript code.",
-        agent=architect
+# ---------------------------------------------------------------------------
+# Runner
+# ---------------------------------------------------------------------------
+
+def run_rn_developer() -> dict:
+    """
+    Execute the RN Developer agent in two sequential Crew runs.
+
+    Part 1: Sections 1-5 (uses TASK_PART1 as-is)
+    Part 2: Sections 6-10 (injects Part 1 output as context, uses rewritten TASK_PART2)
+
+    Returns dict with paths, validation results, and status.
+    """
+    ts = _timestamp()
+    agent = build_rn_developer()
+    results = {
+        "timestamp": ts,
+        "part1_path": None,
+        "part2_path": None,
+        "combined_path": None,
+        "part1_validation": None,
+        "part2_validation": None,
+        "status": "started",
+    }
+
+    # -----------------------------------------------------------------------
+    # PART 1: Sections 1-5
+    # -----------------------------------------------------------------------
+    logger.info("=" * 60)
+    logger.info("PART 1: Generating Sections 1-5")
+    logger.info("=" * 60)
+
+    task_part1 = Task(
+        description=TASK_PART1,
+        expected_output="Complete implementation guide Sections 1-5 with TypeScript code blocks.",
+        agent=agent,
     )
 
-    crew = Crew(
-        agents=[architect],
-        tasks=[rnad_task],
+    crew_part1 = Crew(
+        agents=[agent],
+        tasks=[task_part1],
         process=Process.sequential,
-        verbose=True
+        verbose=True,
     )
 
-    print(f"\n⚛️  React Native Architect designing cross-platform architecture...\n")
-    result = crew.kickoff()
+    part1_result = crew_part1.kickoff()
+    part1_output = str(part1_result)
 
-    os.makedirs("dev/mobile", exist_ok=True)
-    rnad_path = f"dev/mobile/{context['project_id']}_RNAD.md"
-    with open(rnad_path, "w") as f:
-        f.write(str(result))
+    # Validate Part 1
+    part1_validation = validate_agent_output(
+        output=part1_output,
+        expected_sections=[1, 2, 3, 4, 5],
+        forbidden_sections=[6, 7, 8, 9, 10],
+        part_label="Part1",
+    )
+    results["part1_validation"] = part1_validation
 
-    print(f"\n💾 React Native Architecture Document saved: {rnad_path}")
+    if not part1_validation["valid"]:
+        for err in part1_validation["errors"]:
+            logger.warning(f"Part 1 validation: {err}")
+    else:
+        logger.info("Part 1 validation: PASSED ✓")
 
-    context["artifacts"].append({
-        "name": "React Native Architecture Document",
-        "type": "RNAD",
-        "path": rnad_path,
-        "created_at": datetime.utcnow().isoformat(),
-        "created_by": "React Native Architect"
-    })
-    context["status"] = "RNAD_COMPLETE"
-    log_event(context, "RNAD_COMPLETE", rnad_path)
-    save_context(context)
+    # Save Part 1
+    results["part1_path"] = _write_output(f"rn_guide_part1_{ts}.md", part1_output)
 
-    return context, rnad_path
+    # -----------------------------------------------------------------------
+    # PART 2: Sections 6-10  (KEY FIX: inject Part 1 output as context)
+    # -----------------------------------------------------------------------
+    logger.info("=" * 60)
+    logger.info("PART 2: Generating Sections 6-10 (with Part 1 context)")
+    logger.info("=" * 60)
 
+    # Build the Part 2 task description by prepending Part 1 output as context.
+    # This replaces the old approach of pointing at the raw architecture doc.
+    part2_context_prompt = dedent(f"""\
+        =====================================================================
+        CONTEXT: The following is the ALREADY-COMPLETED Part 1 (Sections 1-5).
+        This is provided for reference only. DO NOT regenerate any of this.
+        =====================================================================
+
+        {part1_output}
+
+        =====================================================================
+        END OF PART 1 CONTEXT. Now continue with YOUR task below.
+        =====================================================================
+
+        {TASK_PART2}
+    """)
+
+    task_part2 = Task(
+        description=part2_context_prompt,
+        expected_output="Implementation guide Sections 6-10 ONLY, continuing from Part 1.",
+        agent=agent,
+    )
+
+    crew_part2 = Crew(
+        agents=[agent],
+        tasks=[task_part2],
+        process=Process.sequential,
+        verbose=True,
+    )
+
+    part2_result = crew_part2.kickoff()
+    part2_output = str(part2_result)
+
+    # Validate Part 2
+    part2_validation = validate_agent_output(
+        output=part2_output,
+        expected_sections=[6, 7, 8, 9, 10],
+        forbidden_sections=[1, 2, 3, 4, 5],
+        part_label="Part2",
+    )
+    results["part2_validation"] = part2_validation
+
+    if not part2_validation["valid"]:
+        for err in part2_validation["errors"]:
+            logger.error(f"Part 2 validation: {err}")
+        results["status"] = "part2_validation_failed"
+        # Still save the output so you can inspect what went wrong
+        results["part2_path"] = _write_output(f"rn_guide_part2_BAD_{ts}.md", part2_output)
+        logger.error(
+            "Part 2 FAILED validation — output saved with _BAD_ suffix. "
+            "The model likely regressed into Part 1 content or looped."
+        )
+    else:
+        logger.info("Part 2 validation: PASSED ✓")
+        results["part2_path"] = _write_output(f"rn_guide_part2_{ts}.md", part2_output)
+        results["status"] = "success"
+
+    # -----------------------------------------------------------------------
+    # Combine if both parts are valid
+    # -----------------------------------------------------------------------
+    if results["status"] == "success":
+        combined = part1_output.rstrip() + "\n\n---\n\n" + part2_output.lstrip()
+        results["combined_path"] = _write_output(f"rn_guide_complete_{ts}.md", combined)
+        logger.info(f"Combined guide: {results['combined_path']}")
+    else:
+        logger.warning("Skipping combined output due to validation failure.")
+
+    # -----------------------------------------------------------------------
+    # Summary
+    # -----------------------------------------------------------------------
+    logger.info("=" * 60)
+    logger.info(f"RN Developer Agent — Status: {results['status']}")
+    logger.info(f"  Part 1: {results['part1_path']}")
+    logger.info(f"  Part 2: {results['part2_path']}")
+    if results["combined_path"]:
+        logger.info(f"  Combined: {results['combined_path']}")
+    if results["part1_validation"]["errors"]:
+        logger.info(f"  Part 1 issues: {results['part1_validation']['errors']}")
+    if results["part2_validation"]["errors"]:
+        logger.info(f"  Part 2 issues: {results['part2_validation']['errors']}")
+    logger.info("=" * 60)
+
+    return results
+
+
+# ---------------------------------------------------------------------------
+# CLI Entry Point
+# ---------------------------------------------------------------------------
 
 if __name__ == "__main__":
-    import glob
+    import json
 
-    logs = sorted(glob.glob("logs/PROJ-*.json"), key=os.path.getmtime, reverse=True)
-    if not logs:
-        print("No project context found.")
-        exit(1)
+    results = run_rn_developer()
 
-    with open(logs[0]) as f:
-        context = json.load(f)
-
-    muxd_path = prd_path = None
-    for artifact in context.get("artifacts", []):
-        if artifact.get("type") == "MUXD":
-            muxd_path = artifact["path"]
-        if artifact.get("type") == "PRD":
-            prd_path = artifact["path"]
-
-    if not all([muxd_path, prd_path]):
-        print("Missing MUXD or PRD.")
-        exit(1)
-
-    print(f"📂 Loaded context: {logs[0]}")
-    print(f"📄 Using MUXD: {muxd_path}")
-    context, rnad_path = run_rn_architecture(context, muxd_path, prd_path)
-
-    print(f"\n✅ React Native architecture complete.")
-    print(f"📄 RNAD: {rnad_path}")
-    with open(rnad_path) as f:
-        print(f.read(500))
+    # Print summary to stdout as JSON for pipeline consumption
+    print(json.dumps({
+        "status": results["status"],
+        "part1_path": results["part1_path"],
+        "part2_path": results["part2_path"],
+        "combined_path": results["combined_path"],
+        "part1_valid": results["part1_validation"]["valid"],
+        "part2_valid": results["part2_validation"]["valid"],
+        "part2_errors": results["part2_validation"]["errors"],
+    }, indent=2))

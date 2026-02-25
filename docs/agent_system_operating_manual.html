@@ -1,0 +1,1020 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Agent System Operating Manual</title>
+<style>
+  body {
+    font-family: -apple-system, 'Segoe UI', sans-serif;
+    max-width: 820px;
+    margin: 40px auto;
+    padding: 0 24px;
+    line-height: 1.75;
+    color: #1a1a1a;
+    font-size: 11pt;
+  }
+  h1 {
+    font-size: 22pt;
+    border-bottom: 3px solid #1a56db;
+    padding-bottom: 10px;
+    margin-top: 48px;
+    color: #1a56db;
+  }
+  h2 {
+    font-size: 16pt;
+    color: #1a56db;
+    border-bottom: 1px solid #bbb;
+    padding-bottom: 6px;
+    margin-top: 36px;
+  }
+  h3 {
+    font-size: 13pt;
+    color: #333;
+    margin-top: 24px;
+  }
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 16px 0;
+    font-size: 10pt;
+  }
+  th, td {
+    border: 1px solid #ccc;
+    padding: 8px 10px;
+    text-align: left;
+    vertical-align: top;
+  }
+  th {
+    background-color: #1a56db;
+    color: white;
+    font-weight: bold;
+  }
+  tr:nth-child(even) { background-color: #f5f8fc; }
+  code, pre {
+    font-family: 'SF Mono', 'Courier New', monospace;
+    font-size: 9.5pt;
+    background: #f4f4f4;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+  }
+  code { padding: 2px 6px; }
+  pre {
+    padding: 14px 18px;
+    overflow-x: auto;
+    white-space: pre-wrap;
+    margin: 14px 0;
+  }
+  /* ── Cover ── */
+  .cover {
+    text-align: center;
+    padding: 60px 0 50px 0;
+    border-bottom: 3px solid #1a56db;
+    margin-bottom: 40px;
+  }
+  .cover h1 { border: none; font-size: 30pt; margin-bottom: 0; }
+  .cover .subtitle { font-size: 13pt; color: #555; margin-top: 6px; }
+  .cover .meta { font-size: 10pt; color: #999; margin-top: 24px; }
+  /* ── Callouts ── */
+  .tip {
+    background: #eef6ff;
+    border-left: 4px solid #1a56db;
+    padding: 14px 18px;
+    margin: 18px 0;
+    border-radius: 0 6px 6px 0;
+  }
+  .tip strong { color: #1a56db; }
+  .warn {
+    background: #fff8e1;
+    border-left: 4px solid #f59e0b;
+    padding: 14px 18px;
+    margin: 18px 0;
+    border-radius: 0 6px 6px 0;
+  }
+  .warn strong { color: #b45309; }
+  .stop {
+    background: #fef2f2;
+    border-left: 4px solid #dc2626;
+    padding: 14px 18px;
+    margin: 18px 0;
+    border-radius: 0 6px 6px 0;
+  }
+  .stop strong { color: #dc2626; }
+  /* ── Pipeline diagram ── */
+  .pipeline {
+    background: #f8fafc;
+    border: 2px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 24px;
+    margin: 20px 0;
+    font-family: 'SF Mono', 'Courier New', monospace;
+    font-size: 9.5pt;
+    line-height: 1.6;
+    overflow-x: auto;
+    white-space: pre;
+  }
+  /* ── Agent cards ── */
+  .agent-card {
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 16px 20px;
+    margin: 14px 0;
+    background: #fff;
+  }
+  .agent-card h4 {
+    margin: 0 0 6px 0;
+    font-size: 11.5pt;
+    color: #1a56db;
+  }
+  .agent-card .what { color: #333; margin: 4px 0; }
+  .agent-card .io {
+    font-size: 9.5pt;
+    color: #666;
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px solid #f0f0f0;
+  }
+  /* ── Badges ── */
+  .badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 8.5pt;
+    font-weight: 600;
+    color: white;
+    vertical-align: middle;
+  }
+  .b-plan { background: #1a56db; }
+  .b-build { background: #059669; }
+  .b-test { background: #d97706; }
+  .b-ops { background: #7c3aed; }
+  .b-mobile { background: #0d9488; }
+  /* ── Command blocks ── */
+  .cmd {
+    background: #1e293b;
+    color: #e2e8f0;
+    padding: 16px 20px;
+    border-radius: 6px;
+    margin: 14px 0;
+    font-family: 'SF Mono', 'Courier New', monospace;
+    font-size: 9.5pt;
+    line-height: 1.7;
+    overflow-x: auto;
+    white-space: pre;
+  }
+  .cmd .comment { color: #64748b; }
+  .cmd .checkpoint { color: #fbbf24; font-weight: bold; }
+  /* ── Cheat sheet ── */
+  .cheat {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin: 16px 0;
+  }
+  .cheat-item {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    padding: 12px 14px;
+  }
+  .cheat-item .label { font-weight: 600; font-size: 10pt; color: #1a56db; }
+  .cheat-item code { font-size: 8.5pt; }
+  /* ── TOC ── */
+  .toc a { text-decoration: none; color: #1a56db; }
+  .toc a:hover { text-decoration: underline; }
+  .toc { margin: 20px 0 40px 0; }
+  .toc li { margin: 5px 0; }
+  .toc .part-label {
+    font-weight: 700;
+    font-size: 10pt;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-top: 14px;
+    display: block;
+  }
+  .page-break { page-break-before: always; margin-top: 40px; }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- COVER                                                          -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div class="cover">
+  <h1>Agent System<br>Operating Manual</h1>
+  <div class="subtitle">Your AI development team — 20+ agents that turn a plain-English<br>project description into architecture, code, tests, and deployment.</div>
+  <div class="subtitle" style="font-size: 11pt; margin-top: 16px; color: #888;">CrewAI · Ollama · Local LLMs · GitHub</div>
+  <div class="meta">Version 2.0 — February 2026</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- TABLE OF CONTENTS                                              -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<h2>Contents</h2>
+<div class="toc">
+<ol>
+  <span class="part-label">Part I — Use It</span>
+  <li><a href="#s1">How It Works (The Big Picture)</a></li>
+  <li><a href="#s2">What Kind of Project Am I Running?</a></li>
+  <li><a href="#s3">Meet the Team (What Each Agent Does)</a></li>
+  <li><a href="#s4">Run Your First Project</a></li>
+  <li><a href="#s5">Command Cheat Sheet</a></li>
+  <li><a href="#s6">When It Asks You Something (Checkpoints)</a></li>
+  <li><a href="#s7">When Things Go Wrong</a></li>
+  <span class="part-label">Part II — Customize It</span>
+  <li><a href="#s8">Change Models, Tune Agents, Add New Ones</a></li>
+  <li><a href="#s9">Day-to-Day Operations</a></li>
+  <span class="part-label">Part III — Reference</span>
+  <li><a href="#app-a">Appendix A — Agent Profile Cards (Full Detail)</a></li>
+  <li><a href="#app-b">Appendix B — Artifact Registry</a></li>
+  <li><a href="#app-c">Appendix C — Context Object Schema</a></li>
+  <li><a href="#app-d">Appendix D — Conflict Resolution &amp; Escalation Matrix</a></li>
+  <li><a href="#app-e">Appendix E — Quality Standards</a></li>
+  <li><a href="#app-f">Appendix F — Model Tier Reference</a></li>
+</ol>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- 1. HOW IT WORKS                                                -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<h1 id="s1">1. How It Works</h1>
+
+<p>You describe what you want in plain English. The system runs it through a team of AI agents — each one an expert at a specific job — in a fixed order. You approve the work at key checkpoints. At the end, you have a full set of documents, architecture, code, and tests.</p>
+
+<h3>The pipeline in one picture</h3>
+<div class="pipeline">
+  YOU ──→ 📝 Describe your project in plain English
+            │
+            ▼
+  ┌─────────────────────────────────────────────────────────────┐
+  │  <strong>ORCHESTRATOR</strong>                                                │
+  │  Reads your request → classifies it → routes to the team   │
+  └────────────────────────┬────────────────────────────────────┘
+                           │
+          ┌────────────────┼────────────────┐
+          ▼                ▼                ▼
+  ┌──── PLAN ────┐ ┌─── BUILD ───┐ ┌─── TEST ───┐
+  │              │ │              │ │              │
+  │ Product Mgr  │ │ Senior Dev   │ │ QA Lead      │
+  │   → PRD      │ │   → TIP      │ │   → Test Plan│
+  │              │ │              │ │              │
+  │ Biz Analyst  │ │ Backend Dev  │ │ Test Auto    │
+  │   → BAD      │ │   → BIR      │ │   → Tests    │
+  │              │ │              │ │              │
+  │ Scrum Master │ │ Frontend Dev │ └──────────────┘
+  │   → Sprints  │ │   → FIR      │
+  │              │ │              │
+  │ Architect    │ │ DBA          │
+  │   → TAD      │ │   → DBAR     │
+  │              │ │              │
+  │ Security     │ │ DevOps       │
+  │   → SRR      │ │   → DIR      │
+  │              │ │              │
+  │ UX Designer  │ └──────────────┘
+  │   → UXD      │
+  └──────────────┘
+
+  ⏸️ = Checkpoint (the system stops and asks for your approval)
+
+  YOU ──→ Review artifacts at each ⏸️ → type APPROVE or REJECT
+</div>
+
+<h3>Three rules the system never breaks</h3>
+<ol>
+  <li><strong>Nothing starts without a clear spec.</strong> The Orchestrator turns your request into a structured project before any agent touches it.</li>
+  <li><strong>Nothing passes a checkpoint without your approval.</strong> The system texts and emails you, then waits. No agent ever ships anything on its own.</li>
+  <li><strong>Everything is logged.</strong> Every decision, every artifact, every approval goes into a project context file and git history.</li>
+</ol>
+
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- 2. WHAT KIND OF PROJECT AM I RUNNING?                          -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div class="page-break"></div>
+<h1 id="s2">2. What Kind of Project Am I Running?</h1>
+
+<p>When you describe your project, the Orchestrator classifies it into one of three types. This decides which agents run.</p>
+
+<div class="pipeline" style="font-size: 10pt; line-height: 1.8;">
+                    What does your project need?
+                              │
+              ┌───────────────┼───────────────┐
+              ▼               ▼               ▼
+      <strong>Software only?</strong>    <strong>Data analysis     Both?</strong>
+      (app, dashboard,   only?</strong>            (analyze data,
+       API, automation)  (EDA, ML model,    then build an
+                          stats, reports)   app from results)
+              │               │               │
+              ▼               ▼               ▼
+          <strong>DEV Crew</strong>        <strong>DS Crew</strong>        <strong>JOINT</strong>
+       20 agents run     14 agents run   DS Crew runs first,
+       the full web +    data analysis   hands off to Dev Crew
+       mobile pipeline   pipeline        with a formal package
+</div>
+
+<p>You don't need to pick — the Orchestrator figures this out from your description. But it helps to know:</p>
+
+<table>
+  <tr><th>If you say something like...</th><th>It becomes</th><th>What runs</th></tr>
+  <tr><td>"Build me a dashboard for tracking orders"</td><td><strong>DEV</strong></td><td>Full pipeline: requirements → architecture → code → tests</td></tr>
+  <tr><td>"Analyze last year's sales data and show me patterns"</td><td><strong>DS</strong></td><td>Data science pipeline (not covered in this manual)</td></tr>
+  <tr><td>"Analyze our trip data, then build a dashboard from the results"</td><td><strong>JOINT</strong></td><td>DS pipeline first → handoff package → DEV pipeline second</td></tr>
+</table>
+
+<div class="tip">
+  <strong>Tip:</strong> Be specific. "Build a dashboard" produces vague output. "Build an interactive dashboard showing monthly trip data with filters for type, date range, and provider, deployed as a containerized web app" gives the agents much better starting material.
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- 3. MEET THE TEAM                                               -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div class="page-break"></div>
+<h1 id="s3">3. Meet the Team</h1>
+
+<p>Every agent has one job and produces one document. Here's who they are, what they do, and what they hand off.</p>
+
+<h2>🔵 Planning Agents</h2>
+<p>These agents think. They turn your idea into detailed plans before anyone writes code.</p>
+
+<div class="agent-card">
+  <h4>Product Manager <span class="badge b-plan">PLAN</span></h4>
+  <div class="what">Turns your project description into a detailed requirements document — user stories, acceptance criteria, what's in scope, what's not.</div>
+  <div class="io">📥 Your project spec → 📄 <strong>PRD</strong> (Product Requirements Document)</div>
+</div>
+
+<div class="agent-card">
+  <h4>Business Analyst <span class="badge b-plan">PLAN</span></h4>
+  <div class="what">Goes deeper than the PRD. Maps out stakeholders, draws process flows, builds data dictionaries. Answers every question the PRD leaves open.</div>
+  <div class="io">📥 PRD → 📄 <strong>BAD</strong> (Business Analysis Document)</div>
+</div>
+
+<div class="agent-card">
+  <h4>Scrum Master <span class="badge b-plan">PLAN</span></h4>
+  <div class="what">Takes the requirements and breaks them into sprints — prioritized backlog, story points, what gets built first and why.</div>
+  <div class="io">📥 PRD + BAD → 📄 <strong>Sprint Plan</strong></div>
+</div>
+
+<div class="agent-card">
+  <h4>Technical Architect <span class="badge b-plan">PLAN</span></h4>
+  <div class="what">Designs the whole system — which technologies, how data flows, where things get deployed, how components talk to each other.</div>
+  <div class="io">📥 PRD + BAD + Sprint Plan → 📄 <strong>TAD</strong> (Technical Architecture Document)</div>
+</div>
+
+<div class="agent-card">
+  <h4>Security Reviewer <span class="badge b-plan">PLAN</span></h4>
+  <div class="what">Reviews the architecture for security holes, compliance gaps, and privacy risks. Can block the project if something is unsafe. This is the last gate before coding starts.</div>
+  <div class="io">📥 PRD + TAD → 📄 <strong>SRR</strong> (Security Review Report) — rated 🟢 GREEN / 🟡 AMBER / 🔴 RED</div>
+</div>
+
+<div class="agent-card">
+  <h4>UX/UI Designer <span class="badge b-plan">PLAN</span></h4>
+  <div class="what">Designs every screen, interaction, and user journey. Also writes every label, button, tooltip, and error message — developers never make up UI text.</div>
+  <div class="io">📥 PRD + BAD + SRR → 📄 <strong>UXD</strong> (User Experience Document) + 📄 <strong>UI Content Guide</strong></div>
+</div>
+
+<h2>🟢 Build Agents</h2>
+<p>These agents write code. They follow the plans exactly.</p>
+
+<div class="agent-card">
+  <h4>Senior Developer <span class="badge b-build">BUILD</span></h4>
+  <div class="what">Translates the architecture into a concrete coding plan — project structure, module boundaries, coding standards, implementation order. This is the bible the other developers follow.</div>
+  <div class="io">📥 PRD + TAD + UXD → 📄 <strong>TIP</strong> (Technical Implementation Plan)</div>
+</div>
+
+<div class="agent-card">
+  <h4>Backend Developer <span class="badge b-build">BUILD</span></h4>
+  <div class="what">Builds the server side — APIs, database access, authentication, business logic. Produces working code with documentation.</div>
+  <div class="io">📥 TIP + TAD → 📄 <strong>BIR</strong> (Backend Implementation Report) + code</div>
+</div>
+
+<div class="agent-card">
+  <h4>Frontend Developer <span class="badge b-build">BUILD</span></h4>
+  <div class="what">Builds the user interface — pages, components, state management, API integration. Uses the exact text from the Content Guide.</div>
+  <div class="io">📥 TIP + UXD + BIR + Content Guide → 📄 <strong>FIR</strong> (Frontend Implementation Report) + code</div>
+</div>
+
+<div class="agent-card">
+  <h4>Database Administrator <span class="badge b-build">BUILD</span></h4>
+  <div class="what">Reviews and optimizes the database schema — indexes, migrations, backups, capacity planning. Developers don't modify the database without this agent's sign-off.</div>
+  <div class="io">📥 BIR + TAD + SRR → 📄 <strong>DBAR</strong> (Database Administration Report)</div>
+</div>
+
+<div class="agent-card">
+  <h4>DevOps Engineer <span class="badge b-build">BUILD</span></h4>
+  <div class="what">Sets up everything needed to build, test, and deploy — Docker containers, CI/CD pipelines, infrastructure-as-code, secrets management.</div>
+  <div class="io">📥 TIP + TAD + SRR → 📄 <strong>DIR</strong> (DevOps Implementation Report)</div>
+</div>
+
+<h2>🟠 Test Agents</h2>
+<p>These agents make sure everything works. Nothing ships without their approval.</p>
+
+<div class="agent-card">
+  <h4>QA Lead <span class="badge b-test">TEST</span></h4>
+  <div class="what">Reads every document the team produced and designs the test plan — what to test, how to test it, and what "done" means.</div>
+  <div class="io">📥 PRD + TIP + BIR + FIR + UXD → 📄 <strong>MTP</strong> (Master Test Plan)</div>
+</div>
+
+<div class="agent-card">
+  <h4>Test Automation Engineer <span class="badge b-test">TEST</span></h4>
+  <div class="what">Writes the actual test code — unit tests, API tests, end-to-end tests, accessibility tests. Real code that runs.</div>
+  <div class="io">📥 MTP + BIR + FIR + TIP → 📄 <strong>TAR</strong> (Test Automation Report) + test code</div>
+</div>
+
+<h2>📱 Mobile Agents <span style="font-size: 10pt; color: #888;">(optional — only if your project has a mobile app)</span></h2>
+
+<div class="agent-card">
+  <h4>Mobile UX Designer <span class="badge b-mobile">MOBILE</span></h4>
+  <div class="what">Designs the mobile experience for iOS, Android, and React Native — all three tracks work from this one document.</div>
+  <div class="io">📥 PRD → 📄 <strong>MUXD</strong> (Mobile UX Document)</div>
+</div>
+
+<div class="agent-card">
+  <h4>iOS Developer <span class="badge b-mobile">MOBILE</span></h4>
+  <div class="what">Builds the native iOS app in Swift/SwiftUI with VoiceOver accessibility and secure storage.</div>
+  <div class="io">📥 MUXD + PRD → 📄 <strong>IIR</strong> (iOS Implementation Report) + Swift code</div>
+</div>
+
+<div class="agent-card">
+  <h4>Android Developer <span class="badge b-mobile">MOBILE</span></h4>
+  <div class="what">Builds the native Android app in Kotlin/Compose with TalkBack accessibility and encrypted storage.</div>
+  <div class="io">📥 MUXD + PRD → 📄 <strong>AIR</strong> (Android Implementation Report) + Kotlin code</div>
+</div>
+
+<div class="agent-card">
+  <h4>React Native Architect + Developer <span class="badge b-mobile">MOBILE</span></h4>
+  <div class="what">Designs and builds the cross-platform app in React Native/Expo/TypeScript. Runs as two agents in sequence because the output is too large for one pass.</div>
+  <div class="io">📥 MUXD → 📄 <strong>RNAD</strong> (Architecture) → 📄 <strong>RN Guide</strong> (Implementation)</div>
+</div>
+
+<div class="agent-card">
+  <h4>Mobile DevOps + Mobile QA <span class="badge b-mobile">MOBILE</span></h4>
+  <div class="what">DevOps sets up build pipelines, code signing, and store submission automation. QA writes and runs the mobile test suite.</div>
+  <div class="io">📥 RN Guide + SRR → 📄 <strong>MDIR</strong> + 📄 <strong>Mobile Test Plan</strong> + test files</div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- 4. RUN YOUR FIRST PROJECT                                      -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div class="page-break"></div>
+<h1 id="s4">4. Run Your First Project</h1>
+
+<h2>Before you start</h2>
+<ol>
+  <li>You've installed everything (Ollama, CrewAI, models, Python env).</li>
+  <li>Open a terminal: <code>cd ~/dev-team && source .venv/bin/activate</code></li>
+  <li>Verify Ollama is running: <code>curl http://localhost:11434/api/tags</code></li>
+</ol>
+
+<h2>Step 1 — Describe your project</h2>
+<p>Open <code>agents/orchestrator/classify.py</code>. Find the <code>test_request</code> string at the bottom and replace it with your project description. Then:</p>
+<div class="cmd">python agents/orchestrator/classify.py</div>
+<p>The Orchestrator reads your description, classifies it (DEV / DS / JOINT), and creates a project file in <code>logs/PROJ-{id}.json</code>. You'll see the project ID and a structured spec printed to the terminal.</p>
+
+<h2>Step 2 — Route it</h2>
+<div class="cmd">python agents/orchestrator/router.py</div>
+<p>This assigns your project to the right crew and sets the first agent in motion.</p>
+
+<h2>Step 3 — Run the pipeline</h2>
+<p>Now run each agent in order. Each one automatically loads the project context and finds its upstream documents.</p>
+
+<div class="cmd"><span class="comment"># ── PLANNING ──────────────────────────────────────────────</span>
+python agents/dev/strategy/product_manager.py
+<span class="checkpoint">⏸️  CHECKPOINT: Review the PRD → type APPROVE or REJECT</span>
+
+python agents/dev/strategy/business_analyst.py
+python agents/dev/strategy/scrum_master.py
+python agents/dev/strategy/technical_architect.py
+<span class="checkpoint">⏸️  CHECKPOINT: Review the architecture → APPROVE or REJECT</span>
+
+python agents/dev/strategy/security_reviewer.py
+<span class="checkpoint">⏸️  CHECKPOINT: Security gate → APPROVE or REJECT</span>
+
+python agents/dev/strategy/ux_designer.py
+python agents/dev/strategy/ux_content_guide.py
+<span class="checkpoint">⏸️  CHECKPOINT: Review designs → APPROVE or REJECT</span>
+
+<span class="comment"># ── BUILDING ──────────────────────────────────────────────</span>
+python agents/dev/build/senior_developer.py
+python agents/dev/build/backend_developer.py
+python agents/dev/build/frontend_developer.py
+python agents/dev/build/database_admin.py
+python agents/dev/build/devops_engineer.py
+<span class="checkpoint">⏸️  CHECKPOINT: Build complete → APPROVE or REJECT</span>
+
+<span class="comment"># ── TESTING ───────────────────────────────────────────────</span>
+python agents/dev/quality/qa_lead.py
+python agents/dev/quality/test_automation_engineer.py
+<span class="checkpoint">⏸️  CHECKPOINT: Release gate → APPROVE or REJECT</span></div>
+
+<h2>Step 4 — Commit</h2>
+<div class="cmd">git add -A
+git commit -m "PROJ-XXXXX: Full pipeline complete"
+git push</div>
+
+<p>That's it. Your <code>logs/PROJ-{id}.json</code> file has the full audit trail of everything that happened.</p>
+
+<div class="tip">
+  <strong>Optional — Mobile:</strong> If your project includes a mobile app, run the mobile pipeline after step 3. See <a href="#s5">Command Cheat Sheet</a> for the full mobile command sequence.
+</div>
+
+<div class="tip">
+  <strong>Optional — Retrofit:</strong> If the output has cloud-provider-specific content you want to generalize, run the retrofit agents. See <a href="#s5">Command Cheat Sheet</a>.
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- 5. COMMAND CHEAT SHEET                                         -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div class="page-break"></div>
+<h1 id="s5">5. Command Cheat Sheet</h1>
+
+<p>Every command runs from <code>~/dev-team/</code> with the virtualenv active.</p>
+
+<h2>Startup</h2>
+<div class="cheat">
+  <div class="cheat-item"><div class="label">Activate env</div><code>cd ~/dev-team && source .venv/bin/activate</code></div>
+  <div class="cheat-item"><div class="label">Check Ollama</div><code>curl http://localhost:11434/api/tags</code></div>
+  <div class="cheat-item"><div class="label">Start Ollama</div><code>sudo systemctl start ollama</code></div>
+  <div class="cheat-item"><div class="label">Check GPU/RAM</div><code>ollama ps</code></div>
+</div>
+
+<h2>Web Pipeline (full sequence)</h2>
+<table>
+  <tr><th>#</th><th>Command</th><th>Produces</th><th>⏸️</th></tr>
+  <tr><td>1</td><td><code>python agents/orchestrator/classify.py</code></td><td>Project context</td><td></td></tr>
+  <tr><td>2</td><td><code>python agents/orchestrator/router.py</code></td><td>Routing decision</td><td></td></tr>
+  <tr><td>3</td><td><code>python agents/dev/strategy/product_manager.py</code></td><td>PRD</td><td>✅</td></tr>
+  <tr><td>4</td><td><code>python agents/dev/strategy/business_analyst.py</code></td><td>BAD</td><td></td></tr>
+  <tr><td>5</td><td><code>python agents/dev/strategy/scrum_master.py</code></td><td>Sprint Plan</td><td></td></tr>
+  <tr><td>6</td><td><code>python agents/dev/strategy/technical_architect.py</code></td><td>TAD</td><td>✅</td></tr>
+  <tr><td>7</td><td><code>python agents/dev/strategy/security_reviewer.py</code></td><td>SRR</td><td>✅</td></tr>
+  <tr><td>8</td><td><code>python agents/dev/strategy/ux_designer.py</code></td><td>UXD</td><td></td></tr>
+  <tr><td>9</td><td><code>python agents/dev/strategy/ux_content_guide.py</code></td><td>Content Guide</td><td>✅</td></tr>
+  <tr><td>10</td><td><code>python agents/dev/build/senior_developer.py</code></td><td>TIP</td><td></td></tr>
+  <tr><td>11</td><td><code>python agents/dev/build/backend_developer.py</code></td><td>BIR</td><td></td></tr>
+  <tr><td>12</td><td><code>python agents/dev/build/frontend_developer.py</code></td><td>FIR</td><td></td></tr>
+  <tr><td>13</td><td><code>python agents/dev/build/database_admin.py</code></td><td>DBAR</td><td></td></tr>
+  <tr><td>14</td><td><code>python agents/dev/build/devops_engineer.py</code></td><td>DIR</td><td>✅</td></tr>
+  <tr><td>15</td><td><code>python agents/dev/quality/qa_lead.py</code></td><td>MTP</td><td></td></tr>
+  <tr><td>16</td><td><code>python agents/dev/quality/test_automation_engineer.py</code></td><td>TAR</td><td>✅</td></tr>
+</table>
+
+<h2>Mobile Pipeline (after web pipeline)</h2>
+<table>
+  <tr><th>#</th><th>Command</th><th>Produces</th></tr>
+  <tr><td>1</td><td><code>python agents/mobile/ux/mobile_ux_designer.py</code></td><td>MUXD</td></tr>
+  <tr><td>2</td><td><code>python agents/mobile/ios/ios_developer.py</code></td><td>IIR</td></tr>
+  <tr><td>3</td><td><code>python agents/mobile/android/android_developer.py</code></td><td>AIR</td></tr>
+  <tr><td>4</td><td><code>python agents/mobile/rn/react_native_architect_part1.py</code></td><td>RNAD Part 1</td></tr>
+  <tr><td>5</td><td><code>python agents/mobile/rn/react_native_architect_part2.py</code></td><td>RNAD Part 2</td></tr>
+  <tr><td>6</td><td><code>python agents/mobile/rn/react_native_developer.py</code></td><td>RN Guide</td></tr>
+  <tr><td>7</td><td><code>python agents/mobile/ios/ios_developer_patch.py</code></td><td>IIR patch</td></tr>
+  <tr><td>8</td><td><code>python agents/mobile/ios/ios_accessibility_patch.py</code></td><td>IIR a11y</td></tr>
+  <tr><td>9</td><td><code>python agents/mobile/devops/mobile_devops_engineer.py</code></td><td>MDIR</td></tr>
+  <tr><td>10</td><td><code>python agents/mobile/qa/mobile_qa_specialist.py</code></td><td>Test suite</td></tr>
+</table>
+
+<h2>Retrofit Pipeline (make output deployment-agnostic)</h2>
+<table>
+  <tr><th>#</th><th>Command</th><th>Produces</th></tr>
+  <tr><td>1</td><td><code>python agents/dev/build/tad_retrofit.py</code></td><td>TAD-R</td></tr>
+  <tr><td>2</td><td><code>python agents/dev/build/backend_developer_retrofit.py</code></td><td>BIR-R</td></tr>
+  <tr><td>3</td><td><code>python agents/dev/build/devops_engineer_retrofit.py</code></td><td>DIR-R</td></tr>
+  <tr><td>4</td><td><code>python agents/dev/build/srr_retrofit.py</code></td><td>SRR-R</td></tr>
+  <tr><td>5</td><td><code>python agents/dev/quality/qa_lead_retrofit.py</code></td><td>MTP-R</td></tr>
+  <tr><td>6</td><td><code>python agents/dev/reconciliation.py</code></td><td>Gap report ✅</td></tr>
+</table>
+
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- 6. CHECKPOINTS                                                 -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div class="page-break"></div>
+<h1 id="s6">6. When It Asks You Something</h1>
+
+<p>At six points in the pipeline, the system stops and waits for you. You'll get a text message and an email, and the terminal will show what it needs.</p>
+
+<h3>What to do when it stops:</h3>
+<ol>
+  <li>Open the file it tells you about (e.g., <code>dev/requirements/PROJ-XXXXX_PRD.md</code>)</li>
+  <li>Read through it</li>
+  <li>Go back to the terminal and type <code>APPROVE</code> or <code>REJECT</code></li>
+  <li>If you reject, type a reason — this gets saved and helps guide the re-run</li>
+</ol>
+
+<h3>What to look for at each stop:</h3>
+<table>
+  <tr><th>Checkpoint</th><th>After which agent?</th><th>What are you checking?</th></tr>
+  <tr><td><strong>CP-1: Requirements</strong></td><td>Product Manager → PRD</td><td>Are the user stories right? Is the scope right? Are the right things out of scope?</td></tr>
+  <tr><td><strong>CP-2: Architecture</strong></td><td>Tech Architect → TAD</td><td>Does the technology make sense? Is this achievable? Does the system design fit your infrastructure?</td></tr>
+  <tr><td><strong>CP-3: Security</strong></td><td>Security Reviewer → SRR</td><td>Is the rating acceptable (🟢/🟡/🔴)? Are the security requirements reasonable?</td></tr>
+  <tr><td><strong>CP-4: Design</strong></td><td>UX Designer → UXD + Content</td><td>Does the UI make sense for your users? Is the language clear? Are all the screens covered?</td></tr>
+  <tr><td><strong>CP-5: Build</strong></td><td>DevOps Engineer → DIR</td><td>Spot-check the code. Search for <code>TODO</code> or <code>placeholder</code>. Does it look complete?</td></tr>
+  <tr><td><strong>CP-6: Release</strong></td><td>Test Automation → TAR</td><td>Are you confident this is done? Tests pass? No open issues?</td></tr>
+</table>
+
+<div class="warn">
+  <strong>What if my terminal dies during a checkpoint?</strong> The project context was already saved before the checkpoint fired. Just re-run the same agent — it picks up where it left off.
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- 7. WHEN THINGS GO WRONG                                        -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div class="page-break"></div>
+<h1 id="s7">7. When Things Go Wrong</h1>
+
+<h2>🔇 Agent sits there doing nothing (30+ minutes)</h2>
+<p><strong>What happened:</strong> The LLM hit a timeout or ran out of context window space.</p>
+<p><strong>Fix:</strong> Press Ctrl+C. Check that Ollama is still running (<code>curl http://localhost:11434/api/tags</code>). Re-run the same agent — it's safe, it just starts over.</p>
+
+<h2>🔁 Agent keeps repeating the same text over and over</h2>
+<p><strong>What happened:</strong> The model lost its "stop" instruction. This is the most common failure with local LLMs on large outputs.</p>
+<p><strong>Fix:</strong></p>
+<ol>
+  <li>Press Ctrl+C. The file may have good content before the loop started.</li>
+  <li>Open the output file and delete the repeated content.</li>
+  <li>To prevent it next time, open the agent's Python file and add <code>max_tokens=4096</code> to the <code>Task()</code> constructor, and add an "OUTPUT DISCIPLINE" instruction to the agent's backstory. Full instructions: <code>agents/mobile/output_guard_patch.md</code></li>
+</ol>
+
+<h2>📄 Agent exits immediately with "No project context found"</h2>
+<p><strong>What happened:</strong> There's no <code>logs/PROJ-*.json</code> file.</p>
+<p><strong>Fix:</strong> Run <code>python agents/orchestrator/classify.py</code> first.</p>
+
+<h2>📄 Agent exits with "Missing TIP" or "Missing PRD" or similar</h2>
+<p><strong>What happened:</strong> A required upstream document hasn't been created yet.</p>
+<p><strong>Fix:</strong> Run the agents in order. Check which one was skipped.</p>
+
+<h2>🤖 Output has <code>// TODO</code> or placeholder code</h2>
+<p><strong>What happened:</strong> The model took shortcuts instead of writing complete code.</p>
+<p><strong>Fix:</strong> Open the agent's Python file, find the <code>Task(description=...)</code> block, and add: "No placeholders. No TODO comments. Every function must be complete and working." Then re-run.</p>
+
+<h2>💥 Output is about the wrong project or drifted off-topic</h2>
+<p><strong>What happened:</strong> The upstream artifact excerpt was too short and the model lost context.</p>
+<p><strong>Fix:</strong> In the agent's <code>run_*</code> function, find the line like <code>f.read()[:3000]</code> and increase the number (try <code>[:5000]</code> or <code>[:8000]</code>). Then re-run.</p>
+
+<h2>🔌 Ollama connection refused</h2>
+<div class="cmd">sudo systemctl start ollama
+<span class="comment"># Verify:</span>
+curl http://localhost:11434/api/tags</div>
+
+<h2>💾 Out of memory (Ollama crashes or machine freezes)</h2>
+<p><strong>What happened:</strong> The model is too large for your available RAM.</p>
+<p><strong>Fix:</strong> Don't run strategy agents and build agents at the same time — they use different models. Run the full planning phase first, then the build phase. If the 72b model is too big, drop back to the 32b: edit <code>TIER1_MODEL</code> in <code>config/.env</code>.</p>
+
+<h2>🔄 How to start over</h2>
+<div class="cmd"><span class="comment"># Archive the old project</span>
+mkdir -p logs/archive
+mv logs/PROJ-XXXXX.json logs/archive/
+
+<span class="comment"># Start fresh</span>
+python agents/orchestrator/classify.py</div>
+
+<h2>🔄 How to re-run one agent</h2>
+<p>Just run it again. It overwrites its previous output and updates the project context. Downstream agents will pick up the new version next time they run.</p>
+
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- 8. CUSTOMIZE IT                                                -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div class="page-break"></div>
+<h1 id="s8">8. Change Models, Tune Agents, Add New Ones</h1>
+
+<h2>Switch to a different LLM</h2>
+<p>Two lines in <code>config/.env</code> control which models the entire team uses:</p>
+<div class="cmd">TIER1_MODEL=ollama/qwen2.5:72b      <span class="comment"># Planning agents (the thinkers)</span>
+TIER2_MODEL=ollama/qwen2.5-coder:32b <span class="comment"># Build agents (the coders)</span></div>
+<p>To change: pull the new model (<code>ollama pull &lt;name&gt;</code>), update the line, done. No code changes.</p>
+
+<h2>Make an agent behave differently</h2>
+<p>Every agent's behavior is controlled by text you can edit — no coding required.</p>
+<table>
+  <tr><th>What to change</th><th>Where to find it</th><th>Example</th></tr>
+  <tr><td>The agent's personality and expertise</td><td><code>Agent(backstory="...")</code> in the <code>build_*</code> function</td><td>Add "You always prefer serverless architectures" to the Architect's backstory</td></tr>
+  <tr><td>What the agent is asked to produce</td><td><code>Task(description="...")</code> in the <code>run_*</code> function</td><td>Add a new section to the PRD template: "10. REGULATORY REQUIREMENTS"</td></tr>
+  <tr><td>How much upstream context the agent sees</td><td><code>f.read()[:3000]</code> in the <code>run_*</code> function</td><td>Change <code>[:3000]</code> to <code>[:6000]</code> to give it more context</td></tr>
+  <tr><td>Stop the agent from looping</td><td>Agent backstory + Task constructor</td><td>Add "OUTPUT DISCIPLINE: stop after all sections are complete" to backstory, add <code>max_tokens=4096</code> to Task</td></tr>
+</table>
+
+<h2>Add a new agent</h2>
+<p>Copy any existing agent file (e.g., <code>backend_developer.py</code>) and modify it. Every agent follows the same pattern:</p>
+<ol>
+  <li>A <code>build_*</code> function that returns a CrewAI <code>Agent</code> with role, goal, backstory, and model</li>
+  <li>A <code>run_*</code> function that creates a <code>Task</code>, runs it in a <code>Crew</code>, saves the output, and updates the project context</li>
+  <li>A <code>__main__</code> block that loads the project context and finds upstream artifacts</li>
+</ol>
+<div class="tip">
+  <strong>The key pattern:</strong> Every agent reads upstream artifacts from the <code>artifacts</code> array in the project context JSON. It finds them by <code>type</code> (e.g., <code>"PRD"</code>, <code>"TAD"</code>). When it finishes, it appends its own artifact to the same array. That's how agents find each other's work.
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- 9. DAY-TO-DAY OPERATIONS                                       -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div class="page-break"></div>
+<h1 id="s9">9. Day-to-Day Operations</h1>
+
+<h2>What to watch in the terminal</h2>
+<table>
+  <tr><th>You see...</th><th>It means...</th></tr>
+  <tr><td><code>🔍 Classifying project request...</code></td><td>Orchestrator is thinking about your request</td></tr>
+  <tr><td><code>📋 Product Manager generating PRD for: ...</code></td><td>An agent started working</td></tr>
+  <tr><td>Streaming text (the agent is "typing")</td><td>The LLM is generating — this is normal, let it run</td></tr>
+  <tr><td><code>💾 PRD saved: dev/requirements/PROJ-XXXXX_PRD.md</code></td><td>Agent finished successfully. Artifact is on disk.</td></tr>
+  <tr><td><code>⏸️ CHECKPOINT: ...</code></td><td>Your turn — review and approve/reject</td></tr>
+  <tr><td><code>📱 SMS sent...</code></td><td>You've been texted about the checkpoint</td></tr>
+  <tr><td><code>⚠️ SMS failed: ...</code></td><td>Notification issue — check your .env email settings</td></tr>
+</table>
+
+<h2>Reviewing output efficiently</h2>
+<ol>
+  <li><strong>Quick check:</strong> The terminal prints the first 500 chars of each output. Glance at it — does it start with the right headings?</li>
+  <li><strong>Full review (at checkpoints):</strong> Open the <code>.md</code> file in your editor. Skim the table of contents / section headings first.</li>
+  <li><strong>Red flag search:</strong> <code>grep -i "todo\|placeholder\|implement here\|TBD" dev/requirements/PROJ-XXXXX_*.md</code></li>
+  <li><strong>Check FLAGS.md:</strong> This tracks known gaps. Review it before every checkpoint.</li>
+</ol>
+
+<h2>Git workflow</h2>
+<p>Commit after each agent completes. Use the project ID in every message:</p>
+<div class="cmd">git add -A && git commit -m "PROJ-XXXXX: Product Manager → PRD complete"</div>
+<p>After a full pipeline: <code>git tag PROJ-XXXXX-v1.0</code></p>
+<p>After retrofit: <code>git tag PROJ-XXXXX-v1.0-retrofit</code></p>
+
+<h2>Multiple projects</h2>
+<p>The system runs one project at a time (Ollama serves one model at a time). To switch, archive the current project context:</p>
+<div class="cmd">mkdir -p logs/archive && mv logs/PROJ-XXXXX.json logs/archive/</div>
+<p>Then run <code>classify.py</code> with your new project description.</p>
+
+<h2>Updating the stack</h2>
+<table>
+  <tr><th>What</th><th>How</th></tr>
+  <tr><td>Ollama</td><td><code>curl -fsSL https://ollama.com/install.sh | sh</code> — models are preserved</td></tr>
+  <tr><td>CrewAI</td><td><code>pip install --upgrade "crewai[tools]"</code></td></tr>
+  <tr><td>New LLM model</td><td><code>ollama pull &lt;model-name&gt;</code> → update <code>config/.env</code></td></tr>
+</table>
+
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!--                                                                -->
+<!--  PART III — REFERENCE APPENDICES                               -->
+<!--                                                                -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div class="page-break"></div>
+<h1 style="text-align: center; border: none; color: #888; font-size: 16pt; letter-spacing: 3px;">PART III — REFERENCE</h1>
+<p style="text-align: center; color: #999;">The sections below are detailed reference material. You don't need to read them to use the system — they're here when you need to look something up.</p>
+
+<!-- ── APPENDIX A — FULL AGENT PROFILES ─────────────────────── -->
+<h1 id="app-a">Appendix A — Agent Profile Cards (Full Detail)</h1>
+<p>Complete technical profiles for every agent, including model tier, file location, persona backstory, input/output artifacts, decision authority, and escalation triggers. See the Version 1.0 manual for the full profiles — they are preserved here by reference and can be appended in full if needed.</p>
+
+<div class="tip"><strong>Quick reference for every agent:</strong> open the agent's Python file, read the <code>backstory</code> string in the <code>build_*</code> function. That <em>is</em> the agent's full profile — everything it knows, how it behaves, and what it produces.</div>
+
+<table>
+  <tr><th>Layer</th><th>Agent</th><th>File</th><th>Tier</th><th>Produces</th></tr>
+  <tr><td rowspan="1">Orchestration</td><td>Dev-Team Orchestrator</td><td><code>orchestrator/orchestrator.py</code></td><td>T1</td><td>Project context, routing, notifications</td></tr>
+  <tr><td rowspan="7">Strategy (Plan)</td><td>Product Manager</td><td><code>dev/strategy/product_manager.py</code></td><td>T1</td><td>PRD</td></tr>
+  <tr><td>Business Analyst</td><td><code>dev/strategy/business_analyst.py</code></td><td>T1</td><td>BAD</td></tr>
+  <tr><td>Scrum Master</td><td><code>dev/strategy/scrum_master.py</code></td><td>T1</td><td>Sprint Plan</td></tr>
+  <tr><td>Technical Architect</td><td><code>dev/strategy/technical_architect.py</code></td><td>T1</td><td>TAD</td></tr>
+  <tr><td>Security Reviewer</td><td><code>dev/strategy/security_reviewer.py</code></td><td>T1</td><td>SRR</td></tr>
+  <tr><td>UX/UI Designer</td><td><code>dev/strategy/ux_designer.py</code></td><td>T1</td><td>UXD</td></tr>
+  <tr><td>UX Content Guide</td><td><code>dev/strategy/ux_content_guide.py</code></td><td>T1</td><td>Content Guide</td></tr>
+  <tr><td rowspan="5">Build</td><td>Senior Developer</td><td><code>dev/build/senior_developer.py</code></td><td>T2</td><td>TIP</td></tr>
+  <tr><td>Backend Developer</td><td><code>dev/build/backend_developer.py</code></td><td>T2</td><td>BIR</td></tr>
+  <tr><td>Frontend Developer</td><td><code>dev/build/frontend_developer.py</code></td><td>T2</td><td>FIR</td></tr>
+  <tr><td>Database Administrator</td><td><code>dev/build/database_admin.py</code></td><td>T2</td><td>DBAR</td></tr>
+  <tr><td>DevOps Engineer</td><td><code>dev/build/devops_engineer.py</code></td><td>T2</td><td>DIR</td></tr>
+  <tr><td rowspan="2">Quality</td><td>QA Lead</td><td><code>dev/quality/qa_lead.py</code></td><td>T1</td><td>MTP</td></tr>
+  <tr><td>Test Automation Engineer</td><td><code>dev/quality/test_automation_engineer.py</code></td><td>T2</td><td>TAR</td></tr>
+  <tr><td rowspan="7">Mobile</td><td>Mobile UX Designer</td><td><code>mobile/ux/mobile_ux_designer.py</code></td><td>T1</td><td>MUXD</td></tr>
+  <tr><td>iOS Developer</td><td><code>mobile/ios/ios_developer.py</code></td><td>T2</td><td>IIR</td></tr>
+  <tr><td>Android Developer</td><td><code>mobile/android/android_developer.py</code></td><td>T2</td><td>AIR</td></tr>
+  <tr><td>RN Architect</td><td><code>mobile/rn/react_native_architect_part*.py</code></td><td>T2</td><td>RNAD</td></tr>
+  <tr><td>RN Developer</td><td><code>mobile/rn/react_native_developer.py</code></td><td>T2</td><td>RN Guide</td></tr>
+  <tr><td>Mobile DevOps</td><td><code>mobile/devops/mobile_devops_engineer.py</code></td><td>T2</td><td>MDIR</td></tr>
+  <tr><td>Mobile QA</td><td><code>mobile/qa/mobile_qa_specialist.py</code></td><td>T1</td><td>Test suite</td></tr>
+  <tr><td rowspan="6">Retrofit</td><td>TAD Retrofit</td><td><code>dev/build/tad_retrofit.py</code></td><td>T2</td><td>TAD-R</td></tr>
+  <tr><td>BIR Retrofit</td><td><code>dev/build/backend_developer_retrofit.py</code></td><td>T2</td><td>BIR-R</td></tr>
+  <tr><td>DIR Retrofit</td><td><code>dev/build/devops_engineer_retrofit.py</code></td><td>T2</td><td>DIR-R</td></tr>
+  <tr><td>SRR Retrofit</td><td><code>dev/build/srr_retrofit.py</code></td><td>T2</td><td>SRR-R</td></tr>
+  <tr><td>MTP Retrofit</td><td><code>dev/quality/qa_lead_retrofit.py</code></td><td>T2</td><td>MTP-R</td></tr>
+  <tr><td>Reconciliation</td><td><code>dev/reconciliation.py</code></td><td>T2</td><td>Gap report</td></tr>
+</table>
+
+<!-- ── APPENDIX B — ARTIFACT REGISTRY ───────────────────────── -->
+<div class="page-break"></div>
+<h1 id="app-b">Appendix B — Artifact Registry</h1>
+
+<table>
+  <tr><th>Code</th><th>Full Name</th><th>Produced By</th><th>Consumed By</th><th>File Pattern</th></tr>
+  <tr><td>PRD</td><td>Product Requirements Document</td><td>Product Manager</td><td>BA, SM, TA, SR, UX, SD, QA</td><td><code>{PROJ}_PRD.md</code></td></tr>
+  <tr><td>BAD</td><td>Business Analysis Document</td><td>Business Analyst</td><td>SM, TA, UX</td><td><code>{PROJ}_BAD.md</code></td></tr>
+  <tr><td>Sprint Plan</td><td>Sprint Planning Document</td><td>Scrum Master</td><td>TA</td><td><code>{PROJ}_SPRINT.md</code></td></tr>
+  <tr><td>TAD</td><td>Technical Architecture Document</td><td>Technical Architect</td><td>SR, SD, BD, DevOps, DBA</td><td><code>{PROJ}_TAD.md</code></td></tr>
+  <tr><td>SRR</td><td>Security Review Report</td><td>Security Reviewer</td><td>UX, DevOps, DBA, Mobile DevOps</td><td><code>{PROJ}_SRR.md</code></td></tr>
+  <tr><td>UXD</td><td>User Experience Document</td><td>UX/UI Designer</td><td>Content Guide, SD, FD, QA</td><td><code>{PROJ}_UXD.md</code></td></tr>
+  <tr><td>Content Guide</td><td>UI Content Guide</td><td>UX Content Guide</td><td>FD</td><td><code>{PROJ}_CONTENT.md</code></td></tr>
+  <tr><td>TIP</td><td>Technical Implementation Plan</td><td>Senior Developer</td><td>BD, FD, DevOps, TAE, Mobile DevOps</td><td><code>{PROJ}_TIP.md</code></td></tr>
+  <tr><td>BIR</td><td>Backend Implementation Report</td><td>Backend Developer</td><td>FD, DBA, QA, TAE</td><td><code>{PROJ}_BIR.md</code></td></tr>
+  <tr><td>FIR</td><td>Frontend Implementation Report</td><td>Frontend Developer</td><td>QA, TAE</td><td><code>{PROJ}_FIR.md</code></td></tr>
+  <tr><td>DBAR</td><td>Database Administration Report</td><td>Database Administrator</td><td>DevOps</td><td><code>{PROJ}_DBAR.md</code></td></tr>
+  <tr><td>DIR</td><td>DevOps Implementation Report</td><td>DevOps Engineer</td><td>QA, TAE</td><td><code>{PROJ}_DIR.md</code></td></tr>
+  <tr><td>MTP</td><td>Master Test Plan</td><td>QA Lead</td><td>TAE</td><td><code>{PROJ}_MTP.md</code></td></tr>
+  <tr><td>TAR</td><td>Test Automation Report</td><td>Test Automation Engineer</td><td>(Terminal)</td><td><code>{PROJ}_TAR.md</code></td></tr>
+  <tr><td>MUXD</td><td>Mobile UX Document</td><td>Mobile UX Designer</td><td>iOS, Android, RN, Mobile QA</td><td><code>{PROJ}_MUXD.md</code></td></tr>
+  <tr><td>IIR</td><td>iOS Implementation Report</td><td>iOS Developer</td><td>Mobile DevOps, Mobile QA</td><td><code>{PROJ}_IIR.md</code></td></tr>
+  <tr><td>AIR</td><td>Android Implementation Report</td><td>Android Developer</td><td>Mobile DevOps, Mobile QA</td><td><code>{PROJ}_AIR.md</code></td></tr>
+  <tr><td>RNAD</td><td>React Native Architecture Doc</td><td>RN Architect</td><td>RN Developer</td><td><code>{PROJ}_RNAD_P1.md</code>, <code>_P2.md</code></td></tr>
+  <tr><td>RN Guide</td><td>RN Implementation Guide</td><td>RN Developer</td><td>Mobile DevOps, Mobile QA</td><td><code>rn_guide_complete_{ts}.md</code></td></tr>
+  <tr><td>MDIR</td><td>Mobile DevOps Report</td><td>Mobile DevOps Engineer</td><td>Mobile QA</td><td><code>{PROJ}_MDIR.md</code></td></tr>
+  <tr><td>*-R</td><td>Revised (Retrofit) versions</td><td>Retrofit agents</td><td>Reconciliation</td><td><code>{PROJ}_{TYPE}_R.md</code></td></tr>
+</table>
+
+<!-- ── APPENDIX C — CONTEXT OBJECT SCHEMA ───────────────────── -->
+<div class="page-break"></div>
+<h1 id="app-c">Appendix C — Context Object Schema</h1>
+
+<p>The project context is the JSON file (<code>logs/PROJ-{id}.json</code>) that holds the entire state of a project. Every agent reads and writes to it.</p>
+
+<h3>Top-level fields</h3>
+<table>
+  <tr><th>Field</th><th>Type</th><th>What it is</th></tr>
+  <tr><td><code>project_id</code></td><td>string</td><td>Unique ID, format: <code>PROJ-{8-char-hex}</code></td></tr>
+  <tr><td><code>created_at</code></td><td>ISO datetime</td><td>When the project was created</td></tr>
+  <tr><td><code>status</code></td><td>string</td><td>Current state: <code>INITIATED</code> → <code>CLASSIFIED</code> → <code>ROUTED_TO_DEV</code> → ... → <code>COMPLETE</code></td></tr>
+  <tr><td><code>classification</code></td><td>string</td><td><code>DEV</code>, <code>DS</code>, or <code>JOINT</code></td></tr>
+  <tr><td><code>original_request</code></td><td>string</td><td>Your original project description, word for word</td></tr>
+  <tr><td><code>structured_spec</code></td><td>object</td><td>The Orchestrator's structured version: title, deliverables, complexity, success criteria</td></tr>
+  <tr><td><code>assigned_crew</code></td><td>string</td><td>Which crew is working on it</td></tr>
+  <tr><td><code>artifacts</code></td><td>array</td><td>Every document produced — name, type code, file path, timestamp, which agent made it</td></tr>
+  <tr><td><code>checkpoints</code></td><td>array</td><td>Record of every checkpoint — name, timestamp, APPROVED or REJECTED</td></tr>
+  <tr><td><code>handoffs</code></td><td>array</td><td>Inter-crew handoff records (for JOINT projects)</td></tr>
+  <tr><td><code>audit_log</code></td><td>array</td><td>Every event that happened, in order, with timestamps</td></tr>
+</table>
+
+<h3>JSON Schema (for validation)</h3>
+<pre>{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "ProjectContext",
+  "type": "object",
+  "required": ["project_id", "created_at", "status", "classification",
+               "original_request", "structured_spec", "checkpoints",
+               "handoffs", "artifacts", "audit_log"],
+  "properties": {
+    "project_id": { "type": "string", "pattern": "^PROJ-[A-F0-9]{8}$" },
+    "created_at": { "type": "string", "format": "date-time" },
+    "status": { "type": "string" },
+    "classification": { "type": "string", "enum": ["DEV", "DS", "JOINT", "UNKNOWN"] },
+    "original_request": { "type": "string" },
+    "structured_spec": {
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "description": { "type": "string" },
+        "business_goal": { "type": "string" },
+        "deliverables": { "type": "array", "items": { "type": "string" } },
+        "success_criteria": { "type": "array", "items": { "type": "string" } },
+        "estimated_complexity": { "type": "string", "enum": ["LOW", "MEDIUM", "HIGH"] },
+        "data_required": { "type": "boolean" },
+        "primary_crew": { "type": "string", "enum": ["DEV", "DS", "JOINT"] },
+        "handoff_direction": { "type": ["string", "null"] }
+      }
+    },
+    "assigned_crew": { "type": ["string", "null"] },
+    "artifacts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string" },
+          "type": { "type": "string" },
+          "path": { "type": "string" },
+          "created_at": { "type": "string", "format": "date-time" },
+          "agent": { "type": "string" }
+        }
+      }
+    },
+    "checkpoints": { "type": "array" },
+    "handoffs": { "type": "array" },
+    "audit_log": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "timestamp": { "type": "string", "format": "date-time" },
+          "event": { "type": "string" },
+          "detail": { "type": "string" }
+        }
+      }
+    }
+  }
+}</pre>
+
+
+<!-- ── APPENDIX D — CONFLICT & ESCALATION ───────────────────── -->
+<div class="page-break"></div>
+<h1 id="app-d">Appendix D — Conflict Resolution &amp; Escalation Matrix</h1>
+
+<h2>Who wins when agents disagree?</h2>
+<ol>
+  <li><strong>You</strong> — always the final authority</li>
+  <li><strong>Security Reviewer</strong> — overrides architecture and implementation on security matters</li>
+  <li><strong>Technical Architect</strong> — overrides implementation decisions on architecture matters</li>
+  <li><strong>Senior Developer (TIP)</strong> — overrides build agents on implementation approach</li>
+  <li><strong>Database Administrator</strong> — overrides Backend Developer on schema/query matters</li>
+  <li><strong>QA Lead</strong> — can block release but cannot override architecture or security</li>
+</ol>
+
+<h2>What gets escalated to you automatically</h2>
+<table>
+  <tr><th>Situation</th><th>What happens</th></tr>
+  <tr><td>Any checkpoint reached</td><td>SMS + email, system waits for APPROVE/REJECT</td></tr>
+  <tr><td>Security rated 🔴 RED</td><td>Development blocked until you decide</td></tr>
+  <tr><td>Classification fails</td><td>You manually classify or rephrase</td></tr>
+  <tr><td>Handoff validation fails</td><td>Missing artifacts — you review completeness</td></tr>
+  <tr><td>Agent produces no output</td><td>Likely timeout — you investigate</td></tr>
+  <tr><td>Budget/vendor/policy decisions flagged</td><td>Agent can't proceed without your call</td></tr>
+  <tr><td>Conflicting upstream artifacts</td><td>Agent documents conflict, system halts at next checkpoint</td></tr>
+  <tr><td>Retrofit lost critical content</td><td>Reconciliation report shows gaps, you decide resolution</td></tr>
+</table>
+
+<h2>What agents resolve on their own</h2>
+<table>
+  <tr><th>Situation</th><th>Resolution</th></tr>
+  <tr><td>Minor formatting issues</td><td>Cleaned automatically</td></tr>
+  <tr><td>JSON wrapped in markdown fences</td><td>Stripped before parsing</td></tr>
+  <tr><td>DBA finds missing indexes</td><td>Adds them in DBAR — no re-run needed</td></tr>
+  <tr><td>Retrofit removes provider-specific content</td><td>Expected — documented in reconciliation report</td></tr>
+  <tr><td>Non-blocking ambiguity in upstream doc</td><td>Flagged in output, continues, you see it at checkpoint</td></tr>
+</table>
+
+
+<!-- ── APPENDIX E — QUALITY STANDARDS ───────────────────────── -->
+<div class="page-break"></div>
+<h1 id="app-e">Appendix E — Quality Standards</h1>
+
+<h3>Code</h3>
+<table>
+  <tr><th>Rule</th><th>Standard</th></tr>
+  <tr><td>No placeholder code</td><td>Every function complete. No <code>// TODO</code>, no <code># implement here</code>.</td></tr>
+  <tr><td>Type safety</td><td>TypeScript for frontend/RN. Python type hints for function signatures.</td></tr>
+  <tr><td>Error handling</td><td>Every API call and file operation has explicit error handling.</td></tr>
+  <tr><td>Security</td><td>All SRR CRITICAL/HIGH findings addressed. Secrets never hardcoded.</td></tr>
+  <tr><td>Accessibility</td><td>WCAG 2.1 AA. VoiceOver/TalkBack tested. Every interactive element labeled.</td></tr>
+  <tr><td>Deployment agnostic</td><td>No cloud provider names in app code. <code>DEPLOY_TARGET</code> env var controls provider modules.</td></tr>
+</table>
+
+<h3>Documents</h3>
+<table>
+  <tr><th>Rule</th><th>Standard</th></tr>
+  <tr><td>Complete</td><td>Every section from the task description must be present.</td></tr>
+  <tr><td>Actionable</td><td>A developer can execute from the report without asking questions.</td></tr>
+  <tr><td>Traceable</td><td>Every decision traces back to PRD, SRR, or UXD.</td></tr>
+  <tr><td>Consistent</td><td>Same terminology and naming across all artifacts.</td></tr>
+</table>
+
+<h3>Tests</h3>
+<table>
+  <tr><th>Type</th><th>Target</th><th>Tools</th></tr>
+  <tr><td>Unit</td><td>≥80% coverage on business logic</td><td>Jest, XCTest, JUnit5</td></tr>
+  <tr><td>Component</td><td>Every UI component has a render test</td><td>React Testing Library, Compose UI Testing</td></tr>
+  <tr><td>API</td><td>Positive + negative cases per endpoint</td><td>Supertest</td></tr>
+  <tr><td>E2E</td><td>Every critical user journey</td><td>Playwright (web), Detox (mobile)</td></tr>
+  <tr><td>Accessibility</td><td>No CRITICAL/SERIOUS axe violations</td><td>axe-core</td></tr>
+  <tr><td>Performance</td><td>Baseline established, no >10% regression</td><td>k6</td></tr>
+</table>
+
+
+<!-- ── APPENDIX F — MODEL TIERS ─────────────────────────────── -->
+<h1 id="app-f">Appendix F — Model Tier Reference</h1>
+
+<table>
+  <tr><th>Tier</th><th>Models (evolution)</th><th>Purpose</th><th>Agents</th></tr>
+  <tr>
+    <td><strong>Tier 1</strong></td>
+    <td>qwen2.5:32b → qwen2.5:72b</td>
+    <td>Reasoning, planning, analysis</td>
+    <td>Orchestrator, Product Manager, Business Analyst, Scrum Master, Technical Architect, Security Reviewer, UX Designer, UX Content Guide, QA Lead, Mobile UX Designer, Mobile QA</td>
+  </tr>
+  <tr>
+    <td><strong>Tier 2</strong></td>
+    <td>qwen2.5-coder:14b → qwen2.5-coder:32b</td>
+    <td>Code generation, implementation</td>
+    <td>Senior Developer, Backend Dev, Frontend Dev, DBA, DevOps, Test Automation, iOS Dev, Android Dev, RN Architect, RN Developer, Mobile DevOps, all Retrofit agents, Reconciliation</td>
+  </tr>
+  <tr>
+    <td><strong>Embed</strong></td>
+    <td>nomic-embed-text</td>
+    <td>Vector embeddings for ChromaDB memory</td>
+    <td>All agents (via ChromaDB)</td>
+  </tr>
+</table>
+
+<div style="margin-top: 60px; padding-top: 20px; border-top: 2px solid #1a56db; text-align: center; color: #999; font-size: 9pt;">
+  Agent System Operating Manual — Version 2.0 — February 2026
+</div>
+
+</body>
+</html>
