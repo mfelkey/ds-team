@@ -1758,7 +1758,9 @@ function renderCheckpoints() {
     { id: 'CP-6', name: 'Build Complete', agent: 'DevOps Engineer → DIR', check: 'Spot-check the code. Does it reference the test contracts? Search for TODO or placeholder.' },
     { id: 'CP-7', name: 'Penetration Test', agent: 'Penetration Tester → PTR', check: 'Is the PTR rated 🟢 PASS or 🟡 CONDITIONAL? Are all CRITICAL/HIGH findings addressed? Any 🔴 FAIL blocks release.' },
     { id: 'CP-8', name: 'Scalability Review', agent: 'Scalability Architect → SAR', check: 'Is the SAR rated 🟢 SCALE-READY? Multi-tenant, high-throughput, large dataset, and global distribution all addressed?' },
-    { id: 'CP-9', name: 'Verification Gate (TDD)', agent: 'Test Verification → Report', check: 'Do all pre-written tests pass? Coverage targets met? No regressions?' },
+    { id: 'CP-9', name: 'Performance Audit', agent: 'Performance Auditor → PAR', check: 'Does the PAR show 🟢 MEETS BUDGETS? All PBD targets met? No CRITICAL/HIGH violations?' },
+    { id: 'CP-10', name: 'Accessibility Audit', agent: 'Accessibility Specialist → AAR', check: 'Is the AAR rated 🟢 ACCESSIBLE? WCAG 2.2 AA compliant across all platforms? No CRITICAL barriers?' },
+    { id: 'CP-11', name: 'Verification Gate (TDD)', agent: 'Test Verification → Report', check: 'Do all pre-written tests pass? Coverage targets met? No regressions?' },
   ];
 
   let html = '';
