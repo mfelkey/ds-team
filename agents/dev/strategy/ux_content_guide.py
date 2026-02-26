@@ -8,6 +8,7 @@ from dotenv import load_dotenv
 from crewai import Agent, Task, Crew, Process, LLM
 from agents.orchestrator.orchestrator import log_event, save_context
 from agents.orchestrator.context_manager import load_agent_context, format_context_for_prompt, on_artifact_saved
+from agents.shared.knowledge_curator.rag_inject import get_knowledge_context
 
 
 load_dotenv("config/.env")
@@ -24,6 +25,13 @@ def run_content_guide(context: dict, uxd_path: str) -> dict:
         max_chars_per_artifact=6000
     )
     prompt_context = format_context_for_prompt(ctx)
+
+    # ── RAG: inject current knowledge (VA/healthcare content, accessibility) ──
+    project_title = context.get("structured_spec", {}).get("title", "project")
+    knowledge = get_knowledge_context(
+        agent_role="UX Content Guide",
+        task_summary=f"UI content guide for {project_title}",
+    )
 
 
     llm = LLM(
@@ -55,7 +63,10 @@ def run_content_guide(context: dict, uxd_path: str) -> dict:
 Using the following User Experience Document as context, produce a complete and exhaustive
 UI Content Guide for the VA Ambulance Trip Analysis dashboard.
 
---- UXD (excerpt) ---
+{prompt_context}
+
+CURRENT KNOWLEDGE (from knowledge base — use only if relevant to this task):
+{knowledge}
 
 Produce a UI Content Guide with ALL of the following sections:
 

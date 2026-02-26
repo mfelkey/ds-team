@@ -8,6 +8,7 @@ from dotenv import load_dotenv
 from crewai import Agent, Task, Crew, Process, LLM
 from agents.orchestrator.orchestrator import log_event, save_context
 from agents.orchestrator.context_manager import load_agent_context, format_context_for_prompt, on_artifact_saved
+from agents.shared.knowledge_curator.rag_inject import get_knowledge_context
 
 
 load_dotenv("config/.env")
@@ -88,20 +89,25 @@ def run_database_administration(context: dict, bir_path: str, tad_path: str, srr
     )
     prompt_context = format_context_for_prompt(ctx)
 
+    # ── RAG: inject current knowledge (PostgreSQL updates, security advisories) ──
+    project_title = context.get("structured_spec", {}).get("title", "project")
+    knowledge = get_knowledge_context(
+        agent_role="Database Administrator",
+        task_summary=f"Database administration for {project_title}",
+    )
+
 
     dba = build_database_admin()
 
     dbar_task = Task(
         description=f"""
-You are the Database Administrator for the following project. Review the documents
-below and produce a complete Database Administration Report (DBAR).
+You are the Database Administrator for the following project. Review the upstream
+documents below and produce a complete Database Administration Report (DBAR).
 
---- Backend Implementation Report / Schema (excerpt) ---
+{prompt_context}
 
---- Technical Architecture Document (excerpt) ---
-{tad_content}
-
---- Security Review Report (excerpt) ---
+CURRENT KNOWLEDGE (from knowledge base — use only if relevant to this task):
+{knowledge}
 
 Produce a complete Database Administration Report (DBAR) with ALL of the following sections:
 

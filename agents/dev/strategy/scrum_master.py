@@ -8,6 +8,7 @@ from dotenv import load_dotenv
 from crewai import Agent, Task, Crew, Process, LLM
 from agents.orchestrator.orchestrator import log_event, save_context
 from agents.orchestrator.context_manager import load_agent_context, format_context_for_prompt, on_artifact_saved
+from agents.shared.knowledge_curator.rag_inject import get_knowledge_context
 
 
 load_dotenv("config/.env")
@@ -59,6 +60,13 @@ def run_sprint_planning(context: dict, prd_path: str, bad_path: str) -> dict:
     )
     prompt_context = format_context_for_prompt(ctx)
 
+    # ── RAG: inject current knowledge (dev practices) ──
+    project_title = context.get("structured_spec", {}).get("title", "project")
+    knowledge = get_knowledge_context(
+        agent_role="Scrum Master",
+        task_summary=f"Sprint planning for {project_title}",
+    )
+
 
     sm = build_scrum_master()
 
@@ -66,10 +74,10 @@ def run_sprint_planning(context: dict, prd_path: str, bad_path: str) -> dict:
         description=f"""
 You have received the following project documents:
 
---- PRD (excerpt) ---
+{prompt_context}
 
---- Business Analysis Document (excerpt) ---
-{bad_content}
+CURRENT KNOWLEDGE (from knowledge base — use only if relevant to this task):
+{knowledge}
 
 Produce a complete Sprint Planning Document with ALL of the following sections:
 

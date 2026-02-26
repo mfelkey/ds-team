@@ -8,6 +8,7 @@ from dotenv import load_dotenv
 from crewai import Agent, Task, Crew, Process, LLM
 from agents.orchestrator.orchestrator import log_event, save_context
 from agents.orchestrator.context_manager import load_agent_context, format_context_for_prompt, on_artifact_saved
+from agents.shared.knowledge_curator.rag_inject import get_knowledge_context
 
 
 load_dotenv("config/.env")
@@ -66,25 +67,25 @@ def run_master_test_plan(context: dict, prd_path: str, tip_path: str,
     )
     prompt_context = format_context_for_prompt(ctx)
 
+    # ── RAG: inject current knowledge (testing tools, security advisories) ──
+    project_title = context.get("structured_spec", {}).get("title", "project")
+    knowledge = get_knowledge_context(
+        agent_role="QA Lead",
+        task_summary=f"Master test plan for {project_title}",
+    )
+
 
     qa = build_qa_lead()
 
     mtp_task = Task(
         description=f"""
-You are the QA Lead for the following project. Review the documents below
-and produce a complete Master Test Plan (MTP).
+You are the QA Lead for the following project. Review the upstream
+documents below and produce a complete Master Test Plan (MTP).
 
---- PRD (excerpt) ---
+{prompt_context}
 
---- Technical Implementation Plan (excerpt) ---
-{tip_content}
-
---- Backend Implementation Report (excerpt) ---
-
---- Frontend Implementation Report (excerpt) ---
-{fir_content}
-
---- User Experience Document (excerpt) ---
+CURRENT KNOWLEDGE (from knowledge base — use only if relevant to this task):
+{knowledge}
 
 Produce a complete Master Test Plan (MTP) with ALL of the following sections:
 

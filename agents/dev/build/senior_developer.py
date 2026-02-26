@@ -8,6 +8,7 @@ from dotenv import load_dotenv
 from crewai import Agent, Task, Crew, Process, LLM
 from agents.orchestrator.orchestrator import log_event, save_context
 from agents.orchestrator.context_manager import load_agent_context, format_context_for_prompt, on_artifact_saved
+from agents.shared.knowledge_curator.rag_inject import get_knowledge_context
 
 
 load_dotenv("config/.env")
@@ -80,20 +81,25 @@ def run_technical_implementation_plan(context: dict, prd_path: str, tad_path: st
     )
     prompt_context = format_context_for_prompt(ctx)
 
+    # ── RAG: inject current knowledge (tech stack updates, best practices) ──
+    project_title = context.get("structured_spec", {}).get("title", "project")
+    knowledge = get_knowledge_context(
+        agent_role="Senior Developer",
+        task_summary=f"Technical implementation plan for {project_title}",
+    )
+
 
     sd = build_senior_developer()
 
     tip_task = Task(
         description=f"""
-You are the Senior Developer for the following project. Review the documents below
-and produce a complete Technical Implementation Plan (TIP).
+You are the Senior Developer for the following project. Review the upstream
+documents below and produce a complete Technical Implementation Plan (TIP).
 
---- PRD (excerpt) ---
+{prompt_context}
 
---- Technical Architecture Document (excerpt) ---
-{tad_content}
-
---- User Experience Document (excerpt) ---
+CURRENT KNOWLEDGE (from knowledge base — use only if relevant to this task):
+{knowledge}
 
 Produce a complete Technical Implementation Plan (TIP) with ALL of the following sections:
 

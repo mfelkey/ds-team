@@ -7,6 +7,7 @@ from datetime import datetime
 from dotenv import load_dotenv
 from crewai import Agent, Task, Crew, Process, LLM
 from agents.orchestrator.orchestrator import log_event, save_context
+from agents.shared.knowledge_curator.rag_inject import get_knowledge_context
 
 load_dotenv("config/.env")
 
@@ -47,6 +48,13 @@ def run_ios_patch(context: dict, iir_path: str) -> tuple:
     with open(iir_path) as f:
         iir_content = f.read()[:3000]
 
+    # ── RAG: inject current knowledge (Swift/iOS updates, mobile security) ──
+    project_title = context.get("structured_spec", {}).get("title", "project")
+    knowledge = get_knowledge_context(
+        agent_role="iOS Developer",
+        task_summary=f"iOS PHI security, accessibility, testing patch for {project_title}",
+    )
+
     ios_dev = build_ios_developer()
 
     patch_task = Task(
@@ -56,6 +64,9 @@ The existing IIR is shown below for context.
 
 --- Existing IIR (excerpt) ---
 {iir_content}
+
+CURRENT KNOWLEDGE (from knowledge base — use only if relevant to this task):
+{knowledge}
 
 Produce ONLY the following missing sections with complete, working Swift code.
 No summaries. No bullet points. No placeholders. Working code only.

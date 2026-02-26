@@ -8,6 +8,7 @@ from dotenv import load_dotenv
 from crewai import Agent, Task, Crew, Process, LLM
 from agents.orchestrator.orchestrator import log_event, save_context
 from agents.orchestrator.context_manager import load_agent_context, format_context_for_prompt, on_artifact_saved
+from agents.shared.knowledge_curator.rag_inject import get_knowledge_context
 
 
 load_dotenv("config/.env")
@@ -75,23 +76,25 @@ def run_test_automation(context: dict, mtp_path: str, bir_path: str,
     )
     prompt_context = format_context_for_prompt(ctx)
 
+    # ── RAG: inject current knowledge (testing frameworks, tool updates) ──
+    project_title = context.get("structured_spec", {}).get("title", "project")
+    knowledge = get_knowledge_context(
+        agent_role="Test Automation Engineer",
+        task_summary=f"Test automation for {project_title}",
+    )
+
 
     tae = build_test_automation_engineer()
 
     tar_task = Task(
         description=f"""
-You are the Test Automation Engineer. Using the documents below, implement
-a complete automated test suite and produce a Test Automation Report (TAR).
+You are the Test Automation Engineer. Using the upstream documents below,
+implement a complete automated test suite and produce a Test Automation Report (TAR).
 
---- Master Test Plan (excerpt) ---
+{prompt_context}
 
---- Backend Implementation Report (excerpt) ---
-{bir_content}
-
---- Frontend Implementation Report (excerpt) ---
-
---- Technical Implementation Plan (excerpt) ---
-{tip_content}
+CURRENT KNOWLEDGE (from knowledge base — use only if relevant to this task):
+{knowledge}
 
 Produce a complete Test Automation Report (TAR) with ALL of the following sections:
 

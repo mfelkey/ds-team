@@ -8,6 +8,7 @@ from dotenv import load_dotenv
 from crewai import Agent, Task, Crew, Process, LLM
 from agents.orchestrator.orchestrator import log_event, save_context
 from agents.orchestrator.context_manager import load_agent_context, format_context_for_prompt, on_artifact_saved
+from agents.shared.knowledge_curator.rag_inject import get_knowledge_context
 
 
 load_dotenv("config/.env")
@@ -65,6 +66,13 @@ def run_architecture_design(context: dict, prd_path: str, bad_path: str, sprint_
     )
     prompt_context = format_context_for_prompt(ctx)
 
+    # ── RAG: inject current knowledge (tech stack updates, security advisories) ──
+    project_title = context.get("structured_spec", {}).get("title", "project")
+    knowledge = get_knowledge_context(
+        agent_role="Technical Architect",
+        task_summary=f"System architecture for {project_title}",
+    )
+
 
     ta = build_technical_architect()
 
@@ -72,12 +80,10 @@ def run_architecture_design(context: dict, prd_path: str, bad_path: str, sprint_
         description=f"""
 You have received the following project documents:
 
---- PRD (excerpt) ---
+{prompt_context}
 
---- BAD (excerpt) ---
-{bad_content}
-
---- Sprint Plan (excerpt) ---
+CURRENT KNOWLEDGE (from knowledge base — use only if relevant to this task):
+{knowledge}
 
 Produce a complete Technical Architecture Document (TAD) with ALL of the following sections:
 

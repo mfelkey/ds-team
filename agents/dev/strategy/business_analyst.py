@@ -7,6 +7,7 @@ from datetime import datetime
 from dotenv import load_dotenv
 from crewai import Agent, Task, Crew, Process, LLM
 from agents.orchestrator.orchestrator import log_event, save_context
+from agents.shared.knowledge_curator.rag_inject import get_knowledge_context
 
 load_dotenv("config/.env")
 
@@ -55,6 +56,13 @@ def run_business_analysis(context: dict, prd_path: str) -> dict:
     # Pass first 4000 chars (exec summary through user stories) + requirements
     prd_content = full_prd[:4000]
 
+    # ── RAG: inject current knowledge (VA/CMS policy, domain context) ──
+    project_title = context.get("structured_spec", {}).get("title", "project")
+    knowledge = get_knowledge_context(
+        agent_role="Business Analyst",
+        task_summary=f"Business analysis for {project_title}",
+    )
+
     ba = build_business_analyst()
 
     ba_task = Task(
@@ -64,6 +72,9 @@ You have received the following Product Requirements Document (PRD):
 ---
 {prd_content}
 ---
+
+CURRENT DOMAIN KNOWLEDGE (from knowledge base — use only if relevant to this project):
+{knowledge}
 
 Your job is to produce a Business Analysis Document (BAD) that goes deeper
 than the PRD on process, stakeholders, and data.

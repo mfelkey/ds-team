@@ -8,6 +8,7 @@ from dotenv import load_dotenv
 from crewai import Agent, Task, Crew, Process, LLM
 from agents.orchestrator.orchestrator import log_event, save_context
 from agents.orchestrator.context_manager import load_agent_context, format_context_for_prompt, on_artifact_saved
+from agents.shared.knowledge_curator.rag_inject import get_knowledge_context
 
 
 load_dotenv("config/.env")
@@ -73,6 +74,13 @@ def run_ux_design(context: dict, prd_path: str, bad_path: str, srr_path: str) ->
     )
     prompt_context = format_context_for_prompt(ctx)
 
+    # ── RAG: inject current knowledge (VA/healthcare UX, accessibility) ──
+    project_title = context.get("structured_spec", {}).get("title", "project")
+    knowledge = get_knowledge_context(
+        agent_role="UX/UI Designer",
+        task_summary=f"UX design for {project_title}",
+    )
+
 
     ux = build_ux_designer()
 
@@ -80,12 +88,10 @@ def run_ux_design(context: dict, prd_path: str, bad_path: str, srr_path: str) ->
         description=f"""
 You are designing the user experience for the following project:
 
---- PRD (excerpt) ---
+{prompt_context}
 
---- BAD (excerpt) ---
-{bad_content}
-
---- Security Review Report (excerpt) ---
+CURRENT KNOWLEDGE (from knowledge base — use only if relevant to this task):
+{knowledge}
 
 Produce a complete User Experience Document (UXD) with ALL of the following sections:
 
