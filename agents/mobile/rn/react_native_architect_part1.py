@@ -7,6 +7,7 @@ from datetime import datetime
 from dotenv import load_dotenv
 from crewai import Agent, Task, Crew, Process, LLM
 from agents.orchestrator.context_manager import load_agent_context, format_context_for_prompt, on_artifact_saved
+from agents.shared.knowledge_curator.rag_inject import get_knowledge_context
 
 
 load_dotenv("/home/mfelkey/dev-team/config/.env")
@@ -209,8 +210,21 @@ def run_rn_architecture_part1(context: dict, muxd_path: str) -> tuple:
     )
     prompt_context = format_context_for_prompt(ctx)
 
+    # ── RAG: inject current knowledge (RN/Expo releases, mobile security) ──
+    project_title = context.get("structured_spec", {}).get("title", "project")
+    knowledge = get_knowledge_context(
+        agent_role="RN Architect",
+        task_summary=f"React Native architecture for {project_title}",
+    )
 
-    task_description = TASK_DESCRIPTION.replace("MUXD_PLACEHOLDER", muxd_content)
+    task_description = TASK_DESCRIPTION.replace("MUXD_PLACEHOLDER", prompt_context)
+
+    # Append RAG knowledge to task
+    task_description += f"""
+
+CURRENT KNOWLEDGE (from knowledge base — use only if relevant to this task):
+{knowledge}
+"""
 
     architect = build_rn_architect()
     task = Task(

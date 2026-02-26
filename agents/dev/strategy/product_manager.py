@@ -7,6 +7,7 @@ from datetime import datetime
 from dotenv import load_dotenv
 from crewai import Agent, Task, Crew, Process, LLM
 from agents.orchestrator.orchestrator import log_event, save_context
+from agents.shared.knowledge_curator.rag_inject import get_knowledge_context
 
 load_dotenv("config/.env")
 
@@ -48,11 +49,20 @@ def run_requirements_phase(context: dict) -> dict:
     spec = context["structured_spec"]
     pm = build_product_manager()
 
+    # ── RAG: inject current knowledge (VA/CMS policy, domain context) ──
+    knowledge = get_knowledge_context(
+        agent_role="Product Manager",
+        task_summary=f"Product requirements for {spec.get('title', 'project')}",
+    )
+
     prd_task = Task(
         description=f"""
 You have received the following project specification from the Master Orchestrator:
 
 {json.dumps(spec, indent=2)}
+
+CURRENT DOMAIN KNOWLEDGE (from knowledge base — use only if relevant to this project):
+{knowledge}
 
 Produce a complete Product Requirements Document (PRD) for this project.
 

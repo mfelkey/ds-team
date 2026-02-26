@@ -7,6 +7,7 @@ from datetime import datetime
 from dotenv import load_dotenv
 from crewai import Agent, Task, Crew, Process, LLM
 from agents.orchestrator.context_manager import load_agent_context, format_context_for_prompt, on_artifact_saved
+from agents.shared.knowledge_curator.rag_inject import get_knowledge_context
 
 
 load_dotenv("/home/mfelkey/dev-team/config/.env")
@@ -228,8 +229,17 @@ def run_rn_developer(context: dict, rnad_p1_path: str, rnad_p2_path: str) -> tup
     )
     prompt_context = format_context_for_prompt(ctx)
 
+    # ── RAG: inject current knowledge (RN/Expo releases, mobile security) ──
+    project_title = context.get("structured_spec", {}).get("title", "project")
+    knowledge = get_knowledge_context(
+        agent_role="RN Developer",
+        task_summary=f"React Native screen implementation for {project_title}",
+    )
 
     task_description = TASK_DESCRIPTION + f"""
+
+CURRENT KNOWLEDGE (from knowledge base — use only if relevant to this task):
+{knowledge}
 
 ---
 ## ARCHITECTURE REFERENCE (from RNAD Part 1)

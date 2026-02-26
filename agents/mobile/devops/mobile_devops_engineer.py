@@ -8,6 +8,7 @@ from dotenv import load_dotenv
 from crewai import Agent, Task, Crew, Process, LLM
 from agents.orchestrator.orchestrator import log_event, save_context
 from agents.orchestrator.context_manager import load_agent_context, format_context_for_prompt, on_artifact_saved
+from agents.shared.knowledge_curator.rag_inject import get_knowledge_context
 
 
 load_dotenv("config/.env")
@@ -74,21 +75,25 @@ def run_mobile_devops_implementation(context: dict, tip_path: str, rn_guide_path
     )
     prompt_context = format_context_for_prompt(ctx)
 
+    # ── RAG: inject current knowledge (EAS Build, Fastlane, Sentry releases) ──
+    project_title = context.get("structured_spec", {}).get("title", "project")
+    knowledge = get_knowledge_context(
+        agent_role="Mobile DevOps",
+        task_summary=f"Mobile CI/CD and release pipeline for {project_title}",
+    )
 
     mde = build_mobile_devops_engineer()
 
     mdir_task = Task(
         description=f"""
-You are the Mobile DevOps Engineer for the following project. Using the documents
-below, produce a complete Mobile DevOps Implementation Report (MDIR) with working
-configuration files and scripts for all mobile pipeline and infrastructure components.
+You are the Mobile DevOps Engineer for the following project. Using the upstream
+documents below, produce a complete Mobile DevOps Implementation Report (MDIR) with
+working configuration files and scripts for all mobile pipeline and infrastructure components.
 
---- Technical Implementation Plan (excerpt) ---
+{prompt_context}
 
---- React Native Implementation Guide (excerpt) ---
-{rn_content}
-
---- Security Review Report (excerpt) ---
+CURRENT KNOWLEDGE (from knowledge base — use only if relevant to this task):
+{knowledge}
 
 Produce a complete Mobile DevOps Implementation Report (MDIR) with ALL of the
 following sections:

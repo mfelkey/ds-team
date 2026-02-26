@@ -8,6 +8,7 @@ from dotenv import load_dotenv
 from crewai import Agent, Task, Crew, Process, LLM
 from agents.orchestrator.orchestrator import log_event, save_context
 from agents.orchestrator.context_manager import load_agent_context, format_context_for_prompt, on_artifact_saved
+from agents.shared.knowledge_curator.rag_inject import get_knowledge_context
 
 
 load_dotenv("config/.env")
@@ -68,19 +69,25 @@ def run_backend_implementation(context: dict, tip_path: str, tad_path: str) -> d
     )
     prompt_context = format_context_for_prompt(ctx)
 
+    # ── RAG: inject current knowledge (release notes, CVEs, best practices) ──
+    project_title = context.get("structured_spec", {}).get("title", "project")
+    knowledge = get_knowledge_context(
+        agent_role="Backend Developer",
+        task_summary=f"Backend implementation for {project_title}",
+    )
 
     bd = build_backend_developer()
 
     bir_task = Task(
         description=f"""
-You are the Backend Developer for the following project. Using the Technical
-Implementation Plan and Technical Architecture Document below, produce a complete
-Backend Implementation Report (BIR) with working code samples for all key components.
+You are the Backend Developer for the following project. Using the upstream
+documents below, produce a complete Backend Implementation Report (BIR) with
+working code samples for all key components.
 
---- Technical Implementation Plan (excerpt) ---
+{prompt_context}
 
---- Technical Architecture Document (excerpt) ---
-{tad_content}
+CURRENT KNOWLEDGE (from knowledge base — use only if relevant to this task):
+{knowledge}
 
 Produce a complete Backend Implementation Report (BIR) with ALL of the following sections:
 

@@ -6,6 +6,7 @@ import json
 from datetime import datetime
 from dotenv import load_dotenv
 from crewai import Agent, Task, Crew, Process, LLM
+from agents.shared.knowledge_curator.rag_inject import get_knowledge_context
 
 load_dotenv("/home/mfelkey/dev-team/config/.env")
 
@@ -342,10 +343,25 @@ def build_rn_architect() -> Agent:
 
 
 def run_rn_architecture_part2(context: dict) -> tuple:
+    # ── RAG: inject current knowledge (RN/Expo releases, mobile security) ──
+    project_title = context.get("structured_spec", {}).get("title", "project")
+    knowledge = get_knowledge_context(
+        agent_role="RN Architect",
+        task_summary=f"React Native PHI security and build config for {project_title}",
+    )
+
+    task_description = TASK_DESCRIPTION
+    if knowledge:
+        task_description += f"""
+
+CURRENT KNOWLEDGE (from knowledge base — use only if relevant to this task):
+{knowledge}
+"""
+
     architect = build_rn_architect()
 
     task = Task(
-        description=TASK_DESCRIPTION,
+        description=task_description,
         expected_output=(
             "RNAD Part 2: PHI security, shared components, platform adaptation, "
             "testing architecture, and build configuration with complete TypeScript code."
