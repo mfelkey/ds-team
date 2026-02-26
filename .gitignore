@@ -2,3 +2,4 @@ config/.env
 config/.env
 config/.env
 lib/
+__pycache__/
