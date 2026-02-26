@@ -9,6 +9,7 @@ from dotenv import load_dotenv
 from crewai import Agent, Task, Crew, Process, LLM
 from agents.orchestrator.orchestrator import log_event, save_context
 from agents.orchestrator.context_manager import load_agent_context, format_context_for_prompt, on_artifact_saved
+from agents.shared.knowledge_curator.rag_inject import get_knowledge_context
 
 
 load_dotenv("config/.env")
@@ -116,17 +117,11 @@ MMTP_TASK_TEMPLATE = """
 You are the Mobile QA Specialist for the following project. Review the documents
 below and produce a complete Mobile Master Test Plan (MMTP).
 
---- PRD (excerpt) ---
+--- Upstream Documents ---
+{prompt_context}
 
---- Technical Implementation Plan (excerpt) ---
-{tip_content}
-
---- React Native Implementation Guide (excerpt) ---
-
---- Mobile DevOps Implementation Report (excerpt) ---
-{mdir_content}
-
---- User Experience Document (excerpt) ---
+CURRENT KNOWLEDGE (from knowledge base — use only if relevant to this task):
+{knowledge}
 
 Produce a complete Mobile Master Test Plan (MMTP) with ALL of the following sections:
 
@@ -230,7 +225,7 @@ Using the React Native Implementation Guide below as reference for component
 structure, imports, hooks, and file paths, produce complete, runnable test files.
 
 --- React Native Implementation Guide (excerpt) ---
-{rn_content}
+
 
 Generate the following test files. Each file must:
 - Be a complete, syntactically valid TypeScript/TSX file
@@ -340,6 +335,13 @@ def run_mobile_qa(context: dict, prd_path: str, tip_path: str,
         max_chars_per_artifact=6000
     )
     prompt_context = format_context_for_prompt(ctx)
+
+    # ── RAG: inject current knowledge (mobile testing, security advisories) ──
+    project_title = context.get("structured_spec", {}).get("title", "project")
+    knowledge = get_knowledge_context(
+        agent_role="Mobile QA",
+        task_summary=f"Mobile QA testing for {project_title}",
+    )
 
 
     mqa = build_mobile_qa_specialist()

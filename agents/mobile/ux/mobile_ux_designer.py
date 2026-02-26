@@ -7,6 +7,7 @@ from datetime import datetime
 from dotenv import load_dotenv
 from crewai import Agent, Task, Crew, Process, LLM
 from agents.orchestrator.orchestrator import log_event, save_context
+from agents.shared.knowledge_curator.rag_inject import get_knowledge_context
 
 load_dotenv("config/.env")
 
@@ -68,6 +69,13 @@ def run_mobile_ux_design(context: dict, prd_path: str) -> tuple:
     with open(prd_path) as f:
         prd_content = f.read()
 
+    # ── RAG: inject current knowledge (mobile UX, VA/healthcare) ──
+    project_title = context.get("structured_spec", {}).get("title", "project")
+    knowledge = get_knowledge_context(
+        agent_role="Mobile UX Designer",
+        task_summary=f"Mobile UX design for {project_title}",
+    )
+
     designer = build_mobile_ux_designer()
 
     muxd_task = Task(
@@ -78,6 +86,9 @@ iOS native, Android native, and React Native cross-platform.
 
 --- Product Requirements Document ---
 {prd_content[:4000]}
+
+CURRENT KNOWLEDGE (from knowledge base — use only if relevant to this task):
+{knowledge}
 
 Produce a complete Mobile UX Document (MUXD) with ALL of the following sections:
 

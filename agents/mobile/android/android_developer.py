@@ -8,6 +8,7 @@ from dotenv import load_dotenv
 from crewai import Agent, Task, Crew, Process, LLM
 from agents.orchestrator.orchestrator import log_event, save_context
 from agents.orchestrator.context_manager import load_agent_context, format_context_for_prompt, on_artifact_saved
+from agents.shared.knowledge_curator.rag_inject import get_knowledge_context
 
 
 load_dotenv("config/.env")
@@ -75,18 +76,25 @@ def run_android_implementation(context: dict, muxd_path: str, prd_path: str) -> 
     )
     prompt_context = format_context_for_prompt(ctx)
 
+    # ── RAG: inject current knowledge (Kotlin/Android updates, mobile security) ──
+    project_title = context.get("structured_spec", {}).get("title", "project")
+    knowledge = get_knowledge_context(
+        agent_role="Android Developer",
+        task_summary=f"Android implementation for {project_title}",
+    )
+
 
     android_dev = build_android_developer()
 
     air_task = Task(
         description=f"""
-You are the Android Developer. Using the Mobile UX Document and PRD below,
+You are the Android Developer. Using the upstream documents below,
 produce a complete Android Implementation Report (AIR) with working Kotlin/Compose code.
 
---- Mobile UX Document (excerpt) ---
+{prompt_context}
 
---- Product Requirements Document (excerpt) ---
-{prd_content}
+CURRENT KNOWLEDGE (from knowledge base — use only if relevant to this task):
+{knowledge}
 
 Produce a complete Android Implementation Report (AIR) with ALL of the following sections.
 You MUST produce working code for every section — no bullet-point summaries, no
