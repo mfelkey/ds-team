@@ -1,0 +1,246 @@
+2026-02-26 08:47:37,599 [crewai.cli.config] INFO: Using config path: /home/mfelkey/.config/crewai/settings.json
+2026-02-26 08:47:37,755 [chromadb.telemetry.product.posthog] INFO: Anonymized telemetry enabled. See                     https://docs.trychroma.com/telemetry for more information.
+2026-02-26 08:47:54,206 [crewai.cli.config] INFO: Using config path: /home/mfelkey/.config/crewai/settings.json
+2026-02-26 08:47:54,327 [knowledge_curator] INFO: ============================================================
+2026-02-26 08:47:54,327 [knowledge_curator] INFO: 🧠 KNOWLEDGE CURATOR — Starting run
+2026-02-26 08:47:54,327 [knowledge_curator] INFO:    Source: github
+2026-02-26 08:47:54,327 [knowledge_curator] INFO:    Mode: DRY RUN
+2026-02-26 08:47:54,327 [knowledge_curator] INFO: ============================================================
+2026-02-26 08:47:54,327 [knowledge_curator] INFO: 📦 Fetching GitHub releases...
+2026-02-26 08:47:55,389 [knowledge_curator.fetchers.github] WARNING:   ⚠️ crewAIInc/crewAI: can't compare offset-naive and offset-aware datetimes
+2026-02-26 08:47:56,606 [knowledge_curator.fetchers.github] WARNING:   ⚠️ facebook/react-native: can't compare offset-naive and offset-aware datetimes
+2026-02-26 08:47:57,701 [knowledge_curator.fetchers.github] INFO:   ✅ expo/expo: 0 releases since 2026-02-23
+2026-02-26 08:47:58,764 [knowledge_curator.fetchers.github] INFO:   ✅ python/cpython: 0 releases since 2026-02-23
+2026-02-26 08:48:00,064 [knowledge_curator.fetchers.github] WARNING:   ⚠️ nodejs/node: can't compare offset-naive and offset-aware datetimes
+2026-02-26 08:48:01,261 [knowledge_curator.fetchers.github] WARNING:   ⚠️ fastlane/fastlane: can't compare offset-naive and offset-aware datetimes
+2026-02-26 08:48:01,654 [github.Requester] INFO: Following Github server redirection from /repos/OWASP/owasp-mastg to /repositories/69648386
+2026-02-26 08:48:02,581 [knowledge_curator.fetchers.github] WARNING:   ⚠️ OWASP/owasp-mastg: can't compare offset-naive and offset-aware datetimes
+2026-02-26 08:48:04,058 [knowledge_curator.fetchers.github] WARNING:   ⚠️ microsoft/TypeScript: can't compare offset-naive and offset-aware datetimes
+2026-02-26 08:48:05,286 [knowledge_curator.fetchers.github] WARNING:   ⚠️ jestjs/jest: can't compare offset-naive and offset-aware datetimes
+2026-02-26 08:48:05,287 [knowledge_curator] INFO:   📊 GitHub: 0 releases fetched
+2026-02-26 08:48:05,287 [knowledge_curator] INFO: 📊 TOTAL FETCHED: 0 items
+2026-02-26 08:48:05,288 [knowledge_curator] INFO:   ℹ️ No new items fetched. Done.
+2026-02-26 08:52:48,477 [crewai.cli.config] INFO: Using config path: /home/mfelkey/.config/crewai/settings.json
+2026-02-26 08:52:48,605 [knowledge_curator] INFO: ============================================================
+2026-02-26 08:52:48,605 [knowledge_curator] INFO: 🧠 KNOWLEDGE CURATOR — Starting run
+2026-02-26 08:52:48,605 [knowledge_curator] INFO:    Source: github
+2026-02-26 08:52:48,605 [knowledge_curator] INFO:    Mode: DRY RUN
+2026-02-26 08:52:48,605 [knowledge_curator] INFO: ============================================================
+2026-02-26 08:52:48,605 [knowledge_curator] INFO: 📦 Fetching GitHub releases...
+2026-02-26 08:52:52,741 [knowledge_curator.fetchers.github] INFO:   ✅ crewAIInc/crewAI: 0 releases since 2026-02-23
+2026-02-26 08:53:02,722 [knowledge_curator.fetchers.github] INFO:   ✅ facebook/react-native: 0 releases since 2026-02-23
+2026-02-26 08:53:04,490 [knowledge_curator.fetchers.github] INFO:   ✅ expo/expo: 0 releases since 2026-02-23
+2026-02-26 08:53:05,749 [knowledge_curator.fetchers.github] INFO:   ✅ python/cpython: 0 releases since 2026-02-23
+2026-02-26 08:53:18,795 [knowledge_curator.fetchers.github] INFO:   ✅ nodejs/node: 2 releases since 2026-02-23
+2026-02-26 08:53:31,031 [knowledge_curator.fetchers.github] INFO:   ✅ fastlane/fastlane: 0 releases since 2026-02-23
+2026-02-26 08:53:31,405 [github.Requester] INFO: Following Github server redirection from /repos/OWASP/owasp-mastg to /repositories/69648386
+2026-02-26 08:53:32,464 [knowledge_curator.fetchers.github] INFO:   ✅ OWASP/owasp-mastg: 0 releases since 2026-02-23
+2026-02-26 08:53:38,912 [knowledge_curator.fetchers.github] INFO:   ✅ microsoft/TypeScript: 0 releases since 2026-02-23
+2026-02-26 08:53:43,817 [knowledge_curator.fetchers.github] INFO:   ✅ jestjs/jest: 0 releases since 2026-02-23
+2026-02-26 08:53:43,821 [knowledge_curator] INFO:   📊 GitHub: 2 releases fetched
+2026-02-26 08:53:43,821 [knowledge_curator] INFO: 📊 TOTAL FETCHED: 2 items
+2026-02-26 08:53:43,821 [knowledge_curator] INFO: 🧠 Evaluating 2 items (threshold: 0.6)...
+2026-02-26 08:53:44,714 [LiteLLM] INFO: 
+LiteLLM completion() model= gpt-oss:120b; provider = ollama
+2026-02-26 08:55:15,157 [LiteLLM] INFO: Wrapper: Completed Call, calling success_handler
+2026-02-26 08:55:15,430 [knowledge_curator.evaluator] INFO:   ✅ INGEST [0.66] nodejs/node v25.7.0
+2026-02-26 08:55:15,927 [LiteLLM] INFO: 
+LiteLLM completion() model= gpt-oss:120b; provider = ollama
+2026-02-26 08:55:16,217 [crewai.cli.config] INFO: Using config path: /home/mfelkey/.config/crewai/settings.json
+2026-02-26 08:56:29,659 [LiteLLM] INFO: Wrapper: Completed Call, calling success_handler
+2026-02-26 08:56:29,674 [knowledge_curator.evaluator] INFO:   ✅ INGEST [0.66] nodejs/node v24.14.0
+2026-02-26 08:56:29,674 [knowledge_curator.evaluator] INFO:   📊 Batch: 2/2 items above threshold (0.6)
+2026-02-26 08:56:29,674 [knowledge_curator] INFO:   ✅ Approved for ingestion: 2/2
+2026-02-26 08:56:29,704 [chromadb.telemetry.product.posthog] INFO: Anonymized telemetry enabled. See                     https://docs.trychroma.com/telemetry for more information.
+2026-02-26 08:56:29,780 [knowledge_curator] INFO: 📋 Run report saved: logs/curator/curator_report_20260226_135629.json
+2026-02-26 08:56:29,780 [knowledge_curator] INFO: ============================================================
+2026-02-26 08:56:29,780 [knowledge_curator] INFO: 🧠 KNOWLEDGE CURATOR — Complete (221s)
+2026-02-26 08:56:29,780 [knowledge_curator] INFO:    Fetched: 2
+2026-02-26 08:56:29,780 [knowledge_curator] INFO:    Approved: 2
+2026-02-26 08:56:29,780 [knowledge_curator] INFO:    Ingested: 0
+2026-02-26 08:56:29,780 [knowledge_curator] INFO:    Report: logs/curator/curator_report_20260226_135629.json
+2026-02-26 08:56:29,781 [knowledge_curator] INFO: ============================================================
+2026-02-26 08:56:29,999 [crewai.events.listeners.tracing.trace_batch_manager] WARNING: Trace batch initialization returned status 401. Continuing without tracing.
+2026-02-26 09:25:23,408 [crewai.cli.config] INFO: Using config path: /home/mfelkey/.config/crewai/settings.json
+2026-02-26 09:25:23,548 [knowledge_curator] INFO: ============================================================
+2026-02-26 09:25:23,548 [knowledge_curator] INFO: 🧠 KNOWLEDGE CURATOR — Starting run
+2026-02-26 09:25:23,548 [knowledge_curator] INFO:    Source: github
+2026-02-26 09:25:23,548 [knowledge_curator] INFO:    Mode: DRY RUN
+2026-02-26 09:25:23,548 [knowledge_curator] INFO: ============================================================
+2026-02-26 09:25:23,548 [knowledge_curator] INFO: 📦 Fetching GitHub releases...
+2026-02-26 09:25:28,059 [knowledge_curator.fetchers.github] INFO:   ✅ crewAIInc/crewAI: 0 releases since 2026-02-23
+2026-02-26 09:25:38,848 [knowledge_curator.fetchers.github] INFO:   ✅ facebook/react-native: 0 releases since 2026-02-23
+2026-02-26 09:25:39,854 [knowledge_curator.fetchers.github] INFO:   ✅ expo/expo: 0 releases since 2026-02-23
+2026-02-26 09:25:40,838 [knowledge_curator.fetchers.github] INFO:   ✅ python/cpython: 0 releases since 2026-02-23
+2026-02-26 09:25:54,378 [knowledge_curator.fetchers.github] INFO:   ✅ nodejs/node: 2 releases since 2026-02-23
+2026-02-26 09:26:07,541 [knowledge_curator.fetchers.github] INFO:   ✅ fastlane/fastlane: 0 releases since 2026-02-23
+2026-02-26 09:26:07,928 [github.Requester] INFO: Following Github server redirection from /repos/OWASP/owasp-mastg to /repositories/69648386
+2026-02-26 09:26:08,810 [knowledge_curator.fetchers.github] INFO:   ✅ OWASP/owasp-mastg: 0 releases since 2026-02-23
+2026-02-26 09:26:14,978 [knowledge_curator.fetchers.github] INFO:   ✅ microsoft/TypeScript: 0 releases since 2026-02-23
+2026-02-26 09:26:19,977 [knowledge_curator.fetchers.github] INFO:   ✅ jestjs/jest: 0 releases since 2026-02-23
+2026-02-26 09:26:26,448 [knowledge_curator.fetchers.github] INFO:   ✅ ollama/ollama: 1 releases since 2026-02-23
+2026-02-26 09:26:30,755 [knowledge_curator.fetchers.github] INFO:   ✅ chroma-core/chroma: 0 releases since 2026-02-23
+2026-02-26 09:26:39,722 [knowledge_curator.fetchers.github] INFO:   ✅ wix/Detox: 0 releases since 2026-02-23
+2026-02-26 09:26:44,470 [knowledge_curator.fetchers.github] INFO:   ✅ microsoft/playwright: 0 releases since 2026-02-23
+2026-02-26 09:26:47,947 [knowledge_curator.fetchers.github] INFO:   ✅ grafana/k6: 0 releases since 2026-02-23
+2026-02-26 09:26:57,831 [knowledge_curator.fetchers.github] INFO:   ✅ getsentry/sentry-react-native: 1 releases since 2026-02-23
+2026-02-26 09:27:07,732 [knowledge_curator.fetchers.github] INFO:   ✅ docker/compose: 1 releases since 2026-02-23
+2026-02-26 09:27:09,449 [knowledge_curator.fetchers.github] INFO:   ✅ pallets/flask: 0 releases since 2026-02-23
+2026-02-26 09:27:14,574 [knowledge_curator.fetchers.github] INFO:   ✅ pydantic/pydantic: 2 releases since 2026-02-23
+2026-02-26 09:27:15,796 [knowledge_curator.fetchers.github] INFO:   ✅ BerriAI/litellm: 3 releases since 2026-02-23
+2026-02-26 09:27:16,168 [github.Requester] INFO: Following Github server redirection from /repos/apple/swift to /repositories/44838949
+2026-02-26 09:27:18,364 [knowledge_curator.fetchers.github] INFO:   ✅ apple/swift: 0 releases since 2026-02-23
+2026-02-26 09:27:28,299 [knowledge_curator.fetchers.github] INFO:   ✅ JetBrains/kotlin: 0 releases since 2026-02-23
+2026-02-26 09:27:35,672 [knowledge_curator.fetchers.github] INFO:   ✅ gradle/gradle: 0 releases since 2026-02-23
+2026-02-26 09:27:40,998 [knowledge_curator.fetchers.github] INFO:   ✅ CocoaPods/CocoaPods: 0 releases since 2026-02-23
+2026-02-26 09:27:41,002 [knowledge_curator] INFO:   📊 GitHub: 10 releases fetched
+2026-02-26 09:27:41,002 [knowledge_curator] INFO: 📊 TOTAL FETCHED: 10 items
+2026-02-26 09:27:41,002 [knowledge_curator] INFO: 🧠 Evaluating 10 items (threshold: 0.6)...
+2026-02-26 09:27:41,824 [LiteLLM] INFO: 
+LiteLLM completion() model= gpt-oss:120b; provider = ollama
+2026-02-26 09:28:21,151 [LiteLLM] INFO: Wrapper: Completed Call, calling success_handler
+2026-02-26 09:28:21,387 [knowledge_curator.evaluator] INFO:   ✅ INGEST [0.68] nodejs/node v25.7.0
+2026-02-26 09:28:21,858 [LiteLLM] INFO: 
+LiteLLM completion() model= gpt-oss:120b; provider = ollama
+2026-02-26 09:28:22,563 [crewai.cli.config] INFO: Using config path: /home/mfelkey/.config/crewai/settings.json
+2026-02-26 09:29:50,243 [LiteLLM] INFO: Wrapper: Completed Call, calling success_handler
+2026-02-26 09:29:50,272 [knowledge_curator.evaluator] INFO:   ✅ INGEST [0.62] nodejs/node v24.14.0
+2026-02-26 09:29:50,620 [crewai.events.listeners.tracing.trace_batch_manager] WARNING: Trace batch initialization returned status 401. Continuing without tracing.
+2026-02-26 09:29:50,788 [LiteLLM] INFO: 
+LiteLLM completion() model= gpt-oss:120b; provider = ollama
+2026-02-26 09:31:08,939 [LiteLLM] INFO: Wrapper: Completed Call, calling success_handler
+2026-02-26 09:31:08,970 [knowledge_curator.evaluator] INFO:   ✅ INGEST [0.68] ollama/ollama v0.17.1
+2026-02-26 09:31:09,476 [LiteLLM] INFO: 
+LiteLLM completion() model= gpt-oss:120b; provider = ollama
+2026-02-26 09:33:47,739 [LiteLLM] INFO: Wrapper: Completed Call, calling success_handler
+2026-02-26 09:33:47,778 [knowledge_curator.evaluator] INFO:   ✅ INGEST [0.66] getsentry/sentry-react-native 8.2.0
+2026-02-26 09:33:48,314 [LiteLLM] INFO: 
+LiteLLM completion() model= gpt-oss:120b; provider = ollama
+2026-02-26 09:36:36,631 [LiteLLM] INFO: Wrapper: Completed Call, calling success_handler
+2026-02-26 09:36:36,645 [knowledge_curator.evaluator] INFO:   ✅ INGEST [0.68] docker/compose v5.1.0
+2026-02-26 09:36:37,175 [LiteLLM] INFO: 
+LiteLLM completion() model= gpt-oss:120b; provider = ollama
+2026-02-26 09:39:02,011 [LiteLLM] INFO: Wrapper: Completed Call, calling success_handler
+2026-02-26 09:39:02,047 [knowledge_curator.evaluator] INFO:   ✅ INGEST [0.60] pydantic/pydantic v2.13.0b2
+2026-02-26 09:39:02,569 [LiteLLM] INFO: 
+LiteLLM completion() model= gpt-oss:120b; provider = ollama
+2026-02-26 09:41:54,843 [LiteLLM] INFO: Wrapper: Completed Call, calling success_handler
+2026-02-26 09:41:54,859 [knowledge_curator.evaluator] INFO:   ✅ INGEST [0.68] pydantic/pydantic v2.13.0b1
+2026-02-26 09:41:55,412 [LiteLLM] INFO: 
+LiteLLM completion() model= gpt-oss:120b; provider = ollama
+2026-02-26 09:44:54,653 [LiteLLM] INFO: Wrapper: Completed Call, calling success_handler
+2026-02-26 09:44:54,696 [knowledge_curator.evaluator] INFO:   ✅ INGEST [0.85] BerriAI/litellm 1.81.16-nightly
+2026-02-26 09:44:55,232 [LiteLLM] INFO: 
+LiteLLM completion() model= gpt-oss:120b; provider = ollama
+2026-02-26 09:47:33,677 [LiteLLM] INFO: Wrapper: Completed Call, calling success_handler
+2026-02-26 09:47:33,698 [knowledge_curator.evaluator] INFO:   ⏭️ SKIP [0.55] BerriAI/litellm v1.81.15-nightly
+2026-02-26 09:47:34,226 [LiteLLM] INFO: 
+LiteLLM completion() model= gpt-oss:120b; provider = ollama
+2026-02-26 09:50:01,822 [LiteLLM] INFO: Wrapper: Completed Call, calling success_handler
+2026-02-26 09:50:01,863 [knowledge_curator.evaluator] INFO:   ✅ INGEST [0.62] BerriAI/litellm v1.81.12-stable_gpt-5.3
+2026-02-26 09:50:01,863 [knowledge_curator.evaluator] INFO:   📊 Batch: 9/10 items above threshold (0.6)
+2026-02-26 09:50:01,863 [knowledge_curator] INFO:   ✅ Approved for ingestion: 9/10
+2026-02-26 09:50:01,882 [chromadb.telemetry.product.posthog] INFO: Anonymized telemetry enabled. See                     https://docs.trychroma.com/telemetry for more information.
+2026-02-26 09:50:01,948 [knowledge_curator] INFO: 📋 Run report saved: logs/curator/curator_report_20260226_145001.json
+2026-02-26 09:50:01,948 [knowledge_curator] INFO: ============================================================
+2026-02-26 09:50:01,948 [knowledge_curator] INFO: 🧠 KNOWLEDGE CURATOR — Complete (1478s)
+2026-02-26 09:50:01,948 [knowledge_curator] INFO:    Fetched: 10
+2026-02-26 09:50:01,948 [knowledge_curator] INFO:    Approved: 9
+2026-02-26 09:50:01,948 [knowledge_curator] INFO:    Ingested: 0
+2026-02-26 09:50:01,948 [knowledge_curator] INFO:    Report: logs/curator/curator_report_20260226_145001.json
+2026-02-26 09:50:01,948 [knowledge_curator] INFO: ============================================================
+2026-02-26 10:22:39,763 [crewai.cli.config] INFO: Using config path: /home/mfelkey/.config/crewai/settings.json
+2026-02-26 10:22:39,882 [knowledge_curator] INFO: ============================================================
+2026-02-26 10:22:39,882 [knowledge_curator] INFO: 🧠 KNOWLEDGE CURATOR — Starting run
+2026-02-26 10:22:39,882 [knowledge_curator] INFO:    Source: github
+2026-02-26 10:22:39,882 [knowledge_curator] INFO:    Mode: LIVE
+2026-02-26 10:22:39,882 [knowledge_curator] INFO: ============================================================
+2026-02-26 10:22:39,882 [knowledge_curator] INFO: 📦 Fetching GitHub releases...
+2026-02-26 10:22:43,595 [knowledge_curator.fetchers.github] INFO:   ✅ crewAIInc/crewAI: 0 releases since 2026-02-23
+2026-02-26 10:22:53,891 [knowledge_curator.fetchers.github] INFO:   ✅ facebook/react-native: 0 releases since 2026-02-23
+2026-02-26 10:22:54,807 [knowledge_curator.fetchers.github] INFO:   ✅ expo/expo: 0 releases since 2026-02-23
+2026-02-26 10:22:55,953 [knowledge_curator.fetchers.github] INFO:   ✅ python/cpython: 0 releases since 2026-02-23
+2026-02-26 10:23:08,736 [knowledge_curator.fetchers.github] INFO:   ✅ nodejs/node: 2 releases since 2026-02-23
+2026-02-26 10:23:20,772 [knowledge_curator.fetchers.github] INFO:   ✅ fastlane/fastlane: 0 releases since 2026-02-23
+2026-02-26 10:23:21,157 [github.Requester] INFO: Following Github server redirection from /repos/OWASP/owasp-mastg to /repositories/69648386
+2026-02-26 10:23:22,255 [knowledge_curator.fetchers.github] INFO:   ✅ OWASP/owasp-mastg: 0 releases since 2026-02-23
+2026-02-26 10:23:27,942 [knowledge_curator.fetchers.github] INFO:   ✅ microsoft/TypeScript: 0 releases since 2026-02-23
+2026-02-26 10:23:32,903 [knowledge_curator.fetchers.github] INFO:   ✅ jestjs/jest: 0 releases since 2026-02-23
+2026-02-26 10:23:38,596 [knowledge_curator.fetchers.github] INFO:   ✅ ollama/ollama: 1 releases since 2026-02-23
+2026-02-26 10:23:42,173 [knowledge_curator.fetchers.github] INFO:   ✅ chroma-core/chroma: 0 releases since 2026-02-23
+2026-02-26 10:23:51,323 [knowledge_curator.fetchers.github] INFO:   ✅ wix/Detox: 0 releases since 2026-02-23
+2026-02-26 10:23:55,720 [knowledge_curator.fetchers.github] INFO:   ✅ microsoft/playwright: 0 releases since 2026-02-23
+2026-02-26 10:23:58,819 [knowledge_curator.fetchers.github] INFO:   ✅ grafana/k6: 0 releases since 2026-02-23
+2026-02-26 10:24:08,631 [knowledge_curator.fetchers.github] INFO:   ✅ getsentry/sentry-react-native: 1 releases since 2026-02-23
+2026-02-26 10:24:18,854 [knowledge_curator.fetchers.github] INFO:   ✅ docker/compose: 1 releases since 2026-02-23
+2026-02-26 10:24:20,460 [knowledge_curator.fetchers.github] INFO:   ✅ pallets/flask: 0 releases since 2026-02-23
+2026-02-26 10:24:25,279 [knowledge_curator.fetchers.github] INFO:   ✅ pydantic/pydantic: 2 releases since 2026-02-23
+2026-02-26 10:24:26,553 [knowledge_curator.fetchers.github] INFO:   ✅ BerriAI/litellm: 3 releases since 2026-02-23
+2026-02-26 10:24:26,940 [github.Requester] INFO: Following Github server redirection from /repos/apple/swift to /repositories/44838949
+2026-02-26 10:24:28,874 [knowledge_curator.fetchers.github] INFO:   ✅ apple/swift: 0 releases since 2026-02-23
+2026-02-26 10:24:38,289 [knowledge_curator.fetchers.github] INFO:   ✅ JetBrains/kotlin: 0 releases since 2026-02-23
+2026-02-26 10:24:45,416 [knowledge_curator.fetchers.github] INFO:   ✅ gradle/gradle: 0 releases since 2026-02-23
+2026-02-26 10:24:50,242 [knowledge_curator.fetchers.github] INFO:   ✅ CocoaPods/CocoaPods: 0 releases since 2026-02-23
+2026-02-26 10:24:50,246 [knowledge_curator] INFO:   📊 GitHub: 10 releases fetched
+2026-02-26 10:24:50,246 [knowledge_curator] INFO: 📊 TOTAL FETCHED: 10 items
+2026-02-26 10:24:50,246 [knowledge_curator] INFO: 🧠 Evaluating 10 items (threshold: 0.6)...
+2026-02-26 10:24:51,064 [LiteLLM] INFO: 
+LiteLLM completion() model= gpt-oss:120b; provider = ollama
+2026-02-26 10:26:08,232 [LiteLLM] INFO: Wrapper: Completed Call, calling success_handler
+2026-02-26 10:26:08,609 [knowledge_curator.evaluator] INFO:   ✅ INGEST [0.66] nodejs/node v25.7.0
+2026-02-26 10:26:09,523 [LiteLLM] INFO: 
+LiteLLM completion() model= gpt-oss:120b; provider = ollama
+2026-02-26 10:26:09,860 [crewai.cli.config] INFO: Using config path: /home/mfelkey/.config/crewai/settings.json
+2026-02-26 10:27:51,176 [LiteLLM] INFO: Wrapper: Completed Call, calling success_handler
+2026-02-26 10:27:51,215 [knowledge_curator.evaluator] INFO:   ✅ INGEST [0.65] nodejs/node v24.14.0
+2026-02-26 10:27:51,508 [crewai.events.listeners.tracing.trace_batch_manager] WARNING: Trace batch initialization returned status 401. Continuing without tracing.
+2026-02-26 10:27:52,181 [LiteLLM] INFO: 
+LiteLLM completion() model= gpt-oss:120b; provider = ollama
+2026-02-26 10:29:40,506 [LiteLLM] INFO: Wrapper: Completed Call, calling success_handler
+2026-02-26 10:29:40,532 [knowledge_curator.evaluator] INFO:   ✅ INGEST [0.75] ollama/ollama v0.17.1
+2026-02-26 10:29:41,525 [LiteLLM] INFO: 
+LiteLLM completion() model= gpt-oss:120b; provider = ollama
+2026-02-26 10:33:24,794 [LiteLLM] INFO: Wrapper: Completed Call, calling success_handler
+2026-02-26 10:33:24,827 [knowledge_curator.evaluator] INFO:   ✅ INGEST [0.78] getsentry/sentry-react-native 8.2.0
+2026-02-26 10:33:25,817 [LiteLLM] INFO: 
+LiteLLM completion() model= gpt-oss:120b; provider = ollama
+2026-02-26 10:37:06,815 [LiteLLM] INFO: Wrapper: Completed Call, calling success_handler
+2026-02-26 10:37:06,838 [knowledge_curator.evaluator] INFO:   ✅ INGEST [0.66] docker/compose v5.1.0
+2026-02-26 10:37:07,813 [LiteLLM] INFO: 
+LiteLLM completion() model= gpt-oss:120b; provider = ollama
+2026-02-26 10:40:56,248 [LiteLLM] INFO: Wrapper: Completed Call, calling success_handler
+2026-02-26 10:40:56,274 [knowledge_curator.evaluator] INFO:   ✅ INGEST [0.64] pydantic/pydantic v2.13.0b2
+2026-02-26 10:40:57,218 [LiteLLM] INFO: 
+LiteLLM completion() model= gpt-oss:120b; provider = ollama
+2026-02-26 10:44:42,903 [LiteLLM] INFO: Wrapper: Completed Call, calling success_handler
+2026-02-26 10:44:42,924 [knowledge_curator.evaluator] INFO:   ✅ INGEST [0.68] pydantic/pydantic v2.13.0b1
+2026-02-26 10:44:43,660 [LiteLLM] INFO: 
+LiteLLM completion() model= gpt-oss:120b; provider = ollama
+2026-02-26 10:47:44,583 [LiteLLM] INFO: Wrapper: Completed Call, calling success_handler
+2026-02-26 10:47:44,612 [knowledge_curator.evaluator] INFO:   ✅ INGEST [0.82] BerriAI/litellm 1.81.16-nightly
+2026-02-26 10:47:45,091 [LiteLLM] INFO: 
+LiteLLM completion() model= gpt-oss:120b; provider = ollama
+2026-02-26 10:50:23,496 [LiteLLM] INFO: Wrapper: Completed Call, calling success_handler
+2026-02-26 10:50:23,517 [knowledge_curator.evaluator] INFO:   ⏭️ SKIP [0.52] BerriAI/litellm v1.81.15-nightly
+2026-02-26 10:50:23,972 [LiteLLM] INFO: 
+LiteLLM completion() model= gpt-oss:120b; provider = ollama
+2026-02-26 10:53:15,390 [LiteLLM] INFO: Wrapper: Completed Call, calling success_handler
+2026-02-26 10:53:15,402 [knowledge_curator.evaluator] INFO:   ✅ INGEST [0.60] BerriAI/litellm v1.81.12-stable_gpt-5.3
+2026-02-26 10:53:15,402 [knowledge_curator.evaluator] INFO:   📊 Batch: 9/10 items above threshold (0.6)
+2026-02-26 10:53:15,402 [knowledge_curator] INFO:   ✅ Approved for ingestion: 9/10
+2026-02-26 10:53:15,426 [chromadb.telemetry.product.posthog] INFO: Anonymized telemetry enabled. See                     https://docs.trychroma.com/telemetry for more information.
+2026-02-26 10:53:22,102 [knowledge_curator] INFO:   💾 Ingested 9 documents into ChromaDB
+2026-02-26 10:53:22,102 [knowledge_curator] INFO:      dev_practices: +9
+2026-02-26 10:53:22,103 [knowledge_curator] INFO:      system_updates: +9
+2026-02-26 10:53:22,103 [knowledge_curator] INFO: 🧹 Purging expired documents...
+2026-02-26 10:53:22,110 [knowledge_curator] INFO:   ✅ No expired documents found
+2026-02-26 10:53:22,113 [knowledge_curator] INFO: 📋 Run report saved: logs/curator/curator_report_20260226_155322.json
+2026-02-26 10:53:22,113 [knowledge_curator] INFO: ============================================================
+2026-02-26 10:53:22,113 [knowledge_curator] INFO: 🧠 KNOWLEDGE CURATOR — Complete (1842s)
+2026-02-26 10:53:22,113 [knowledge_curator] INFO:    Fetched: 10
+2026-02-26 10:53:22,113 [knowledge_curator] INFO:    Approved: 9
+2026-02-26 10:53:22,113 [knowledge_curator] INFO:    Ingested: 9
+2026-02-26 10:53:22,113 [knowledge_curator] INFO:    Report: logs/curator/curator_report_20260226_155322.json
+2026-02-26 10:53:22,113 [knowledge_curator] INFO: ============================================================
+2026-02-26 10:55:58,254 [crewai.cli.config] INFO: Using config path: /home/mfelkey/.config/crewai/settings.json
+2026-02-26 10:55:58,381 [chromadb.telemetry.product.posthog] INFO: Anonymized telemetry enabled. See                     https://docs.trychroma.com/telemetry for more information.

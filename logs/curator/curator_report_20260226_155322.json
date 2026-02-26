@@ -1,0 +1,111 @@
+{
+  "timestamp": "2026-02-26T15:53:22.113268",
+  "dry_run": false,
+  "fetched_count": 10,
+  "evaluated_count": 10,
+  "approved_count": 9,
+  "rejected_count": 1,
+  "ingestion": {
+    "ingested": 9,
+    "by_collection": {
+      "dev_practices": 9,
+      "system_updates": 9
+    }
+  },
+  "expired_removed": {
+    "dev_practices": 0,
+    "ds_methods": 0,
+    "domain_healthcare": 0,
+    "domain_va": 0,
+    "system_updates": 0
+  },
+  "collection_stats": {
+    "dev_practices": 9,
+    "ds_methods": 0,
+    "domain_healthcare": 0,
+    "domain_va": 0,
+    "system_updates": 9
+  },
+  "items": [
+    {
+      "title": "nodejs/node v25.7.0",
+      "source_type": "github_release",
+      "url": "https://github.com/nodejs/node/releases/tag/v25.7.0",
+      "score": 0.66,
+      "ingested": true,
+      "key_takeaway": "Node.js v25.7.0 adds http1 fallback options in http2, ESM entry\u2011point support in SEA, marks sqlite as a release candidate, renames a stream API option, and improves test runner handling, providing new backend capabilities and security packaging options."
+    },
+    {
+      "title": "nodejs/node v24.14.0",
+      "source_type": "github_release",
+      "url": "https://github.com/nodejs/node/releases/tag/v24.14.0",
+      "score": 0.65,
+      "ingested": true,
+      "key_takeaway": "Node.js v24.14.0 (LTS) introduces several minor but useful features: async_hooks tracking, fs.watch ignore option, global HTTP proxy setting, expanded module subpath imports, and adds LIEF as a dependency, which may affect binary handling and security considerations."
+    },
+    {
+      "title": "ollama/ollama v0.17.1",
+      "source_type": "github_release",
+      "url": "https://github.com/ollama/ollama/releases/tag/v0.17.1",
+      "score": 0.75,
+      "ingested": true,
+      "key_takeaway": "Ollama v0.17.1 introduces Nemotron architecture support, reduces MLX memory usage, adds capability\u2011based web\u2011search detection, fixes duplicate log prefixes, changes default quantization behavior for unquantized models, updates mlx\u2011c bindings to 0.5.0, and provides an upgrade configuration option in the UI."
+    },
+    {
+      "title": "getsentry/sentry-react-native 8.2.0",
+      "source_type": "github_release",
+      "url": "https://github.com/getsentry/sentry-react-native/releases/tag/8.2.0",
+      "score": 0.78,
+      "ingested": true,
+      "key_takeaway": "Sentry React Native 8.2.0 resolves AGP Artifacts API conflicts and an Android launch crash caused by SDK/plugin version mismatches, while updating Android, Cocoa, and CLI dependencies to their latest patches."
+    },
+    {
+      "title": "docker/compose v5.1.0",
+      "source_type": "github_release",
+      "url": "https://github.com/docker/compose/releases/tag/v5.1.0",
+      "score": 0.66,
+      "ingested": true,
+      "key_takeaway": "Docker Compose 5.1.0 introduces several bug fixes (container status events, nil pointer dereference, panics, Windows OCI path) and internal improvements (fsnotify, linting, code modernisation, CI updates), enhancing stability for local container orchestration pipelines."
+    },
+    {
+      "title": "pydantic/pydantic v2.13.0b2",
+      "source_type": "github_release",
+      "url": "https://github.com/pydantic/pydantic/releases/tag/v2.13.0b2",
+      "score": 0.64,
+      "ingested": true,
+      "key_takeaway": "Pydantic v2.13.0b2 (beta) backports the V1 namespace, allows any type form in `validate_as()`, and fixes a walrus\u2011operator precedence bug in `UrlConstraints`."
+    },
+    {
+      "title": "pydantic/pydantic v2.13.0b1",
+      "source_type": "github_release",
+      "url": "https://github.com/pydantic/pydantic/releases/tag/v2.13.0b1",
+      "score": 0.68,
+      "ingested": true,
+      "key_takeaway": "Pydantic v2.13.0b1 introduces a new `polymorphic_serialization` option, backports V1 changes up to v1.10.26 (including Python 3.14 support), merges pydantic-core into the main repo, and adds several performance and validation improvements."
+    },
+    {
+      "title": "BerriAI/litellm 1.81.16-nightly",
+      "source_type": "github_release",
+      "url": "https://github.com/BerriAI/litellm/releases/tag/1.81.16-nightly",
+      "score": 0.82,
+      "ingested": true,
+      "key_takeaway": "Litellm nightly 1.81.16 adds critical CVE patches, limits concurrent health checks, introduces spend\u2011tracking lifecycle logging, adds optional Prometheus stream labels, supports OpenAI Codex 5.3 day\u20110, and improves proxy tool\u2011policy auto\u2011discovery and performance."
+    },
+    {
+      "title": "BerriAI/litellm v1.81.15-nightly",
+      "source_type": "github_release",
+      "url": "https://github.com/BerriAI/litellm/releases/tag/v1.81.15-nightly",
+      "score": 0.52,
+      "ingested": false,
+      "key_takeaway": "A new litellm nightly build v1.81.15 was released, but without detailed changelog information the specific updates are unknown."
+    },
+    {
+      "title": "BerriAI/litellm v1.81.12-stable_gpt-5.3",
+      "source_type": "github_release",
+      "url": "https://github.com/BerriAI/litellm/releases/tag/v1.81.12-stable_gpt-5.3",
+      "score": 0.6,
+      "ingested": true,
+      "key_takeaway": "Litellm v1.81.12-stable_gpt-5.3 was released, indicating a stable build with added GPT\u20115.3 support; specific changes are not listed, but the update is relevant for agents managing LLM proxy integrations and backend services."
+    }
+  ]
+}
