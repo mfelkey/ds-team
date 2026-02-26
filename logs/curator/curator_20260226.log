@@ -244,3 +244,103 @@ LiteLLM completion() model= gpt-oss:120b; provider = ollama
 2026-02-26 10:53:22,113 [knowledge_curator] INFO: ============================================================
 2026-02-26 10:55:58,254 [crewai.cli.config] INFO: Using config path: /home/mfelkey/.config/crewai/settings.json
 2026-02-26 10:55:58,381 [chromadb.telemetry.product.posthog] INFO: Anonymized telemetry enabled. See                     https://docs.trychroma.com/telemetry for more information.
+2026-02-26 10:58:00,478 [crewai.cli.config] INFO: Using config path: /home/mfelkey/.config/crewai/settings.json
+2026-02-26 10:58:00,600 [knowledge_curator] INFO: ============================================================
+2026-02-26 10:58:00,600 [knowledge_curator] INFO: 🧠 KNOWLEDGE CURATOR — Starting run
+2026-02-26 10:58:00,600 [knowledge_curator] INFO:    Source: security
+2026-02-26 10:58:00,600 [knowledge_curator] INFO:    Mode: LIVE
+2026-02-26 10:58:00,600 [knowledge_curator] INFO: ============================================================
+2026-02-26 10:58:00,600 [knowledge_curator] INFO: 🔒 Fetching security advisories...
+2026-02-26 10:58:00,833 [knowledge_curator.fetchers.security] INFO:   ✅ NVD 'python': 7 CVEs checked
+2026-02-26 10:58:07,004 [knowledge_curator.fetchers.security] INFO:   ✅ NVD 'react-native': 0 CVEs checked
+2026-02-26 10:58:13,169 [knowledge_curator.fetchers.security] INFO:   ✅ NVD 'node.js': 5 CVEs checked
+2026-02-26 10:58:19,356 [knowledge_curator.fetchers.security] INFO:   ✅ NVD 'docker': 3 CVEs checked
+2026-02-26 10:58:25,674 [knowledge_curator.fetchers.security] INFO:   ✅ NVD 'android': 4 CVEs checked
+2026-02-26 10:58:31,967 [knowledge_curator.fetchers.security] INFO:   ✅ NVD 'ios': 1 CVEs checked
+2026-02-26 10:58:38,120 [knowledge_curator.fetchers.security] INFO:   ✅ NVD 'swift': 0 CVEs checked
+2026-02-26 10:58:44,120 [knowledge_curator.fetchers.security] INFO:   📊 Total unique CVEs: 13
+2026-02-26 10:58:44,121 [knowledge_curator] INFO:   📊 Security: 13 CVEs + 3 OWASP updates
+2026-02-26 10:58:44,121 [knowledge_curator] INFO: 📊 TOTAL FETCHED: 16 items
+2026-02-26 10:58:44,121 [knowledge_curator] INFO: 🧠 Evaluating 16 items (threshold: 0.6)...
+2026-02-26 10:58:44,895 [LiteLLM] INFO: 
+LiteLLM completion() model= gpt-oss:120b; provider = ollama
+2026-02-26 10:59:40,961 [LiteLLM] INFO: Wrapper: Completed Call, calling success_handler
+2026-02-26 10:59:41,186 [knowledge_curator.evaluator] INFO:   ✅ INGEST [0.90] CVE-2026-26198
+2026-02-26 10:59:41,636 [LiteLLM] INFO: 
+LiteLLM completion() model= gpt-oss:120b; provider = ollama
+2026-02-26 10:59:41,841 [crewai.cli.config] INFO: Using config path: /home/mfelkey/.config/crewai/settings.json
+2026-02-26 11:00:54,868 [LiteLLM] INFO: Wrapper: Completed Call, calling success_handler
+2026-02-26 11:00:54,931 [knowledge_curator.evaluator] INFO:   ⏭️ SKIP [0.25] CVE-2026-26331
+2026-02-26 11:00:55,211 [crewai.events.listeners.tracing.trace_batch_manager] WARNING: Trace batch initialization returned status 401. Continuing without tracing.
+2026-02-26 11:00:55,373 [LiteLLM] INFO: 
+LiteLLM completion() model= gpt-oss:120b; provider = ollama
+2026-02-26 11:02:23,413 [LiteLLM] INFO: Wrapper: Completed Call, calling success_handler
+2026-02-26 11:02:23,434 [knowledge_curator.evaluator] INFO:   ✅ INGEST [0.60] CVE-2026-27952
+2026-02-26 11:02:23,917 [LiteLLM] INFO: 
+LiteLLM completion() model= gpt-oss:120b; provider = ollama
+2026-02-26 11:03:22,292 [LiteLLM] INFO: Wrapper: Completed Call, calling success_handler
+2026-02-26 11:03:22,331 [knowledge_curator.evaluator] INFO:   ✅ INGEST [0.93] CVE-2026-27966
+2026-02-26 11:03:22,786 [LiteLLM] INFO: 
+LiteLLM completion() model= gpt-oss:120b; provider = ollama
+2026-02-26 11:06:20,599 [LiteLLM] INFO: Wrapper: Completed Call, calling success_handler
+2026-02-26 11:06:20,610 [knowledge_curator.evaluator] INFO:   ⏭️ SKIP [0.30] CVE-2025-69985
+2026-02-26 11:06:21,065 [LiteLLM] INFO: 
+LiteLLM completion() model= gpt-oss:120b; provider = ollama
+2026-02-26 11:09:22,370 [LiteLLM] INFO: Wrapper: Completed Call, calling success_handler
+2026-02-26 11:09:22,392 [knowledge_curator.evaluator] INFO:   ⏭️ SKIP [0.35] CVE-2026-27699
+2026-02-26 11:09:22,895 [LiteLLM] INFO: 
+LiteLLM completion() model= gpt-oss:120b; provider = ollama
+2026-02-26 11:12:19,539 [LiteLLM] INFO: Wrapper: Completed Call, calling success_handler
+2026-02-26 11:12:19,553 [knowledge_curator.evaluator] INFO:   ✅ INGEST [0.68] CVE-2026-27903
+2026-02-26 11:12:20,030 [LiteLLM] INFO: 
+LiteLLM completion() model= gpt-oss:120b; provider = ollama
+2026-02-26 11:15:05,753 [LiteLLM] INFO: Wrapper: Completed Call, calling success_handler
+2026-02-26 11:15:05,774 [knowledge_curator.evaluator] INFO:   ✅ INGEST [0.68] CVE-2026-27959
+2026-02-26 11:15:06,273 [LiteLLM] INFO: 
+LiteLLM completion() model= gpt-oss:120b; provider = ollama
+2026-02-26 11:17:52,833 [LiteLLM] INFO: Wrapper: Completed Call, calling success_handler
+2026-02-26 11:17:52,866 [knowledge_curator.evaluator] INFO:   ✅ INGEST [0.90] CVE-2026-27208
+2026-02-26 11:17:53,335 [LiteLLM] INFO: 
+LiteLLM completion() model= gpt-oss:120b; provider = ollama
+2026-02-26 11:21:03,522 [LiteLLM] INFO: Wrapper: Completed Call, calling success_handler
+2026-02-26 11:21:03,563 [knowledge_curator.evaluator] INFO:   ✅ INGEST [0.84] CVE-2026-27899
+2026-02-26 11:21:04,004 [LiteLLM] INFO: 
+LiteLLM completion() model= gpt-oss:120b; provider = ollama
+2026-02-26 11:23:50,243 [LiteLLM] INFO: Wrapper: Completed Call, calling success_handler
+2026-02-26 11:23:50,259 [knowledge_curator.evaluator] INFO:   ✅ INGEST [0.60] CVE-2026-2794
+2026-02-26 11:23:50,721 [LiteLLM] INFO: 
+LiteLLM completion() model= gpt-oss:120b; provider = ollama
+2026-02-26 11:27:35,858 [LiteLLM] INFO: Wrapper: Completed Call, calling success_handler
+2026-02-26 11:27:35,887 [knowledge_curator.evaluator] INFO:   ✅ INGEST [0.68] CVE-2026-2800
+2026-02-26 11:27:36,352 [LiteLLM] INFO: 
+LiteLLM completion() model= gpt-oss:120b; provider = ollama
+2026-02-26 11:30:34,007 [LiteLLM] INFO: Wrapper: Completed Call, calling success_handler
+2026-02-26 11:30:34,020 [knowledge_curator.evaluator] INFO:   ✅ INGEST [0.70] CVE-2026-2634
+2026-02-26 11:30:34,481 [LiteLLM] INFO: 
+LiteLLM completion() model= gpt-oss:120b; provider = ollama
+2026-02-26 11:33:18,307 [LiteLLM] INFO: Wrapper: Completed Call, calling success_handler
+2026-02-26 11:33:18,330 [knowledge_curator.evaluator] INFO:   ✅ INGEST [0.90] OWASP Mobile Application Security Testing Guide (MASTG)
+2026-02-26 11:33:18,804 [LiteLLM] INFO: 
+LiteLLM completion() model= gpt-oss:120b; provider = ollama
+2026-02-26 11:35:48,760 [LiteLLM] INFO: Wrapper: Completed Call, calling success_handler
+2026-02-26 11:35:48,773 [knowledge_curator.evaluator] INFO:   ✅ INGEST [0.88] OWASP Mobile Application Security Verification Standard (MAS
+2026-02-26 11:35:49,261 [LiteLLM] INFO: 
+LiteLLM completion() model= gpt-oss:120b; provider = ollama
+2026-02-26 11:38:40,210 [LiteLLM] INFO: Wrapper: Completed Call, calling success_handler
+2026-02-26 11:38:40,233 [knowledge_curator.evaluator] INFO:   ✅ INGEST [0.68] OWASP Top 10 for Web Applications
+2026-02-26 11:38:40,233 [knowledge_curator.evaluator] INFO:   📊 Batch: 13/16 items above threshold (0.6)
+2026-02-26 11:38:40,233 [knowledge_curator] INFO:   ✅ Approved for ingestion: 13/16
+2026-02-26 11:38:40,255 [chromadb.telemetry.product.posthog] INFO: Anonymized telemetry enabled. See                     https://docs.trychroma.com/telemetry for more information.
+2026-02-26 11:38:42,479 [knowledge_curator] INFO:   💾 Ingested 13 documents into ChromaDB
+2026-02-26 11:38:42,479 [knowledge_curator] INFO:      dev_practices: +13
+2026-02-26 11:38:42,479 [knowledge_curator] INFO:      system_updates: +13
+2026-02-26 11:38:42,479 [knowledge_curator] INFO: 🧹 Purging expired documents...
+2026-02-26 11:38:42,488 [knowledge_curator] INFO:   ✅ No expired documents found
+2026-02-26 11:38:42,491 [knowledge_curator] INFO: 📋 Run report saved: logs/curator/curator_report_20260226_163842.json
+2026-02-26 11:38:42,491 [knowledge_curator] INFO: ============================================================
+2026-02-26 11:38:42,491 [knowledge_curator] INFO: 🧠 KNOWLEDGE CURATOR — Complete (2442s)
+2026-02-26 11:38:42,491 [knowledge_curator] INFO:    Fetched: 16
+2026-02-26 11:38:42,491 [knowledge_curator] INFO:    Approved: 13
+2026-02-26 11:38:42,491 [knowledge_curator] INFO:    Ingested: 13
+2026-02-26 11:38:42,491 [knowledge_curator] INFO:    Report: logs/curator/curator_report_20260226_163842.json
+2026-02-26 11:38:42,491 [knowledge_curator] INFO: ============================================================
