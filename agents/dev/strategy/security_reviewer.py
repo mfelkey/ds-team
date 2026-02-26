@@ -8,6 +8,7 @@ from dotenv import load_dotenv
 from crewai import Agent, Task, Crew, Process, LLM
 from agents.orchestrator.orchestrator import log_event, save_context
 from agents.orchestrator.context_manager import load_agent_context, format_context_for_prompt, on_artifact_saved
+from agents.shared.knowledge_curator.rag_inject import get_knowledge_context
 
 
 load_dotenv("config/.env")
@@ -62,6 +63,11 @@ def run_security_review(context: dict, prd_path: str, tad_path: str) -> dict:
     )
     prompt_context = format_context_for_prompt(ctx)
 
+    # ── RAG: inject current security knowledge (CVEs, OWASP, VA policy) ──
+    knowledge = get_knowledge_context(
+        agent_role="Security Reviewer",
+        task_summary=f"Security review for {context.get('structured_spec', {}).get('title', 'project')}",
+    )
 
     sr = build_security_reviewer()
 
@@ -69,10 +75,10 @@ def run_security_review(context: dict, prd_path: str, tad_path: str) -> dict:
         description=f"""
 You are conducting a pre-implementation security review of the following project:
 
---- PRD (excerpt) ---
+{prompt_context}
 
---- Technical Architecture Document (excerpt) ---
-{tad_content}
+CURRENT SECURITY INTELLIGENCE (from knowledge base — reference in your findings where relevant):
+{knowledge}
 
 Produce a complete Security Review Report (SRR) with ALL of the following sections:
 
@@ -91,6 +97,7 @@ Produce a complete Security Review Report (SRR) with ALL of the following sectio
    - Review each architecture component for security weaknesses
    - Flag any findings as: CRITICAL / HIGH / MEDIUM / LOW
    - Include specific remediation for each finding
+   - Cross-reference with any relevant CVEs from the security intelligence above
 
 4. COMPLIANCE GAP ANALYSIS
    - HIPAA Security Rule gaps
