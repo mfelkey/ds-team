@@ -1,0 +1,159 @@
+{
+  "timestamp": "2026-02-26T17:19:38.343625",
+  "dry_run": false,
+  "fetched_count": 16,
+  "evaluated_count": 16,
+  "approved_count": 11,
+  "rejected_count": 5,
+  "ingestion": {
+    "ingested": 11,
+    "by_collection": {
+      "dev_practices": 11,
+      "system_updates": 11
+    }
+  },
+  "expired_removed": {
+    "dev_practices": 0,
+    "ds_methods": 0,
+    "domain_healthcare": 0,
+    "domain_va": 0,
+    "system_updates": 0
+  },
+  "collection_stats": {
+    "dev_practices": 23,
+    "ds_methods": 0,
+    "domain_healthcare": 0,
+    "domain_va": 0,
+    "system_updates": 23
+  },
+  "items": [
+    {
+      "title": "CVE-2026-26198",
+      "source_type": "cve_advisory",
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-26198",
+      "score": 0.9,
+      "ingested": true,
+      "key_takeaway": "Ormar versions 0.9.9\u20110.22.0 allow raw SQL injection via min()/max() aggregate calls, letting attackers read the entire database; upgrade to version 0.23.0 or later immediately."
+    },
+    {
+      "title": "CVE-2026-26331",
+      "source_type": "cve_advisory",
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-26331",
+      "score": 0.3,
+      "ingested": false,
+      "key_takeaway": "yt-dlp versions prior to 2026.02.21 allow command injection via the --netrc-cmd option; upgrade to 2026.02.21 or later, or avoid using that option."
+    },
+    {
+      "title": "CVE-2026-27952",
+      "source_type": "cve_advisory",
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-27952",
+      "score": 0.88,
+      "ingested": true,
+      "key_takeaway": "Agenta API versions prior to 0.48.1 allow sandbox escape via a whitelisted numpy package, enabling arbitrary code execution on the server; upgrade to \u22650.48.1 (or use v0.60+ where the sandbox was removed) immediately."
+    },
+    {
+      "title": "CVE-2026-27966",
+      "source_type": "cve_advisory",
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-27966",
+      "score": 0.85,
+      "ingested": true,
+      "key_takeaway": "Auto-scored cve_advisory: CVE-2026-27966"
+    },
+    {
+      "title": "CVE-2025-69985",
+      "source_type": "cve_advisory",
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2025-69985",
+      "score": 0.65,
+      "ingested": true,
+      "key_takeaway": "FUXA versions <=1.2.8 trust the HTTP Referer header for JWT validation, allowing unauthenticated authentication bypass and remote code execution via the /api/runscript endpoint; upgrade to a patched version or remove the Referer check immediately."
+    },
+    {
+      "title": "CVE-2026-27699",
+      "source_type": "cve_advisory",
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-27699",
+      "score": 0.35,
+      "ingested": false,
+      "key_takeaway": "basic-ftp versions before 5.2.0 allow path traversal via malicious FTP server filenames in downloadToDir(); upgrade to >=5.2.0 to prevent arbitrary file writes."
+    },
+    {
+      "title": "CVE-2026-27903",
+      "source_type": "cve_advisory",
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-27903",
+      "score": 0.78,
+      "ingested": true,
+      "key_takeaway": "Upgrade minimatch to versions >=10.2.3 (or the equivalent patched versions) to prevent unbounded recursive backtracking that can be exploited to stall the Node.js event loop when attacker-controlled glob patterns contain multiple '**' segments."
+    },
+    {
+      "title": "CVE-2026-27959",
+      "source_type": "cve_advisory",
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-27959",
+      "score": 0.8,
+      "ingested": true,
+      "key_takeaway": "Upgrade Koa to versions >=3.1.2 (or >=2.16.4) to fix naive Host header parsing in ctx.hostname, preventing host header injection attacks that can manipulate URL generation and routing."
+    },
+    {
+      "title": "CVE-2026-27208",
+      "source_type": "cve_advisory",
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-27208",
+      "score": 0.88,
+      "ingested": true,
+      "key_takeaway": "Upgrade bleon-ethical/api-gateway-deploy to version 1.0.1 (or later) to mitigate critical OS command injection and privilege escalation vulnerabilities that allow root command execution and potential container escape."
+    },
+    {
+      "title": "CVE-2026-27899",
+      "source_type": "cve_advisory",
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-27899",
+      "score": 0.84,
+      "ingested": true,
+      "key_takeaway": "Upgrade WireGuard Portal to version 2.1.3 or later to prevent authenticated non-admin users from escalating to full admin privileges via the IsAdmin field in profile updates."
+    },
+    {
+      "title": "CVE-2026-2794",
+      "source_type": "cve_advisory",
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-2794",
+      "score": 0.35,
+      "ingested": false,
+      "key_takeaway": "Update Firefox and Firefox Focus for Android to version 148 or later to fix an information disclosure bug caused by uninitialized memory."
+    },
+    {
+      "title": "CVE-2026-2800",
+      "source_type": "cve_advisory",
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-2800",
+      "score": 0.34,
+      "ingested": false,
+      "key_takeaway": "Upgrade Firefox for Android and Thunderbird to version 148 or later to mitigate a critical WebAuthn spoofing vulnerability."
+    },
+    {
+      "title": "CVE-2026-2634",
+      "source_type": "cve_advisory",
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-2634",
+      "score": 0.38,
+      "ingested": false,
+      "key_takeaway": "Update Firefox for iOS to version 147.4 or later to mitigate a critical address-bar spoofing vulnerability that could present attacker-controlled pages under spoofed domains."
+    },
+    {
+      "title": "OWASP Mobile Application Security Testing Guide (MASTG)",
+      "source_type": "owasp_update",
+      "url": "https://mas.owasp.org/MASTG/",
+      "score": 0.72,
+      "ingested": true,
+      "key_takeaway": "The updated OWASP MASTG offers a comprehensive, current methodology and test cases for mobile app security testing on iOS and Android, essential for hardening and validating mobile applications."
+    },
+    {
+      "title": "OWASP Mobile Application Security Verification Standard (MASVS)",
+      "source_type": "owasp_update",
+      "url": "https://mas.owasp.org/MASVS/",
+      "score": 0.73,
+      "ingested": true,
+      "key_takeaway": "MASVS defines a comprehensive set of security requirements for mobile apps, serving as a verification benchmark for design, data storage, cryptography, authentication, networking, platform interaction, code quality, and resilience."
+    },
+    {
+      "title": "OWASP Top 10 for Web Applications",
+      "source_type": "owasp_update",
+      "url": "https://owasp.org/www-project-top-ten/",
+      "score": 0.68,
+      "ingested": true,
+      "key_takeaway": "The OWASP Top 10 provides essential awareness of the most critical web application security risks, serving as a baseline for secure design, testing, and remediation in our web projects."
+    }
+  ]
+}

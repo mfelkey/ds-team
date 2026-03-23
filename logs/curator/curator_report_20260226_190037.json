@@ -1,0 +1,63 @@
+{
+  "timestamp": "2026-02-26T19:00:37.302098",
+  "dry_run": false,
+  "fetched_count": 4,
+  "evaluated_count": 4,
+  "approved_count": 4,
+  "rejected_count": 0,
+  "ingestion": {
+    "ingested": 4,
+    "by_collection": {
+      "domain_va": 4,
+      "domain_healthcare": 4
+    }
+  },
+  "expired_removed": {
+    "dev_practices": 0,
+    "ds_methods": 0,
+    "domain_healthcare": 0,
+    "domain_va": 0,
+    "system_updates": 0
+  },
+  "collection_stats": {
+    "dev_practices": 24,
+    "ds_methods": 0,
+    "domain_healthcare": 4,
+    "domain_va": 4,
+    "system_updates": 24
+  },
+  "items": [
+    {
+      "title": "VA Lighthouse API Portal \u2014 Current API Catalog",
+      "source_type": "va_bulletin",
+      "url": "https://developer.va.gov/explore",
+      "score": 0.9,
+      "ingested": true,
+      "key_takeaway": "VA Lighthouse provides a set of HIPAA\u2011subject APIs (FHIR R4, benefits, facilities, etc.) requiring OAuth 2.0 with PKCE; essential for building VA health and benefits applications."
+    },
+    {
+      "title": "CMS Interoperability and Patient Access Final Rule (CMS-9115-F)",
+      "source_type": "cms_bulletin",
+      "url": "https://www.cms.gov/priorities/key-initiatives/burden-reduction/interoperability",
+      "score": 0.9,
+      "ingested": true,
+      "key_takeaway": "CMS final rule mandates that CMS\u2011regulated payers expose patient data via FHIR R4 APIs (Patient Access, Provider Directory, payer\u2011to\u2011payer exchange), impacting any app handling Medicare/Medicaid claims or clinical data."
+    },
+    {
+      "title": "TEFCA (Trusted Exchange Framework and Common Agreement)",
+      "source_type": "cms_bulletin",
+      "url": "https://www.healthit.gov/topic/interoperability/policy/trusted-exchange-framework-and-common-agreement-tefca",
+      "score": 0.88,
+      "ingested": true,
+      "key_takeaway": "TEFCA establishes a national framework for health information exchange, requiring any app that connects to the U.S. health data network to meet QHIN requirements, identity proofing, consent management, and data use agreements."
+    },
+    {
+      "title": "HIPAA Security Rule \u2014 Technical Safeguards",
+      "source_type": "cms_bulletin",
+      "url": "https://www.hhs.gov/hipaa/for-professionals/security/laws-regulations/index.html",
+      "score": 0.9,
+      "ingested": true,
+      "key_takeaway": "HIPAA Security Rule technical safeguards mandate access controls, audit logs, integrity/authentication measures, and encryption for any mobile or web app handling ePHI, requiring strict implementation to stay compliant."
+    }
+  ]
+}

@@ -1,0 +1,38 @@
+{
+  "timestamp": "2026-02-26T13:56:29.780312",
+  "dry_run": true,
+  "fetched_count": 2,
+  "evaluated_count": 2,
+  "approved_count": 2,
+  "rejected_count": 0,
+  "ingestion": {
+    "ingested": 0,
+    "by_collection": {}
+  },
+  "expired_removed": {},
+  "collection_stats": {
+    "dev_practices": 0,
+    "ds_methods": 0,
+    "domain_healthcare": 0,
+    "domain_va": 0,
+    "system_updates": 0
+  },
+  "items": [
+    {
+      "title": "nodejs/node v25.7.0",
+      "source_type": "github_release",
+      "url": "https://github.com/nodejs/node/releases/tag/v25.7.0",
+      "score": 0.66,
+      "ingested": true,
+      "key_takeaway": "Node.js v25.7.0 (minor release) adds http2 http1 fallback options, ESM entry point support in SEA, a sqlite release candidate, and renames a stream API option, offering new backend capabilities and minor API changes."
+    },
+    {
+      "title": "nodejs/node v24.14.0",
+      "source_type": "github_release",
+      "url": "https://github.com/nodejs/node/releases/tag/v24.14.0",
+      "score": 0.66,
+      "ingested": true,
+      "key_takeaway": "Node.js v24.14.0 LTS adds several minor but useful features such as async_hooks trackPromises, an ignore option for fs.watch, http.setGlobalProxyFromEnv, subpath import support, and other API tweaks, enhancing observability and configurability for backend services."
+    }
+  ]
+}
