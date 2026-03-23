@@ -4,3 +4,4 @@ config/.env
 lib/
 __pycache__/
 dev-team/
+dev-team/
