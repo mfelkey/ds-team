@@ -12,60 +12,44 @@ init_langfuse()
 
 # ── Notification helpers ──────────────────────────────────────────────────────
 
-def send_sms(message: str) -> bool:
-    """Send SMS via AT&T email-to-text gateway. Returns True on success."""
-    try:
-        import smtplib
-        from email.mime.text import MIMEText
 
-        # AT&T email-to-text gateway
-        sms_address = os.getenv("HUMAN_PHONE_NUMBER", "").replace("+1", "") + "@txt.att.net"
-
-        msg = MIMEText(message[:160])  # SMS limit
-        msg["From"] = os.getenv("OUTLOOK_ADDRESS")
-        msg["To"] = sms_address
-        msg["Subject"] = ""
-
-        with smtplib.SMTP("smtp.office365.com", 587) as server:
-            server.ehlo()
-            server.starttls()
-            server.login(
-                os.getenv("OUTLOOK_ADDRESS"),
-                os.getenv("OUTLOOK_PASSWORD")
-            )
-            server.send_message(msg)
-        print(f"📱 SMS sent via AT&T gateway: {message[:60]}...")
-        return True
-    except Exception as e:
-        print(f"⚠️  SMS failed: {e}")
+def send_pushover(subject: str, message: str, priority: int = 1) -> bool:
+    """Send Pushover push notification."""
+    import urllib.request, urllib.parse, json
+    user_key  = os.getenv("PUSHOVER_USER_KEY", "")
+    api_token = os.getenv("PUSHOVER_API_TOKEN", "")
+    if not user_key or not api_token:
+        print("⚠️  Pushover credentials not set")
         return False
+    try:
+        data = urllib.parse.urlencode({
+            "token": api_token, "user": user_key,
+            "title": subject[:250], "message": message[:1024],
+            "priority": priority,
+        }).encode("utf-8")
+        req = urllib.request.Request(
+            "https://api.pushover.net/1/messages.json",
+            data=data, method="POST"
+        )
+        with urllib.request.urlopen(req, timeout=10) as resp:
+            result = json.loads(resp.read())
+            if result.get("status") == 1:
+                print(f"📱 Pushover sent: {subject[:60]}")
+                return True
+            print(f"⚠️  Pushover error: {result}")
+            return False
+    except Exception as e:
+        print(f"⚠️  Pushover failed: {e}")
+        return False
+
+
+def send_sms(message: str) -> bool:
+    return send_pushover("Notification", message, priority=1)
+
 
 def send_email(subject: str, body: str) -> bool:
-    """Send email via Gmail SMTP. Returns True on success."""
-    try:
-        import smtplib
-        from email.mime.text import MIMEText
-        from email.mime.multipart import MIMEMultipart
+    return send_pushover(subject, body, priority=0)
 
-        msg = MIMEMultipart()
-        msg["From"] = os.getenv("OUTLOOK_ADDRESS")
-        msg["To"] = os.getenv("HUMAN_EMAIL")
-        msg["Subject"] = subject
-        msg.attach(MIMEText(body, "plain"))
-
-        with smtplib.SMTP("smtp.office365.com", 587) as server:
-            server.ehlo()
-            server.starttls()
-            server.login(
-                os.getenv("OUTLOOK_ADDRESS"),
-                os.getenv("OUTLOOK_PASSWORD")
-            )
-            server.send_message(msg)
-        print(f"📧 Email sent: {subject}")
-        return True
-    except Exception as e:
-        print(f"⚠️  Email failed: {e}")
-        return False
 
 def notify_human(subject: str, message: str) -> None:
     """Send notification via SMS (primary) and email (secondary)."""
