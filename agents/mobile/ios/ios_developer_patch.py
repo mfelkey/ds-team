@@ -122,7 +122,7 @@ accessibility modifier. No screen may be omitted.
 
 DashboardView — KPI cards:
 - Each KPICard: .accessibilityLabel("Total trips: \\(count)")
-- Chart: .accessibilityLabel("Trip trend chart") .accessibilityHint("Shows monthly ambulance trips")
+- Chart: .accessibilityLabel("Data trend chart") .accessibilityHint("Shows monthly data records")
 - Filter button: .accessibilityLabel("Filter") .accessibilityHint("Opens filter options")
 
 TripListView — rows:
@@ -213,7 +213,7 @@ Matchfile (complete):
 git_url(ENV["MATCH_GIT_URL"])
 storage_mode("git")
 type("development")
-app_identifier(["com.va.ambulance.trip"])
+app_identifier(["com.proteanpursuits.app"])
 username(ENV["APPLE_ID"])
 ```
 
@@ -226,7 +226,7 @@ platform :ios do
   desc "Run all unit and UI tests"
   lane :test do
     run_tests(
-      scheme: "VAAmbulanceTripAnalysis",
+      scheme: "AppProject",
       devices: ["iPhone 15 Pro"],
       clean: true,
       code_coverage: true
@@ -241,7 +241,7 @@ platform :ios do
       build_number: ENV["BUILD_NUMBER"] || Time.now.strftime("%Y%m%d%H%M")
     )
     build_app(
-      scheme: "VAAmbulanceTripAnalysis",
+      scheme: "AppProject",
       configuration: "Staging",
       export_method: "app-store"
     )
@@ -259,7 +259,7 @@ platform :ios do
       build_number: ENV["BUILD_NUMBER"]
     )
     build_app(
-      scheme: "VAAmbulanceTripAnalysis",
+      scheme: "AppProject",
       configuration: "Release",
       export_method: "app-store"
     )

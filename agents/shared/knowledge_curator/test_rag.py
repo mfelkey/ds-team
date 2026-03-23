@@ -55,7 +55,7 @@ def main():
     # Test dev agents against dev_practices + system_updates
     test_agent(
         "Backend Developer",
-        "Build REST API endpoints for ambulance trip data with authentication"
+        "Build REST API endpoints for project data with authentication"
     )
 
     test_agent(
@@ -82,12 +82,12 @@ def main():
     # Test domain-specific agents against VA/healthcare collections
     test_agent(
         "Product Manager",
-        "Define requirements for VA ambulance scheduling system"
+        "Define requirements for the project scheduling system"
     )
 
     test_agent(
         "Business Analyst",
-        "Map stakeholders and process flows for veteran transportation"
+        "Map stakeholders and process flows for the project domain"
     )
 
     # Test the convenience wrapper
@@ -97,7 +97,7 @@ def main():
 
     result = inject_for_agent(
         "Security Reviewer",
-        "Build a mobile app for VA ambulance trip analysis with PHI data",
+        "Build a mobile app for project data analysis",
     )
     if result:
         print(f"  ✅ inject_for_agent returned {len(result)} chars")

@@ -21,7 +21,7 @@ except ImportError:
 
 TASK_DESCRIPTION = """
 You are the React Native Architect producing Part 1 of the React Native Architecture
-Document (RNAD) for the VA Ambulance Trip Analysis cross-platform app.
+Document (RNAD) for the project cross-platform app.
 
 --- Mobile UX Document (excerpt) ---
 MUXD_PLACEHOLDER
@@ -69,7 +69,7 @@ RootStackParamList, AuthStackParamList, MainTabParamList, DashboardStackParamLis
 
 ### navigation/RootNavigator.tsx
 Complete NavigationContainer with:
-- Linking config: vaambulance://dashboard, vaambulance://trip/:id, vaambulance://login
+- Linking config: app://dashboard, app://detail/:id, app://login
 - Auth gate from useAuthStore
 - Adaptive theme via useColorScheme
 

@@ -20,7 +20,7 @@ except ImportError:
 
 
 TASK_DESCRIPTION = """
-You are the React Native Developer implementing the VA Ambulance Trip Analysis
+You are the React Native Developer implementing the the project
 cross-platform app. The React Native Architect has defined the architecture.
 Your job is to implement the screen-level code.
 
@@ -47,7 +47,7 @@ Complete implementation:
 ## 2. LOGIN SCREEN (features/auth/screens/LoginScreen.tsx)
 
 Complete implementation:
-- VA branding: logo, "VA Ambulance Trip Analysis" title, subtitle
+- VA branding: logo, "the project" title, subtitle
 - Single "Sign in with VA Credentials" button using VAButton (primary variant)
 - Loading state: button shows ActivityIndicator while OIDC flow in progress
 - Error state: ErrorBanner below button showing error message
@@ -196,7 +196,7 @@ def build_rn_developer() -> Agent:
     return Agent(
         role="React Native Developer",
         goal=(
-            "Implement all 10 screens of the VA Ambulance Trip Analysis React Native "
+            "Implement all 10 screens of the the project React Native "
             "app with complete, working TypeScript code — consuming the architecture "
             "defined in the RNAD."
         ),

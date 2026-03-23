@@ -198,7 +198,7 @@ def execute_handoff(context: dict, package: dict) -> dict:
 
 
 if __name__ == "__main__":
-    # Test with ambulance project context
+    # Test with sample project context
     import glob
 
     logs = sorted(glob.glob("logs/PROJ-*.json"), key=os.path.getmtime, reverse=True)
@@ -219,14 +219,14 @@ if __name__ == "__main__":
         artifacts=[
             {
                 "name": "Cleaned Trip Dataset",
-                "description": "2,853 ambulance trips cleaned and labeled",
-                "path": "ds/data/ambulance_trips_clean.csv",
+                "description": "dataset cleaned and labeled",
+                "path": "ds/data/dataset_clean.csv",
                 "type": "dataset"
             },
             {
                 "name": "Analysis Report",
                 "description": "EDA findings and capture rate recommendations",
-                "path": "ds/reports/ambulance_analysis.md",
+                "path": "ds/reports/analysis.md",
                 "type": "report"
             },
             {
@@ -237,7 +237,7 @@ if __name__ == "__main__":
             }
         ],
         summary=(
-            "The DS Crew has completed analysis of 2,853 VA ambulance trips. "
+            "The DS Crew has completed analysis of the project dataset. "
             "Key finding: 34% of contracted trips meet criteria for in-house capture. "
             "Estimated annual savings: $420,000. Cleaned dataset and schema are "
             "ready for dashboard development. All artifacts validated."

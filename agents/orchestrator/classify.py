@@ -49,9 +49,9 @@ Follow these steps exactly:
 
 Example output format:
 {{
-  "title": "Ambulance Trip Dashboard",
+  "title": "Project Dashboard",
   "description": "Build an interactive dashboard...",
-  "business_goal": "Enable VA leadership to monitor ambulance utilization.",
+  "business_goal": "Enable stakeholders to monitor key project metrics.",
   "deliverables": ["React dashboard", "PostgreSQL backend", "API layer"],
   "success_criteria": ["Dashboard loads in under 2 seconds", "Shows trip data by month"],
   "estimated_complexity": "HIGH",
@@ -108,9 +108,3 @@ Example output format:
 if __name__ == "__main__":
     # Quick test
     test_request = """
-    I need to analyze our VA ambulance trip data from 2023 to identify
-    which trips we could have captured in-house versus contracted out.
-    Then build a simple dashboard so leadership can explore the results
-    interactively by month and trip type.
-    """
-    context = classify_project(test_request)

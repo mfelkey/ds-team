@@ -149,7 +149,7 @@ if __name__ == "__main__":
     print(f"📄 Artifacts found: {list(path_lookup.keys())}")
 
     report_sections = [
-        f"# Reconciliation Report — PROJ-85C88A7E\n",
+        f"# Reconciliation Report — PROJ-TEMPLATE\n",
         f"**Generated:** {datetime.utcnow().strftime('%Y-%m-%d %H:%M UTC')}\n",
         f"**Purpose:** Gap analysis comparing original documents against retrofit-revised versions.\n",
         f"\n---\n",

@@ -28,7 +28,7 @@ def build_business_analyst() -> Agent:
         backstory=(
             "You are a senior Business Analyst with 12 years of experience in "
             "federal healthcare IT, specializing in VA and DoD systems. You have "
-            "deep knowledge of VA business processes, ambulance authorization "
+            "deep knowledge of the relevant business domain, processes, "
             "workflows, and the political dynamics of government stakeholder "
             "environments. You think in process flows and data lineage — you never "
             "accept vague requirements and always ask 'what does the data look like "
@@ -89,7 +89,7 @@ Produce a complete Business Analysis Document with ALL of the following sections
    - Communication plan: who gets what updates, how often, in what format
 
 2. CURRENT STATE PROCESS FLOW
-   - Step-by-step description of how ambulance trips are currently
+   - Step-by-step description of how the core workflow is currently
      authorized, dispatched, recorded, and billed at the VA
    - Identify every point where data is created, modified, or lost
    - Identify pain points and bottlenecks in the current process
@@ -107,7 +107,7 @@ Produce a complete Business Analysis Document with ALL of the following sections
    - Who owns closing each gap
 
 5. DATA DICTIONARY
-   - Every field in the ambulance trip dataset with:
+   - Every field in the project dataset with:
      * Field name (technical)
      * Display name (business-friendly)
      * Data type

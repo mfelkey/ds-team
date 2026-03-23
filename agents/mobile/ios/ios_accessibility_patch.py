@@ -22,7 +22,7 @@ def build_ios_developer() -> Agent:
         role="iOS Accessibility Specialist",
         goal=(
             "Produce complete, per-screen VoiceOver accessibility implementations "
-            "for all 6 screens in the VA Ambulance iOS app, plus Dynamic Type "
+            "for all screens in the iOS app, plus Dynamic Type "
             "and Reduce Motion modifiers. Every screen must have working Swift code "
             "showing every accessibility modifier — no summaries, no examples, "
             "no placeholders."
@@ -54,7 +54,7 @@ def run_accessibility_patch(context: dict, iir_path: str) -> tuple:
 
     a11y_task = Task(
         description="""
-You are producing Section 8 — Accessibility Implementation — for the VA Ambulance
+You are producing Section 8 — Accessibility Implementation — for the project
 iOS app. This is a HIPAA-regulated healthcare app requiring Section 508 compliance.
 
 Produce complete SwiftUI code for ALL of the following. Every element in every
@@ -72,7 +72,7 @@ Produce the complete DashboardView body with:
 - Each KPI card wrapped in .accessibilityElement(children: .combine)
   with .accessibilityLabel("Total trips: \\(totalTrips), in-house: \\(inHousePercent) percent, cost: \\(cost) dollars")
 - Chart view: .accessibilityLabel("Monthly trip trend chart")
-  .accessibilityHint("Shows ambulance trip counts by month. Double tap to hear data summary.")
+  .accessibilityHint("Shows data counts by month. Double tap to hear data summary.")
   .accessibilityElement(children: .ignore)
   with a custom .accessibilityAction(named: "Read chart data") { ... }
 - Filter button in toolbar:
@@ -171,7 +171,7 @@ Produce the complete SettingsView body with:
 ### 8.6 LoginView — Complete Accessible Implementation
 
 Produce the complete LoginView body with:
-- App logo image: .accessibilityLabel("VA Ambulance Trip Analysis")
+- App logo image: .accessibilityLabel("the app")
   .accessibilityHidden(false) (decorative only — make it hidden if truly decorative)
 - OIDC login button:
   .accessibilityLabel("Log in with VA credentials")

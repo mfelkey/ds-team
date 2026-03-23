@@ -42,7 +42,7 @@ def run_content_guide(context: dict, uxd_path: str) -> dict:
 
     ux = Agent(
         role="UX/UI Designer",
-        goal="Produce a complete UI Content Guide for the VA Ambulance Trip Analysis dashboard.",
+        goal="Produce a complete UI Content Guide for the the project dashboard.",
         backstory=(
             "You are a Senior UX/UI Designer responsible for all interface content — "
             "every label, button, tooltip, error message, and notification that a user "
@@ -61,7 +61,7 @@ def run_content_guide(context: dict, uxd_path: str) -> dict:
     content_task = Task(
         description=f"""
 Using the following User Experience Document as context, produce a complete and exhaustive
-UI Content Guide for the VA Ambulance Trip Analysis dashboard.
+UI Content Guide for the the project dashboard.
 
 {prompt_context}
 

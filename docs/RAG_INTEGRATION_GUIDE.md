@@ -15,7 +15,7 @@ Then in the `run_*` function, before building the Task, query for relevant knowl
 ```python
 knowledge = get_knowledge_context(
     agent_role="Backend Developer",
-    task_summary="Build REST API for ambulance trip data",
+    task_summary="Build REST API for project data",
 )
 ```
 

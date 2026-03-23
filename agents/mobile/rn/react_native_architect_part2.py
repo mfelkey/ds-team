@@ -19,7 +19,7 @@ except ImportError:
 
 TASK_DESCRIPTION = """
 You are the React Native Architect producing Part 2 of the React Native Architecture
-Document (RNAD) for the VA Ambulance Trip Analysis cross-platform app.
+Document (RNAD) for the project cross-platform app.
 
 Produce sections 6-10 with complete working TypeScript code.
 No placeholders. No "implement logic here". Working code only.
@@ -274,8 +274,8 @@ provides full native access while retaining Expo tooling (EAS Build, expo-update
 ### app.config.js (complete)
 Complete app.config.js with:
 - name, slug, version, platforms
-- ios: bundleIdentifier com.va.ambulance.trip, buildNumber from env
-- android: package com.va.ambulance.trip, versionCode from env
+- ios: bundleIdentifier com.proteanpursuits.app, buildNumber from env
+- android: package com.proteanpursuits.app, versionCode from env
 - plugins array: expo-screen-capture, expo-haptics, expo-build-properties
   (set iOS deployment target 14.0, Android minSdkVersion 24)
 - extra: apiBaseUrl from process.env.EXPO_PUBLIC_API_BASE_URL

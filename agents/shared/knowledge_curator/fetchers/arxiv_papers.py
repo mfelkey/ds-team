@@ -36,8 +36,6 @@ DS_KEYWORDS = [
     "simulation", "healthcare analytics", "clinical data",
     "EHR", "electronic health record", "survival analysis",
     "bayesian", "machine learning pipeline", "AutoML",
-    "data quality", "missing data", "ambulance",
-    "emergency medical", "EMS", "transportation analysis",
 ]
 
 # ── Category → collection + agent routing ─────────────────────────
