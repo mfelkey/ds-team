@@ -160,6 +160,14 @@ Project: {name} (ID: {run_id}{f' | {project_id}' if project_id else ''})
 
     print(f"\n💾 Output saved: {output_path}")
 
+    # Publish to parallaxedge/docs/
+    try:
+        sys.path.insert(0, os.path.expanduser("~/projects/protean-pursuits"))
+        from core.doc_publisher import publish_document
+        publish_document(output_path, "ds", name, run_id)
+    except Exception as e:
+        print(f"⚠️  Auto-publish failed (run scripts/publish.py manually): {e}")
+
     # Notify
     send_pushover(
         subject=f"[DS] Brief complete — {name[:50]}",
