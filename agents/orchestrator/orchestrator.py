@@ -7,8 +7,6 @@ from crewai import Agent, LLM
 
 load_dotenv("config/.env")
 
-from config.langfuse_setup import init_langfuse
-init_langfuse()
 
 # ── Notification helpers ──────────────────────────────────────────────────────
 
@@ -133,32 +131,85 @@ def request_human_approval(context: dict, checkpoint_name: str,
 
 # ── Agent factory ─────────────────────────────────────────────────────────────
 
-def build_devteam_orchestrator() -> Agent:
-    """Instantiate and return the Dev-Team Orchestrator agent."""
+
+# ── DS Orchestrator agent (replaces stale dev-team clone) ────────────────────
+
+def build_ds_orchestrator() -> Agent:
+    """Instantiate and return the DS Team Orchestrator agent."""
     llm = LLM(
-        model=os.getenv("TIER1_MODEL", "ollama/gpt-oss:120b"),
-        base_url=os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
+        model=os.getenv("TIER1_MODEL", "ollama/qwen3:32b"),
+        base_url=os.getenv("OLLAMA_BASE_URL", "http://localhost:11434"),
+        timeout=3600,
+        num_ctx=8192,
     )
 
     return Agent(
-        role="Dev-Team Orchestrator",
+        role="DS Team Orchestrator",
         goal=(
-            "Receive software development project requests, initialize structured "
-            "project context, route to the correct dev sub-team (backend, frontend, "
-            "mobile, DevOps, QA), manage checkpoints, coordinate handoffs between "
-            "agents, and ensure complete audit trails."
+            "Coordinate the DS Team to produce complete, structured data science "
+            "deliverables — from problem framing through final synthesis — for any "
+            "Protean Pursuits project. Delegate to specialist agents, synthesise "
+            "their outputs, and produce a cohesive final report."
         ),
         backstory=(
-            "You are the Dev-Team Orchestrator — the central coordinator for a "
-            "federated AI software development system. You manage the full dev "
-            "pipeline: product requirements, technical architecture, backend, "
-            "frontend, mobile (React Native, DevOps, QA), security review, "
-            "infrastructure, and quality assurance. You structure incoming work "
-            "into actionable project specs and coordinate execution with human "
-            "oversight at every major decision. "
-            "You never proceed past a checkpoint without explicit human approval."
+            "You are the Lead Data Scientist and team coordinator at Protean Pursuits LLC. "
+            "You have 15 years of experience leading DS teams across analytics, ML, and "
+            "data engineering disciplines. You are domain-agnostic — you read the project "
+            "brief carefully and apply rigorous DS methodology to whatever domain is in scope. "
+            "You never invent domain knowledge not in the brief; when domain expertise is "
+            "required beyond what the brief supplies, you flag it as a CROSS-TEAM FLAG "
+            "for SME consultation. "
+            "You sequence specialist agents intelligently based on run mode and complexity. "
+            "For LOW complexity you skip unnecessary agents. For MEDIUM/HIGH you run the "
+            "full pipeline. "
+            "Your synthesis outputs are comprehensive, traceable, and actionable — "
+            "every finding references which specialist produced it. "
+            "You are an authorized SME caller — you may invoke the SME Group by passing "
+            "caller='ds_orchestrator' to run_sme_consult() or run_sme_crew(). "
+            "Every output you produce ends with:\n"
+            "CROSS-TEAM FLAGS — items requiring Legal, Finance, Strategy, QA, or SME input\n"
+            "OPEN QUESTIONS — numbered list of decisions still required from the human\n"
         ),
         llm=llm,
         verbose=True,
-        allow_delegation=True
+        allow_delegation=False,
     )
+
+
+# ── Run function ──────────────────────────────────────────────────────────────
+
+def run_ds_orchestrator(brief: str, context: dict) -> str:
+    """
+    Instantiate the DS Team Orchestrator, run it against the brief, return output.
+
+    Called by flows/ds_intake_flow.py via:
+        run_ds_orchestrator = _import_orchestrator()
+        result = run_ds_orchestrator(brief=brief_text, context=project_context)
+    """
+    from crewai import Crew, Task
+
+    agent = build_ds_orchestrator()
+    context_block = (
+        context.get("raw", "")
+        or (json.dumps(context, indent=2) if context else "No context provided.")
+    )
+
+    task = Task(
+        description=(
+            f"Project brief:\n{brief}\n\n"
+            f"Project context:\n{context_block}\n\n"
+            "Coordinate the DS Team to produce complete, structured data science "
+            "deliverables. Classify complexity (LOW/MEDIUM/HIGH), sequence specialist "
+            "agents accordingly, synthesise their outputs, and produce a cohesive "
+            "final report. Every output ends with CROSS-TEAM FLAGS and OPEN QUESTIONS."
+        ),
+        expected_output=(
+            "Complete DS Team deliverable. No placeholders. All sections fully "
+            "populated. Ends with CROSS-TEAM FLAGS and OPEN QUESTIONS."
+        ),
+        agent=agent,
+    )
+
+    crew = Crew(agents=[agent], tasks=[task], verbose=True)
+    result = crew.kickoff()
+    return str(result)
